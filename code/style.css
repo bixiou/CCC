@@ -1,0 +1,91 @@
+/*@media all and (max-device-width: 480px) compatibilit� IE et smartphones */
+body {
+    webkit-background-size: cover; 
+    -moz-background-size: cover; 
+    -o-background-size: cover;	
+    background-size: cover;
+    background-color: #BBBBBB; /*#8888FF;
+   /* background-color:rgba(0,0,255,0.2);*/
+	font-family: lora, Times New Roman, "Cooper Black", Verdana, serif;
+}
+
+article {
+	background-color: rgba(255,255,255,0.98);
+    overflow:auto;
+}
+
+p {
+    text-indent: -2%;
+}
+
+.code {    
+    font-family: "Ubunuto Mono", "Monospace", "Courrier", serif;
+    white-space: pre-wrap;
+    font-size: 0.9em;
+}
+
+
+@media only all and (max-width: 1000px) 
+{ 
+    p {
+        text-indent: 0%;
+    }
+}
+
+@media all and (min-width: 1000px)
+{ 
+	@font-face {
+	    font-family: "lora";
+	    src: url(lora/Lora-Regular.ttf) format("truetype");
+	}
+
+	article
+	{
+		position:absolute;
+		width: 95%; /* 70 */
+		height: 95%; /* 85 */
+		/*right: 3%; /* 1 */
+		padding-left: 2%;
+		padding-right: 1.5%;
+		/*top: 13%;*/
+	}
+
+	p
+	{
+		margin: 0px 5px;
+		padding: 5px 5px;
+		font-size: 1.2em; /*1*/
+		padding-top: 30 px;
+		font-family: lora, georgia, Times New Roman, "Cooper Black", Verdana, serif;
+		text-align: justify;
+		text-indent : 5%;
+	}
+	
+}
+
+@media only all and (max-width: 1000px) 
+{ 
+	body
+	{
+		overflow: auto;
+	}
+        
+	p
+	{
+		margin: 0px 5px;
+		padding: 5px 5px;
+		font-size: 1em;
+		padding-top: 30 px;
+		font-family: georgia, Times New Roman, "Cooper Black", Verdana, serif;
+		text-align: justify;
+		text-indent : 5%;
+	}
+}
+	
+@media all and (min-width: 2000px) { 
+	body {
+		width:1500px;
+		margin:auto;
+	}
+
+}

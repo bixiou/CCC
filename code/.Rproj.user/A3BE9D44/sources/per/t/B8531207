@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587577240445.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B8531207",
+    "lastKnownWriteTime" : 35231650741942751,
+    "last_content_update" : 1587577240445,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "bcf6a08d81634703acb1aabc894fe361",
+        "name" : "s$taille_agglo",
+        "title" : "s$taille_agglo"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

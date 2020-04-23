@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587458847441.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "926647865",
+    "id" : "AE80F44A",
+    "lastKnownWriteTime" : 1587511842,
+    "last_content_update" : 1587511842678,
+    "path" : "/var/www/conv_citoyenne/code/.Rprofile",
+    "project_path" : ".Rprofile",
+    "properties" : {
+        "cursorPosition" : "127,28",
+        "scrollLine" : "122"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

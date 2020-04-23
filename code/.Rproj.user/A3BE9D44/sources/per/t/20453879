@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585404175109.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3143377000",
+    "id" : "20453879",
+    "lastKnownWriteTime" : 1586347015,
+    "last_content_update" : 1586347015,
+    "path" : "/var/www/beliefs_climate_policies/code/papier.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "6,21",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

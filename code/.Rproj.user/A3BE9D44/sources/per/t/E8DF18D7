@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587301609722.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1955329732",
+    "id" : "E8DF18D7",
+    "lastKnownWriteTime" : 1587597316,
+    "last_content_update" : 1587597316238,
+    "path" : "/var/www/conv_citoyenne/code/externe_preparation.R",
+    "project_path" : "externe_preparation.R",
+    "properties" : {
+        "cursorPosition" : "788,2",
+        "scrollLine" : "782",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
