@@ -9,13 +9,13 @@
     "id" : "AE80F44A",
     "lastKnownWriteTime" : 1587511842,
     "last_content_update" : 1587511842678,
-    "path" : "/var/www/conv_citoyenne/code/.Rprofile",
+    "path" : "/var/www/conv_citoyenne/CCC/code/.Rprofile",
     "project_path" : ".Rprofile",
     "properties" : {
         "cursorPosition" : "127,28",
-        "scrollLine" : "122"
+        "scrollLine" : "0"
     },
-    "relative_order" : 4,
+    "relative_order" : 2,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_source"

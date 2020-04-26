@@ -264,10 +264,10 @@ relabel_and_rename <- function(s) {
   label(s[[124]]) <- "CCC_representative: Une assemblée représentative de la population - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
   label(s[[125]]) <- "CCC_autre_choix: Autre - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
   label(s[[126]]) <- "CCC_autre: Autre (champ libre) - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
-  label(s[[127]]) <- "CCC_devoile_fonds_mondial_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(s[[128]]) <- "CCC_devoile_obligation_renovation_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(s[[129]]) <- "CCC_devoile_taxe_viande_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge -Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(s[[130]]) <- "CCC_devoile_limitation_110_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
+  label(s[[127]]) <- "CCC_devoile_fonds_mondial_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
+  label(s[[128]]) <- "CCC_devoile_obligation_renovation_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
+  label(s[[129]]) <- "CCC_devoile_taxe_viande_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une taxe sur la viande rouge -Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
+  label(s[[130]]) <- "CCC_devoile_limitation_110_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
   label(s[[131]]) <- "first_click:"
   label(s[[132]]) <- "last_click:"
   label(s[[133]]) <- "duree_info_CCC: Temps passé sur la page affichant l'information sur la CCC (info_CCC==1)"
@@ -381,7 +381,7 @@ convert_s <- function(s) {
   # s$mauvaise_qualite[n(s$revenu) > 10000] <- 1 + s$mauvaise_qualite[n(s$revenu) > 10000] # 58
   # s$mauvaise_qualite[n(s$rev_tot) > 10000] <- 1 + s$mauvaise_qualite[n(s$rev_tot) > 10000] # 55
   s$revenu <- clean_number(s$revenu, high_numbers='divide')
-  s$rev_tot <- clean_number(s$rev_tot, high_numbers='divide') # TODO: check ça et patrimoine
+  s$rev_tot <- clean_number(s$rev_tot, high_numbers='divide') # TODO: check ça
   # s$revenu[s$revenu > 10000] <- wtd.mean(s$revenu[s$revenu < 10000], weights = s$weight[s$revenu < 10000], na.rm=T)
   # s$rev_tot[s$rev_tot > 10000] <- wtd.mean(s$rev_tot[s$rev_tot < 10000], weights = s$weight[s$rev_tot < 10000], na.rm=T)
   for (i in c( # TODO: check number outliers
@@ -436,16 +436,18 @@ convert_s <- function(s) {
     if (j %in% c("chauffage", "cause_CC_AT")) s[capitalize(j)] <- s[j][[1]]
     # s[j][[1]] <- as.item(as.character(s[j][[1]]),
     #             labels = structure(levels(factor(s[j][[1]])), names = levels(factor(s[j][[1]]))),
-    #             missing.values = c("NSP", ""), annotation=paste(attr(s[j][[1]], "label"), "(char)")) # TODO: pb with numbers=T
-    s[j][[1]] <- as.item(as.factor(s[j][[1]]), missing.values = c("NSP", ""), annotation=paste(attr(s[j][[1]], "label"), "(char)")) # TODO: pb with numbers=T
+    #             missing.values = c("NSP", ""), annotation=paste(attr(s[j][[1]], "label"), "(char)"))
+    s[j][[1]] <- as.item(as.factor(s[j][[1]]), missing.values = c("NSP", ""), annotation=paste(attr(s[j][[1]], "label"), "(char)")) 
   }
 
   for (j in names(s)) {
-    if ((grepl('gilets_jaunes_|ecologiste|conservateur|liberal|patriote|humaniste|apolitique|locataire|proprio_|heberge_|solution_CC_|responsable_', j)
+    if ((grepl('gilets_jaunes_|ecologiste|conservateur|liberal|patriote|humaniste|apolitique|locataire|proprio_|heberge_|solution_CC_|responsable_|centre|droite|gauche', j)
         | grepl('soutenu_|qualite_enfant_|^CCC_', j))
-        & !(j %in% c('CCC_autre')) & !grepl('CCC_devoile_', j)) { # TODO: extr_gauche à extr_droite
-      s[[j]][s[[j]]!=""] <- TRUE
+        & !(j %in% c('CCC_autre')) & !grepl('CCC_devoile_', j)) {
+      temp <- label(s[[j]])
+      s[[j]] <- s[[j]]!="" # s[[j]][s[[j]]!=""] <- TRUE
       s[[j]][is.na(s[[j]])] <- FALSE
+      label(s[[j]]) <- temp
     }
   }
 
@@ -507,7 +509,7 @@ convert_s <- function(s) {
 
   temp <- -3*(s$problemes_invisibilises=='Jamais') - (s$problemes_invisibilises=='Peu souvent') + (s$problemes_invisibilises=='Assez souvent') + 3*(s$problemes_invisibilises=='Très souvent')
   s$problemes_invisibilises <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Jamais', 'Peu souvent', 'Assez souvent', 'Très souvent')), annotation=Label(s$problemes_invisibilises))
-# TODO: confiance_dividende -1:1?
+
   temp <- -3*(s$issue_CC=='Non, certainement pas') - (s$issue_CC=='Non, probablement pas') + (s$issue_CC=='Oui, probablement') + 3*(s$issue_CC=='Oui, certainement')
   s$issue_CC <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Non, certainement pas', 'Non, probablement pas', 'Oui, probablement', 'Oui, certainement')), annotation=Label(s$issue_CC))
 
@@ -522,10 +524,14 @@ convert_s <- function(s) {
   temp <- -2*grepl("Jamais", s$confiance_gouvernement) - grepl("Parfois", s$confiance_gouvernement) + grepl("La plupart", s$confiance_gouvernement) + 2*grepl("Toujours", s$confiance_gouvernement) + 0.1*grepl("NSP", s$confiance_gouvernement)
   s$confiance_gouvernement <- as.item(temp, labels=structure(c(-2:2,0.1), names = c('Jamais', 'Parfois', 'Moitié du temps', 'Plupart du temps', 'Toujours', 'NSP')), missing.values=0.1, annotation=Label(s$confiance_gouvernement))
 
+  temp <- 1*(s$confiance_dividende=='Oui') - 1*(s$confiance_dividende=='Non')
+  s$confiance_dividende <- as.item(temp, labels=structure(c(-1:1), names=c('Non', 'À moitié', 'Oui')), annotation=Label(s$confiance_dividende))
+  
   temp <- - grepl("Non", s$connait_CCC) + grepl("Oui, je sais assez", s$connait_CCC) + 2*grepl("Oui, je sais très bien", s$connait_CCC)
   s$connait_CCC <- as.item(temp, labels=structure(c(-1:2), names = c('Non', 'Vaguement', 'Oui, assez', 'Oui, très')), annotation=Label(s$connait_CCC))
 
-  temp <- - grepl("Aucune", s$sait_CCC_devoilee) + grepl("Oui", s$sait_CCC_devoilee) 
+  temp <- - grepl("Aucune", s$sait_CCC_devoilee) + grepl("Oui", s$sait_CCC_devoilee)
+  is.na(temp) <- is.na(s$sait_CCC_devoilee)
   s$sait_CCC_devoilee <- as.item(temp, labels=structure(c(-1:1), names = c('Non', 'Pas sûr', 'Oui')), annotation=Label(s$sait_CCC_devoilee))
   
   s$question_confiance <- s$question_confiance > 0
@@ -543,22 +549,23 @@ convert_s <- function(s) {
   temp <- 20.90*(s$age == "18 à 24 ans") + 29.61*(s$age == "25 à 34 ans") + 42.14*(s$age == "35 à 49 ans") + 56.84*(s$age == "50 à 64 ans") + 75.43*(s$age == "65 ans ou plus")
   s$age <- as.item(temp, labels = structure(c(20.90, 29.61, 42.14, 56.84, 75.43), names = c("18-24", "25-34", "35-49", "50-64", "65+")), annotation=Label(s$age))
   # s$Age <- (s$age == "18 à 24 ans") + 2*(s$age == "25 à 34 ans") + 3.3*(s$age == "35 à 49 ans") + 4.6*(s$age == "50 à 64 ans") + 7*(s$age == "65 ans ou plus")
-  s$taille_agglo <- as.item(as.numeric(s$taille_agglo), labels = structure(1:5, names = c("rural", "-20k", "20-100k", "+100k", "Paris")), annotation=Label(s$taille_agglo))  
-  temp <- 1*grepl('10 001', s$patrimoine) + 2*grepl('60 001', s$patrimoine) + 3*grepl('180 001', s$patrimoine) + 4*grepl('350 001', s$patrimoine) + 5*grepl('Plus de', s$patrimoine) - 1*grepl('NSP', s$patrimoine) # TODO: check if NA
+  s$taille_agglo <- as.numeric(sub('CC ', '', s$taille_agglo))
+  s$taille_agglo <- as.item(as.numeric(s$taille_agglo), labels = structure(1:5, names = c("rural", "-20k", "20-100k", "+100k", "Paris")), annotation=Label(s$taille_agglo))
+  temp <- 1*grepl('10 001', s$patrimoine) + 2*grepl('60 001', s$patrimoine) + 3*grepl('180 001', s$patrimoine) + 4*grepl('350 001', s$patrimoine) + 5*grepl('Plus de', s$patrimoine) - 1*grepl('NSP', s$patrimoine)
   s$patrimoine <- as.item(as.numeric(temp), missing.values=-1, labels = structure(-1:5, names = c("NSP", "< 10k", "10-60k", "60-180k", "180-350k", "350-550k", "> 550k")), annotation=Label(s$patrimoine))  
   
   s$Diplome <- (s$diplome == "Brevet des collèges") + 2*(s$diplome=="CAP ou BEP") + 3*(s$diplome=="Baccalauréat") + 4*(s$diplome=="Bac +2 (BTS, DUT, DEUG, écoles de formation sanitaires et sociales...)") + 5*(s$diplome=="Bac +3 (licence...)") + 6*(s$diplome=="Bac +5 ou plus (master, école d'ingénieur ou de commerce, doctorat, médecine, maîtrise, DEA, DESS...)") - (s$diplome=="NSP (Ne se prononce pas)")
   s$diplome4 <- as.item(pmin(pmax(s$Diplome, 1), 4), labels = structure(1:4, names = c("Aucun diplôme ou brevet", "CAP ou BEP", "Baccalauréat", "Supérieur")), annotation=Label(s$diplome))  
-# TODO
+
   s$chauffage <- relabel(s$chauffage, c("Gaz de ville"="Gaz réseau", "Butane, propane, gaz en citerne"="Gaz bouteille", "Fioul, mazout, pétrole"="Fioul", "Électricité"="Électricité", "Bois, solaire, géothermie, aérothermie (pompe à chaleur)"="Bois, solaire...", "Autre"="Autre", "NSP"="NSP"))
   s$cause_CC_AT <- relabel(s$cause_CC_AT, c("n'est pas une réalité"="n'existe pas", "est principalement dû à la variabilité naturelle du climat"="naturel", "est principalement dû à l'activité humaine"="anthropique", "NSP"="NSP"))
   s$confiance_gens <- relabel(s$confiance_gens, c("On n’est jamais assez prudent quand on a affaire aux autres"="Confiant", "On n’est jamais assez prudent quand on a affaire aux autres"="Méfiant"))
   
-  s$gauche_droite <- pmax(-2,pmin(2,-2 * grepl("extrême gauche", s$extr_gauche) - grepl("De gauche", s$gauche) + grepl("De droite", s$droite) + 2 * grepl("extrême droite", s$extr_droite)))
-  is.na(s$gauche_droite) <- (s$gauche_droite == 0) & !grepl("centre", s$centre)
+  s$gauche_droite <- pmax(-2,pmin(2,-2 * s$extr_gauche - 1*s$gauche + 1*s$droite + 2 * s$extr_droite))
+  is.na(s$gauche_droite) <- (s$gauche_droite == 0) & !s$centre
   s$Gauche_droite <- as.factor(s$gauche_droite)
   s$gauche_droite <- as.item(as.numeric(as.vector(s$gauche_droite)), labels = structure(c(-2:2),
-                          names = c("Extrême gauche","Gauche","Centre","Droite","Extrême droite")), annotation="gauche_droite:échelle de -2 (extr_gauche) à +2 (extr_droite) - Orientation politique (Comment vous définiriez-vous ? Plusieurs réponses possibles: (D'extrême) gauche/Du centre/(D'extrême) droite/Libéral/Humaniste/Patriote/Apolitique/Écologiste/Conservateur (champ libre)/NSP)") 
+                          names = c("Extrême gauche","Gauche","Centre","Droite","Extrême droite")), annotation="gauche_droite:échelle de -2 (extr_gauche) à +2 (extr_droite) - Orientation politique (Comment vous définiriez-vous ? Plusieurs réponses possibles: (D'extrême) gauche/Du centre/(D'extrême) droite/Libéral/Humaniste/Patriote/Apolitique/Écologiste/Conservateur (champ libre)/NSP)")
   levels(s$Gauche_droite) <- c("Extreme-left", "Left", "Center", "Right", "Extreme-right", "Indeterminate")
   s$Gauche_droite[is.na(s$Gauche_droite)] <- "Indeterminate"
   s$indeterminate <- s$Gauche_droite == "Indeterminate"
@@ -600,7 +607,7 @@ convert_s <- function(s) {
 	  )
   	for (i in 1:9) if (as.numeric(code) %in% as.numeric(regions[[i]])) reg <- names(regions)[i]
 	  return(reg)
-	} # TODO: pourquoi Centre excède de 20% le quota? Pourquoi y a-t-il aussi des excès de quotas dans taille_agglo?
+	} 
   region_dep <- rep("", 95)
   for (i in 1:95) region_dep[i] <- region_code(i)
   s$region_verif <- "autre"
@@ -639,7 +646,7 @@ convert_s <- function(s) {
   s$conso <- pmin(s$conso, 30) # 75
   s$surface <- pmin(s$surface, 650) # 5
   
-#   s$gaz <- grepl('gaz', s$chauffage, ignore.case = T) # TODO: check efforts_relatifs & fuel_2_1 in new survey test
+#   s$gaz <- grepl('gaz', s$chauffage, ignore.case = T)
 #   s$fioul <- grepl('fioul', s$chauffage, ignore.case = T)
 #   s$hausse_chauffage <- -55.507189 + s$gaz * 124.578484 + s$fioul * 221.145441 + s$surface * 0.652174  
 # 	s$hausse_diesel[s$nb_vehicules == 0] <- (0.5*(6.39/100) * s$km * 1.4 * (1 - 0.4) * 0.090922)[s$nb_vehicules == 0] # share_diesel * conso * km * price * (1-elasticite) * price_increase
@@ -742,6 +749,7 @@ convert_s <- function(s) {
   
   s$origine_taxe <- relevel(as.factor(s$origine_taxe), 'inconnue')
   s$label_taxe <- relevel(as.factor(s$label_taxe), 'taxe')
+  s$variante_taxe_carbone <- relevel(as.factor(s$variante_taxe_carbone), 'neutre')
   
   s$retraites <- s$statut_emploi == 'retraité·e' 
   s$actifs <- s$statut_emploi %in% c("autre actif", "CDD", "CDI", "fonctionnaire", "intérimaire ou contrat précaire")
@@ -787,7 +795,72 @@ convert_s <- function(s) {
   label(s$prop_politiques_env) <- "prop_politiques_env: Proportion de politiques environnementales soutenues par le répondant = prop_referenda + prop_politiques_1 + prop_politiques_2 (cf. les 20 variables_politiques_env)"
   label(s$prop_referenda_politiques_2) <- "prop_referenda_politiques_2: Proportion de politiques environnementales de la 2è partie soutenues par le répondant = nb_referenda + nb_politiques_2 (cf. les 14 variables_politiques_2 et variables_referendum)"
   
-  # TODO: obstacles, soutenu, devoile
+  s$correct_soutenu_bonus_malus <- s$soutenu_bonus_malus==T # ~65% pour
+  s$correct_soutenu_normes_isolation <- s$soutenu_normes_isolation==T # AT: 72% pour
+  s$correct_soutenu_obligation_renovation <- s$soutenu_obligation_renovation==T # referendum_obligation_renovation: ~75% Oui / pour_obligation_renovation: ~83% pour
+  s$correct_soutenu_limitation_110 <- s$soutenu_limitation_110==F # pour_limitation_110: ~53% contre
+  s$nb_correct_soutenu <- s$correct_soutenu_bonus_malus + s$correct_soutenu_normes_isolation + s$correct_soutenu_obligation_renovation + s$correct_soutenu_limitation_110
+  label(s$correct_soutenu_bonus_malus) <- "correct_soutenu_bonus_malus: soutenu_bonus_malus==T - Un renforcement du bonus/malus écologique pour l’achat d’un véhicule - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
+  label(s$correct_soutenu_obligation_renovation) <- "correct_soutenu_obligation_renovation: soutenu_obligation_renovation==T - L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
+  label(s$correct_soutenu_limitation_110) <- "correct_soutenu_limitation_110: soutenu_limitation_110==F - L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
+  label(s$correct_soutenu_normes_isolation) <- "correct_soutenu_normes_isolation: soutenu_normes_isolation==T - Des normes plus strictes sur l'isolation pour les nouveaux bâtiments - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
+  label(s$nb_correct_soutenu) <- "nb_correct_soutenu: Nombre de réponses correctes à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
+  
+  s$correct_devoile_obligation_renovation <- s$CCC_devoile_obligation_renovation > 0 # https://www.lemonde.fr/climat/article/2020/04/11/climat-les-50-propositions-de-la-convention-citoyenne-pour-porter-l-espoir-d-un-nouveau-modele-de-societe_6036293_1652612.html
+  s$correct_devoile_limitation_110 <- s$CCC_devoile_limitation_110 < 0
+  s$correct_devoile_fonds_mondial <- s$CCC_devoile_fonds_mondial < 0
+  s$correct_devoile_taxe_viande <- s$CCC_devoile_taxe_viande < 0
+  s$nb_correct_devoile <- s$correct_devoile_obligation_renovation + s$correct_devoile_limitation_110 + s$correct_devoile_fonds_mondial + s$correct_devoile_taxe_viande
+  label(s$correct_devoile_obligation_renovation) <- "correct_devoile_obligation_renovation: CCC_devoile_obligation_renovation > 0 - [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
+  label(s$correct_devoile_limitation_110) <- "correct_devoile_limitation_110: CCC_devoile_limitation_110 < 0 - [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
+  label(s$correct_devoile_fonds_mondial) <- "correct_devoile_fonds_mondial: CCC_devoile_fonds_mondial < 0 - [Si pas Aucun à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
+  label(s$correct_devoile_taxe_viande) <- "correct_devoile_taxe_viande: CCC_devoile_taxe_viande < 0 - [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
+  label(s$nb_correct_devoile) <- "nb_correct_devoile: Nombre de réponses correctes à si cette mesure de la CCC a été dévoilée (obligation_renovation=T/limitation_110=F/taxe_viande=F/fonds_mondial=F)"
+  
+  obstacles <<- c("lobbies", "manque_volonte", "manque_cooperation", "inegalites", "incertitudes", "demographie", "technologies", "rien")
+  variables_obstacles <<- paste("obstacles", obstacles, sep="_")
+  for (i in 1:8)  {
+    for (v in obstacles) s[[paste("obstacle", i, sep="_")]][s[[paste("obstacles", v, sep="_")]]==i] <- v
+    label(s[[paste("obstacle", i, sep="_")]]) <- paste("obstacle_", i, ": Obstacle à la lutte contre le CC classé en position ", i, " (1: le plus - 7: le moins important) (", paste(obstacles, collapse = "/"), ")", sep="") }
+  # TODO!: connaissance_CCC
+  # TODO: questionnaire preferences-pol.fr
+  
+  s$Connaissance_CCC <- NA
+  s$connaissance_CCC_bon_francais <- s$connaissance_CCC_sortition <- s$connaissance_CCC_mesures <- s$connaissance_CCC_temporalite <- s$connaissance_CCC_internet <- s$connaissance_CCC == "FALSE"
+  s$connaissance_CCC_150 <- s$connaissance_CCC == "FALSE"
+  s$Connaissance_CCC[c(1,3,10,13,17,19,29,30,34,45,49,51,54,57,64,68,74,77,78,86,93,97,103,121,129,136,139,151,153,155,156,159,162,163,164,174,179,181,182,183,184,187,191,194,196,197,201)] <- "aucune" #
+  s$Connaissance_CCC[c(208,210,217,218,223,232,236,242,250,255,259,260,266,268,271,272,278,282,285,289,291,297,298,301,310,312,313,324,327,328,349,352,355,357,361,372)] <- "aucune" # 
+  s$Connaissance_CCC[c(383,385,389,390,394,402,410,411,415,416,417,419,421,422,424,425,429,431,442,444,446,450,451,457,458,461,463,465,466,468,469,472,476,485,487,488,492)] <- "aucune" # ex: "nsp" 19, 402, # doublons 450-451, 421-422, 468-469, 515-516?
+  s$Connaissance_CCC[c(6,22,25,66,72,80,90,100,107,110,111,152,166,170,177,188,214,227,238,276,281,316,319,320,323,339,360,387,393,396,399,408,432,452,454,474,498,503)] <- "hors sujet" # ex: 25, 71, 90, 107 # 25-110-432 doublon ?
+  s$Connaissance_CCC[c(8,15,18,20,26,27,28,43,65,75,84,85,89,101,123,132,135,140,142,144,145,147,165,168,172,176,207,220,222,240,247,275,288,303,308,341,347,348,351,356,364,377,473,493)] <- "approximatif"
+  s$Connaissance_CCC[c(7,24,62,67,71,84,91,106,117,127,130,131,134,150,154,158,173,175,186,202,209,226,246,247,253,262,284,302,307,334,337,380,386,391,400,407,418,420,428,440,448,449,470,481)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+  s$connaissance_CCC_bon_francais[c(6,15,18,20,24,27,62,84,85,91,130,134,140,145,154,158,165,170,175,193,202,207,220,226,242,247,248,253,262,288,347,348,351,356,360,364,377,380,386,387,391)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+  s$connaissance_CCC_sortition[c(7,62,67,71,91,106,127,130,131,134,150,154,158,165,173,175,186,202,207,209,239,246,247,253,262,284,302,308,334,348,380,407,420,428,440,448,449,470,481)] <- "sortition"
+  s$Connaissance_CCC[c(496,502,515,516,520,526,532,533,534,535,537,540,541,546,548,550,551,552,553,555,557,560,561,562,564,567,568,572)] <- "aucune" # 
+  s$Connaissance_CCC[c(510,570)] <- "hors sujet" # ex: 25, 71, 90, 107, 570 # 25-110-432 doublon ?
+  s$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
+  s$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531)] <- "approximatif"
+  s$Connaissance_CCC[c(494,501,514,542,547,558,563,566)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+  s$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504)] <- "faux" # ex: 239, 326
+  s$connaissance_CCC_internet[c(44,70,239,279,512)] <- "internet"
+  s$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566)] <- "sortition"
+  s$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566)] <- "mesures"
+  s$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
+  s$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+  s$connaissance_CCC_150[which(c(grepl('150', s$connaissance_CCC)),470)] <- "150"
+  variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
+  for (v in variables_connaissance_CCC) s[[paste("connaissance_CCC", v, sep="_")]] <- s[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
+  temp <- -2*(s$Connaissance_CCC=="hors sujet") -1*(s$Connaissance_CCC=="faux") + 1*(s$Connaissance_CCC=="trop vague") + 2*(s$Connaissance_CCC=="approximatif") + 3*(s$Connaissance_CCC=="bonne")
+  temp[s$connaissance_CCC_internet==T] <- 2
+  s$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")), 
+                                annotation="Connaissance_CCC: connaissance_CCC recodé en hors sujet/faux/aucune/approximatif/bonne (incl. internet) - Décrivez ce que vous savez de la Convention Citoyenne pour le Climat. (champ libre)")
+  label(s$connaissance_CCC_bon_francais) <- "connaissance_CCC_bon_francais: Indicatrice que la réponse à connaissance_CCC est constituée d'une phrase grammaticalement correcte et sans faute d'orthographe (à l'exception des phrases très courtes type 'Je ne sais pas')"
+  label(s$connaissance_CCC_sortition) <- "connaissance_CCC_sortition: Indicatrice que la réponse à connaissance_CCC mentionne le tirage au sort, ou du moins le caractère 'lambda' ou hétérogène des citoyens de la CCC"
+  label(s$connaissance_CCC_mesures) <- "connaissance_CCC_mesures: Indicatrice que la réponse à connaissance_CCC mentionne le fait que la CCC rend des propositions de mesures"
+  label(s$connaissance_CCC_temporalite) <- "connaissance_CCC_temporalite: Indicatrice que la réponse à connaissance_CCC mentionne un élément de la temporalité de la CCC (date de début ou de fin, ou fréquence de ses réunions)"
+  label(s$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
+  label(s$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
+  # TODO!: connaissance_CCC >572 = "/"
   
   s <- s[, -c(9:17, 39:49, 131, 132, 134, 136, 137, 139)]
   return(s)
@@ -834,27 +907,33 @@ weighting_s <- function(data, printWeights = T) { # cf. google sheet
                 population.margins = list(sexe,diplome4,taille_agglo,region,csp,age)) 
 
   if (printWeights) {    print(summary(weights(raked))  )
-    print(sum( weights(raked) )^2/(length(weights(raked))*sum(weights(raked)^2)) ) # <0.5 : problématique   
-    print( length(which(weights(raked)<0.25 | weights(raked)>4))/ length(weights(raked)))
+    print(paste("(mean w)^2 / (n * mean w^2): ", round(sum( weights(raked) )^2/(length(weights(raked))*sum(weights(raked)^2)), 3), " (pb if < 0.5)")) # <0.5 : problématique   
+    print(paste("proportion not in [0.25; 4]: ", round(length(which(weights(raked)<0.25 | weights(raked)>4))/ length(weights(raked)), 3)))
   }
   return(weights(trimWeights(raked, lower=0.25, upper=4, strict=TRUE)))
 }
 
 # exclude_speeder=TRUE;exclude_screened=TRUE; only_finished=TRUE; only_known_agglo=T; duree_max=630
 prepare_s <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished=TRUE, only_known_agglo=T, duree_max=390) { # , exclude_quotas_full=TRUE
-  s <- read_csv("../données/externe1.csv")[-c(1:2),]
+  s <- read_csv("../donnees/externe1.csv")[-c(1:2),]
 
   s <- relabel_and_rename(s)
   
   print(paste(length(which(s$exclu=="QuotaMet")), "QuotaMet"))
   s$fini[s$exclu=="QuotaMet" | is.na(s$revenu)] <- "False" # To check the number of QuotaMet that shouldn't have incremented the quota, comment this line and: decrit(s$each_strate[s$exclu=="QuotaMet" & s$csp=="Employé" & !grepl("2019-03-04 07", s$date)])
-  # if (exclude_screened) { s <- s[is.na(s$exclu),] } # remove Screened TODO: seems to be TRUE/FALSE now
+  if (exclude_screened) { s <- s[is.na(s$exclu),] }
   if (exclude_speeder) { s <- s[as.numeric(as.vector(s$duree)) > duree_max,] } 
   # if (exclude_quotas_full) { s <- s[s[101][[1]] %in% c(1:5),]  } # remove those with a problem for the taille d'agglo
   # if (exclude_quotas_full) { s <- s[s$Q_TerminateFlag=="",]  } # remove those with a problem for the taille d'agglo
-  if (only_finished) { s <- s[s$fini=="True",] }
+  if (only_finished) { 
+    s <- s[s$fini=="True",] 
+    s <- convert_s(s) 
+    
+    s$weight <- weighting_s(s)
   
-  s <- convert_s(s) 
+    s$gauche_droite_na <- as.numeric(s$gauche_droite)
+    s$gauche_droite_na[s$indeterminate == T] <- wtd.mean(s$gauche_droite, weights = s$weight)
+  }
   
   s$sample <- "a"
   s$sample[s$fini=="True"] <- "e"
@@ -863,17 +942,12 @@ prepare_s <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished
   s$sample[s$fini=="True" & n(s$duree) > duree_max & s$exclu==""] <- "r"
   
   # s <- s[-which(is.element(s$id, s$id[duplicated(s$id)]) & !duplicated(s$id)),] # TODO: check duplicates
-
-  s$weight <- weighting_s(s)
-  
-  s$gauche_droite_na <- as.numeric(s$gauche_droite)
-  s$gauche_droite_na[s$indeterminate == T] <- wtd.mean(s$gauche_droite, weights = s$weight)
   
   return(s)
 }
 
-# sa <- prepare_s(exclude_screened=FALSE, exclude_speeder=FALSE, only_finished=T) # TODO: let only_finished = FALSE
-# # se <- prepare_s(exclude_screened=FALSE, exclude_speeder=FALSE)
+sa <- prepare_s(exclude_screened=FALSE, exclude_speeder=FALSE, only_finished=FALSE)
+# se <- prepare_s(exclude_screened=FALSE, exclude_speeder=FALSE)
 # # sp <- prepare_s(exclude_screened=FALSE)
 
 s <- prepare_s()

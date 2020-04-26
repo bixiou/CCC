@@ -1,0 +1,447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+ <!-- *** WEB SITE INFORMATION AND COPYRIGHT ***********
+	Qualtrics Control Panel
+	COPYRIGHT:  This page, its design, and content (photographic, written, etc.) are copyrighted by Qualtrics Labs, Inc.
+	** For more information, see: www.Qualtrics.com **
+ **************************************************** -->
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+	<link rel="apple-touch-icon-precomposed" href="/WRQualtricsShared/Graphics/qipadicon.png"/>
+			<title>Edit Survey | Qualtrics Survey Software</title>
+		<meta name="Description" content="Survey Software, Enterprise Survey software for enterprise feedback management and CRM solutions. Enables high-quality data collection, panel management and results analysis. Perfect for market research or CRM solution (Customer Relationship Management) integration. Free trial and consultation." />
+	<meta name="Keywords" content="enterprise survey software, survey software, email survey software, web survey software, internet survey software, online survey software, online survey, employee satisfaction survey, customer satisfaction survey, customer survey, market research, survey templates, employee survey, web survey, customer service survey, employee opinion survey, survey hosting, qualtrics.com" />
+
+	<link rel="shortcut icon" href="/WRQualtricsShared/Brands/Qualtrics/favicon.ico" type="image/x-icon" />
+
+	<base href="/WRQualtricsControlPanel_rel/" />
+
+			<link rel="stylesheet" type="text/css" href="/cpui/static/v_0bad2fb23a/vendors~account-usage~admin-security~admin-users~cpui-default-preload-package~distribute-survey~ex-s~458e229c.min.css"></link>
+			<link rel="stylesheet" type="text/css" href="/cpui/static/v_0bad2fb23a/survey-builder.min.css"></link>
+	
+	<!-- Templated JS data ideally goes here, so that it can be on the window when any scripts need it -->
+<script type="text/javascript">
+	if (!window.Qualtrics) Qualtrics = {};
+
+	Qualtrics.__naive_page_start = new Date().getTime();
+
+	// Enumerates any [unfortunate] server-side writes to Request Context that occurred
+	// during the rendering of this page section.
+	Qualtrics.__request_context_updates = 'ActiveLibrary/LibraryID=UR_6sO1EE1T0t8MvHv';
+
+			window.initialPageData = JSON.parse("{\"surveyId\":\"SV_6s67PS7CwuYTuxD\"}");
+	
+	window.NavigationService = {
+		activeSubSection: 'Blocks',
+		activeSection: 'EditSection',
+		activeSuperSection: 'SurveysSection',
+		tabsList: [{"name":"MySurveysSection","status":"Enabled","display":"My Surveys"},{"name":"MyProjectsSection","status":"Enabled","display":"My Projects"},{"name":"EditSection","status":"Enabled","display":"Edit Survey"},{"name":"DistributeSection","status":"Enabled","display":"Distribute Survey"},{"name":"TriggersSection","status":"Disabled","display":"#SiteMenu, TriggersSection#"},{"name":"TicketsSection","status":"Disabled","display":"#SiteMenu, TicketsSection#"},{"name":"ResultsSection","status":"Enabled","display":"View Results"},{"name":"ResponsesSection","status":"Enabled","display":"Responses"},{"name":"TextToolsSection","status":"Enabled","display":"#SiteMenu, TextToolsSection#"},{"name":"ResponseWeightingSection","status":"Enabled","display":"#SiteMenu, ResponseWeightingSection#"},{"name":"DashboardSection","status":"Enabled","display":"#SiteMenu, DashboardSection#"},{"name":"ReportingSection","status":"Hidden","display":"Reporting"}],
+		customTabsList: null,
+	};
+
+	window.qVersion = '7968485';
+	window.uiVersion = 'v_0bad2fb23a';
+
+	if(!Qualtrics.Navigation)
+	{
+		Qualtrics.Navigation = {};
+	}
+	Qualtrics.Navigation.section = '';
+	Qualtrics.Navigation.subSection = 'Blocks';
+
+	Qualtrics.System = {};
+	Qualtrics.System.serverId = '';
+	Qualtrics.System.brandId = 'singuser2978b892';
+	Qualtrics.System.brandDescription = 'Paris School of Economics | CNRS PSE';
+	Qualtrics.System.brandBaseUrl = 'https://survey.eu.qualtrics.com';
+	Qualtrics.System.brandType = 'Academic';
+	Qualtrics.System.productName = 'ControlPanel';
+	Qualtrics.System.dataCenter = 'AWSIRELAND';
+	Qualtrics.System.isDev = '' === '1';
+	Qualtrics.System.section = 'EditSection';
+	Qualtrics.System.subSection = 'Blocks';
+
+	Qualtrics.System.ControlPanelRefresh = '1';
+	Qualtrics.System.brandHasMailingApprovalPermission = JSON.parse('false');
+	Qualtrics.System.brandHasSurveyApprovalPermission = JSON.parse('false');
+	Qualtrics.System.brandHasTextIQPermission = JSON.parse('false');
+	Qualtrics.System.brandHasForceHTTPS = '1';
+	Qualtrics.System.brandHasTA = JSON.parse('false');
+	Qualtrics.System.brandHasIQDLite = JSON.parse('false');
+	Qualtrics.System.brandHasOasis = JSON.parse('false');
+	Qualtrics.System.brandHasEndOfSurveyRedirectEnabled = JSON.parse('true');
+
+			Qualtrics.System.AvailableProducts = {};
+					Qualtrics.System.AvailableProducts.ControlPanel = "/WRQualtricsControlPanel/";
+		
+		
+		
+			
+	Qualtrics.User = {};
+	Qualtrics.User.permissions = JSON.parse('{"accountPermissions":{"createSurveys":true,"shareSurveys":true,"collaborateOutsideBrand":true,"accessMailer":true,"accessPolls":false,"sendSystemMessage":true,"showLeadGenerator":false,"allowNonAccessibleSurveys":true,"accessAPI":false,"accessSurveyDirector":false,"salesforceIntegration":false,"accessSharedAddressBook":true,"allowJavaScript":true,"allowAllMarkup":true,"approveSurveys":false,"approveMailings":false,"offlineApp":false,"panelProviderAPI":false,"omnitureIntegration":false,"translateSurveysWithGoogle":true,"exportReportToFile":true,"enablePublicReport":true,"accessPanelManagement":false,"manageDirectory":false,"autoResolveDirectoryDuplicates":false,"managePortal":false,"accessPortal":false,"manageManagers":true,"useBenchmarks":false,"useTickets":false,"accessPrintedReports":false,"useDashboards":false,"useSMSDistribution":false,"useSMSAccessCodes":false,"useVocalize":false,"marketoIntegration":false,"useSurveyDirector":false,"tableauWdc":false,"slackIntegration":false,"createVocalizeProjects":true,"msdynamicsIntegration":false,"zendeskIntegration":false,"freshdeskIntegration":false,"hubspotIntegration":false,"servicenowIntegration":false,"useResponseWeighting":true,"accessSiteIntercept":false,"administerSiteIntercept":false,"HIPAACompliant":false,"useStatwing":false,"useCrosstabsIq":false,"usePredictIq":false,"useImportedDataProjects":false,"useStatsIqDescribe":false,"useStatsIqRelate":false,"useStatsIqRegression":false,"useStatsIqPivotTable":false,"useStatsIqCluster":false,"allowPeopleImportAutomations":false,"marketoV2Integration":false,"createMaxDiffProjects":false,"createCBConjointProjects":false,"useWhatsAppDistribution":false,"manageDirectoryPermissions":false,"manageTickets":false,"multipleDirectories":false,"accessDirectoryAutomations":false,"useRespondentFunnel":false,"manageProductTestingParticipantPortal":false,"viewWaves":false,"purchaseOnlineSamples":false,"purchaseSoftLaunch":false,"managePricingConstraints":false,"buyAllocations":false,"manageSurveyAllocations":false},"libraryPermissions":{"useSurveyLibrary":false,"useQuestionLibrary":false,"useMessages":true,"useLibraryGraphics":true,"useLibraryFiles":true,"useMailingLists":true,"usePanelSamples":true,"manageSurveyLibrary":false,"manageQuestionLibrary":false,"manageMessages":true,"manageLibraryGraphics":true,"manageLibraryFiles":true,"manageMailingLists":true,"managePanelSamples":true,"useLibraryColorGroups":true,"manageLibraryColorGroups":false,"useBlockLibrary":false,"manageBlockLibrary":false,"useMailingListTriggers":false,"manageMailingListTriggers":false,"useAutoResolveDuplicates":false,"usePanelHealth":false,"managePanelHealth":false,"usePanelMemberPortal":false,"managePanelMemberPortal":false,"useIncentives":false,"manageIncentives":false,"manageVirtualPool":false,"useCampaigns":false,"manageCampaigns":false,"useSavedLogic":true,"useAsReferenceLibrary":true},"questionPermissions":{"MC":true,"Matrix":true,"TE":true,"DB":true,"CS":true,"Slider":true,"RO":true,"SS":true,"SBS":true,"PGR":true,"DD":true,"HotSpot":true,"HeatMap":true,"Timing":true,"Meta":true,"GAP":true,"FileUpload":false,"DynamicMatrix":false,"Captcha":true,"NPS":true,"HL":false,"Draw":false},"projectPermissions":{"surveyPlatform":true,"CXCategory":false,"CXSurveyProject":true,"EXSurveyProject":true,"PXSurveyProject":true,"BXSurveyProject":true,"RCSurveyProject":true,"ResearchCoreCategory":true,"threeSixty":false,"employeeEngagement":false,"employeePulse":false,"BXCategory":false,"PXCategory":false,"EXCategory":false,"employeeLifecycle":false,"employeeGeneralFeedback":false}}');
+	Qualtrics.User.permissions.skinPermissions = JSON.parse('null');
+	Qualtrics.System.brandCategoryEntitlements = JSON.parse('{"BXCategory":"0","PXCategory":"0","CXCategory":"0","EXCategory":"0"}');
+	Qualtrics.User.offlineAppPermission = '';
+	Qualtrics.User.useBenchmarkPermission = false;
+	Qualtrics.User.canAddBenchmarkBlock = false;
+	Qualtrics.User.canAccessPanels = '1';
+	Qualtrics.User.canAccessSurveyDirector = '';
+	Qualtrics.User.brandHasContactsEnabled = '';
+	Qualtrics.User.accessSiteIntercept = '';
+	Qualtrics.User.userId = 'UR_6sO1EE1T0t8MvHv';
+	Qualtrics.User.username = 'benedicte.apouey@psemail.eu';
+	Qualtrics.User.email = 'benedicte.apouey@psemail.eu';
+	Qualtrics.User.firstName = 'Bénédicte';
+	Qualtrics.User.lastName = 'Apouey';
+	Qualtrics.User.name = 'Bénédicte Apouey';
+	Qualtrics.User.accountType = 'Standard Account';
+	Qualtrics.User.isStudent = '';
+	Qualtrics.User.userAccountCreationDate = '2020-04-07 12:44:39';
+	Qualtrics.User.userAccountStatus = 'Active';
+	Qualtrics.User.loginHistory = [];
+
+	Qualtrics.User.defaults = {};
+	Qualtrics.User.defaults.defaultFromEmail = '';
+	Qualtrics.User.defaults.defaultFromName = '';
+	Qualtrics.User.defaults.defaultReplyToEmail = '';
+
+	
+			Qualtrics.User.XMSurveyProjectEnabled = '1';
+	
+	
+	Qualtrics.User.language = 'EN';
+	Qualtrics.User.timezone = 'America/Denver';
+	Qualtrics.User.currentSurveyId = 'SV_6s67PS7CwuYTuxD';
+	Qualtrics.User.currentSurveyName = 'CCC_externe_3.0';
+	Qualtrics.User.isBrandAdminOrHigher = '';
+	Qualtrics.User.isMultiBrandAdminOrHigher = '';
+	Qualtrics.User.canUploadBlock = '';
+	Qualtrics.User.userType = 'UT_9od1enVtTulsEwA';
+	Qualtrics.User.helpTipsEnabled = 1;
+
+				
+	//feature flippers, don't override if some have already been set
+	if (!Qualtrics.Features) {
+		Qualtrics.Features = {};
+	}
+
+						Qualtrics.Features['AutoAuth'] = true;
+								Qualtrics.Features['ACTIONS_DeprecateLegacyTriggers'] = false;
+								Qualtrics.Features['UseExportServiceExperimental'] = false;
+								Qualtrics.Features['UseExportServiceSPSS'] = true;
+								Qualtrics.Features['UseExportServiceNewBrands'] = true;
+								Qualtrics.Features['SiteCatalystExport'] = false;
+								Qualtrics.Features['ServerSideAdobeAnalytics'] = true;
+								Qualtrics.Features['QuotaCheckSEFlowElement'] = false;
+								Qualtrics.Features['NPSQuestionType'] = false;
+								Qualtrics.Features['NewReportingDesignDefault'] = false;
+								Qualtrics.Features['CPRResults'] = false;
+								Qualtrics.Features['SalesforceUseOAuth'] = true;
+								Qualtrics.Features['ScreenCapture'] = true;
+								Qualtrics.Features['showODataExport'] = false;
+								Qualtrics.Features['SIZonesInMyProjects'] = true;
+								Qualtrics.Features['VocalizeGenesisIntegration'] = true;
+								Qualtrics.Features['TicketsComponentIntegration'] = true;
+								Qualtrics.Features['Tickets.ShowNewBanner'] = true;
+								Qualtrics.Features['EnableOasis'] = false;
+								Qualtrics.Features['NewCollaborationModal'] = false;
+								Qualtrics.Features['JFE_LookAndFeel'] = true;
+								Qualtrics.Features['ControlPanelPrivateData'] = false;
+								Qualtrics.Features['OptimizelyScript'] = false;
+								Qualtrics.Features['CanAccessProjectStore'] = true;
+								Qualtrics.Features['project_workflow'] = false;
+								Qualtrics.Features['project_workflow_dark_launch'] = false;
+								Qualtrics.Features['HomePageFreshUI'] = true;
+								Qualtrics.Features['core_xm_rebranding'] = true;
+								Qualtrics.Features['HomePageUseNewUserSettings'] = false;
+								Qualtrics.Features['HomePageCustomToSEnabled'] = false;
+								Qualtrics.Features['PX_FeatureRequest'] = false;
+								Qualtrics.Features['PX_Conjoint'] = false;
+								Qualtrics.Features['PX_MaxDiff'] = false;
+								Qualtrics.Features['PX_ProductTesting'] = false;
+								Qualtrics.Features['PX_OverrideEntitlement'] = false;
+								Qualtrics.Features['DisableSIOldUI'] = true;
+								Qualtrics.Features['ShowOptOutNewSI'] = false;
+								Qualtrics.Features['EX_EnableEmployeeAdHoc'] = true;
+								Qualtrics.Features['SDS_EnableImportedData'] = false;
+								Qualtrics.Features['CustomOptOut'] = false;
+								Qualtrics.Features['ImportDataCreateFieldset'] = false;
+								Qualtrics.Features['SDEF_AutocompleteQuestionType'] = false;
+								Qualtrics.Features['SDEF_LogEditorConsoleErrors'] = false;
+								Qualtrics.Features['BX_EnableBrandTracker'] = true;
+								Qualtrics.Features['TA_UseCOP'] = false;
+								Qualtrics.Features['DirectoryCustomOptOut'] = true;
+								Qualtrics.Features['WOFI_DisableToolsMenuTRs_SalesforceResponseMapping'] = false;
+								Qualtrics.Features['360.RemoveBilling'] = true;
+								Qualtrics.Features['360.DoNoSetPrepareReportCheckboxOnClosingProjectModal'] = false;
+								Qualtrics.Features['EX_BlankSIProjects'] = true;
+								Qualtrics.Features['TNT.SalesforceIntegration'] = false;
+								Qualtrics.Features['TNT.SalesforceOutboundMessage'] = false;
+								Qualtrics.Features['CleverSSO'] = false;
+								Qualtrics.Features['JFE_SurveyTester'] = false;
+								Qualtrics.Features['ProjectStore.Programs'] = false;
+								Qualtrics.Features['ProjectStore.Proxy.ReqCtx.Drop'] = false;
+								Qualtrics.Features['ProjectStore.Proxy.ReqCtx.Verify'] = false;
+								Qualtrics.Features['EX_EnableEmployeePulse'] = false;
+								Qualtrics.Features['JFE_ReauthenticateSession'] = true;
+								Qualtrics.Features['JFE_ScaleReversalUI'] = false;
+								Qualtrics.Features['EX_ELC_WriteToPythonJobService'] = true;
+								Qualtrics.Features['EX_ELC_WriteToFirestorm'] = true;
+								Qualtrics.Features['ShareProjectOnEditSurvey'] = true;
+								Qualtrics.Features['SettingsDropdown'] = false;
+								Qualtrics.Features['project_store_v0_dark_launch'] = false;
+								Qualtrics.Features['project_store_proxy_source_of_truth'] = true;
+			
+	//privileges
+	if (!Qualtrics.Privileges) {
+		Qualtrics.Privileges = {};
+	}
+						Qualtrics.Privileges['BrandTracker'] = false;
+								Qualtrics.Privileges['Conjoint'] = false;
+								Qualtrics.Privileges['MaxDiff'] = false;
+			
+	window.cdnDomain = 'https://static-assets.qualtrics.com';
+	window.siteInterceptStaticAssetPath = 'https://static-assets.qualtrics.com/static/monolith/WRQualtricsSiteIntercept/JavaScript/';
+</script>
+
+<!-- Page-specific templated data -->
+<script type="text/javascript">
+	window.ToolbarTemplatedData = {
+                    shouldLockSurvey: true,
+        
+                    isActive: true,
+            };
+</script><script type="text/javascript">
+	window.SurveyEditorData = {
+		allowNonAccessibleSurveys: true,
+		mobileCompatibilityChecker: 1,
+		previewMode: 1,
+		previewSurveyURL: '/SE/?SID=SV_6s67PS7CwuYTuxD&Preview=Survey&Q_CHL=preview&BrandID=singuser2978b892',
+		questionPermissions: {"MC":"1","Matrix":"1","TE":"1","DB":"1","CS":"1","Slider":"1","RO":"1","SS":"1","SBS":"1","PGR":"1","DD":"1","HotSpot":"1","HeatMap":"1","Timing":"1","Meta":"1","GAP":"1","FileUpload":"0","DynamicMatrix":"0","Captcha":"1","NPS":"1","HL":"0","Draw":"0"},
+		skinEditorPermission: '',
+		surveyPermissions: {
+							editQuestions: 1,
+										deleteSurveyQuestions: 1,
+										copySurveyQuestions: 1,
+										useBlocks: 1,
+					},
+		sfClientInfo: '',
+			    	};
+
+	//Pass along Accessibility Levels
+	window.AccesibilityLevels = {
+		levels: {"MC":{"NPS":{"AccessibleLevel":"NotAccessible"},"DL":{"AccessibleLevel":"NotAccessible"},"SB":{"AccessibleLevel":"NotAccessible"},"MSB":{"AccessibleLevel":"NotAccessible"},"SAHR":{"AccessibleLevel":"NotAccessible"},"SAVR":{"AccessibleLevel":"NotAccessible"},"SACOL":{"AccessibleLevel":"NotAccessible"},"MAHR":{"AccessibleLevel":"NotAccessible"},"MAVR":{"AccessibleLevel":"NotAccessible"},"MACOL":{"AccessibleLevel":"NotAccessible"}},"TE":{"AccessibleLevel":"IsAccessible"},"RO":{"SB":{"AccessibleLevel":"NotAccessible"},"DND":{"AccessibleLevel":"NotAccessible"},"RB":{"AccessibleLevel":"IsAccessible"},"HR":{"AccessibleLevel":"IsAccessible"},"VR":{"AccessibleLevel":"IsAccessible"}},"CS":{"HR":{"AccessibleLevel":"IsAccessible"},"VR":{"AccessibleLevel":"IsAccessible"},"VRTL":{"AccessibleLevel":"IsAccessible"},"HBAR":{"AccessibleLevel":"NotAccessible"},"HSLIDER":{"AccessibleLevel":"NotAccessible"},"STAR":{"AccessibleLevel":"NotAccessible"}},"Slider":{"AccessibleLevel":"IsAccessible"},"Matrix":{"Likert":{"SingleAnswer":{"AccessibleLevel":"NotAccessible"},"MultipleAnswer":{"AccessibleLevel":"NotAccessible"},"DL":{"AccessibleLevel":"NotAccessible"},"DND":{"AccessibleLevel":"NotAccessible"}},"Bipolar":{"AccessibleLevel":"NotAccessible"},"TE":{"AccessibleLevel":"NotAccessible"},"CS":{"AccessibleLevel":"NotAccessible"},"RO":{"AccessibleLevel":"NotAccessible"},"Profile":{"SingleAnswer":{"AccessibleLevel":"NotAccessible"},"MultipleAnswer":{"AccessibleLevel":"NotAccessible"},"DL":{"AccessibleLevel":"NotAccessible"}}},"HotSpot":{"AccessibleLevel":"NotAccessible"},"HeatMap":{"Image":{"AccessibleLevel":"NotAccessible"}},"HL":{"Text":{"AccessibleLevel":"NotAccessible"}},"Draw":{"Signature":{"AccessibleLevel":"NotAccessible"}},"NPS":{"AccessibleLevel":"IsAccessible"},"Captcha":{"V2":{"AccessibleLevel":"IsAccessible"},"V1":{"AccessibleLevel":"IsAccessible"}},"DD":{"AccessibleLevel":"IsAccessible"},"SS":{"AccessibleLevel":"NotAccessible"},"GAP":{"AccessibleLevel":"NotAccessible"},"PGR":{"DragAndDrop":{"AccessibleLevel":"NotAccessible"},"Predefined":{"AccessibleLevel":"NotAccessible"},"RecipientDefined":{"AccessibleLevel":"NotAccessible"}},"SBS":{"AccessibleLevel":"IsAccessible"},"Timing":{"AccessibleLevel":"IsAccessible"},"Meta":{"AccessibleLevel":"IsAccessible"},"DB":{"GRB":{"AccessibleLevel":"NotAccessible"},"PTB":{"AccessibleLevel":"NotAccessible"},"TB":{"AccessibleLevel":"NotAccessible"},"FLB":{"AccessibleLevel":"NotAccessible"},"AWM":{"AccessibleLevel":"NotAccessible"},"VWM":{"AccessibleLevel":"NotAccessible"},"ARP":{"AccessibleLevel":"NotAccessible"},"VRP":{"AccessibleLevel":"NotAccessible"}},"FileUpload":{"AccessibleLevel":"IsAccessible"}}
+	};
+
+	try {
+		window.choiceScaleTriggers = JSON.parse('{\"SatisfiedDissatisfied_AcceptHowSatisfied\":\"\\\\bhow satisfied\",\"SatisfiedDissatisfied_AcceptLevelOfSatisfaction\":\"level of satisfaction\",\"SatisfiedDissatisfied_RejectLevelOfSatisfaction\":\"rank\",\"MaleFemale_AcceptGender\":\"gender\",\"MaleFemale_AcceptSex\":\"sex\",\"YesNo_AcceptDidYou\":\"^did you\",\"YesNo_AcceptDoYou\":\"^do you\",\"YesNo_AcceptWillYou\":\"^will you\",\"YesNo_AcceptDoesYour\":\"^does your\",\"YesNo_AcceptWereYou\":\"^were you\",\"YesNo_AcceptHaveYou\":\"^have you\",\"YesNo_AcceptAreYou\":\"^are you\",\"YesNo_AcceptIs\":\"^is\\\\b\",\"YesNo_RejectOr\":\"\\\\bor\\\\b\",\"YesNo_RejectFollowing\":\"\\\\bfollowing\",\"YesNo_RejectApply\":\"\\\\bapply\",\"EasyDifficult_AcceptHowEasy\":\"\\\\bhow easy\",\"EasyDifficult_AcceptHowHard\":\"\\\\bhow hard\",\"EasyDifficult_AcceptHowDifficult\":\"\\\\bhow difficult\",\"EffectiveIneffective_AcceptHowEffective\":\"\\\\bhow effective\",\"GoodBad_AcceptHowGood\":\"\\\\bhow good\",\"GoodBad_AcceptHowBad\":\"\\\\bhow bad\",\"DelightfulPoor_AcceptDelightful\":\"\\\\bdelightful\",\"Believability_AcceptHowBelievable\":\"\\\\bhow believable\",\"FastSlow_AcceptHowFast\":\"\\\\bhow fast\",\"FastSlow_AcceptHowSlow\":\"\\\\bhow slow\",\"LikelyUnlikely_AcceptHowLikely\":\"\\\\bhow likely\",\"HappyUnhappy_AcceptHappy\":\"\\\\bhappy\",\"HappyUnhappy_AcceptUnhappy\":\"\\\\bunhappy\",\"UsefulUseless_AcceptUseful\":\"\\\\buseful\",\"UsefulUseless_AcceptUseless\":\"\\\\buseless\",\"ImportantUnimportant_AcceptImportant\":\"\\\\bhow important\",\"PleasedDispleased_AcceptPleased\":\"\\\\bpleased\",\"PleasedDispleased_AcceptDispleased\":\"\\\\bdisplaesed\",\"LikeDislike_AcceptLike\":\"\\\\blike\",\"LikeDislike_AcceptDislike\":\"\\\\bdislike\",\"Ideals_AcceptHowIdeal\":\"\\\\bhow ideal\",\"NoneAll_AcceptHowMuch\":\"\\\\bhow much\",\"LowerHigher_AcceptHowMuchMoreThan\":\"\\\\bhow much more than\",\"LowerHigher_AcceptHowMuchLessThan\":\"\\\\bhow much less than\",\"NoChanceGoodChance_AcceptWhatChance\":\"\\\\bwhat chance\",\"NoChanceGoodChance_AcceptWhatAreTheChances\":\"\\\\bwhat are the chances\",\"WeakStrong_AcceptHowMuchStronger\":\"\\\\bhow much stronger\",\"WeakStrong_AcceptHowMuchWeaker\":\"\\\\bhow much weaker\",\"ClearUnclear_AcceptHowClear\":\"how clear\",\"ReasonableUnreasonable_AcceptReasonable\":\"reasonable\",\"ReasonableUnreasonable_AcceptUnreasonable\":\"unreasonable\",\"ComfortableUncomfortable_AcceptComfortable\":\"comfortable\",\"ComfortableUncomfortable_AcceptUncomfortable\":\"uncomfortable\",\"PositiveNegative_AcceptPositive\":\"positive\",\"PositiveNegative_AcceptNegative\":\"negative\",\"CompetentIncompetent_AcceptCompetent\":\"competent\",\"CompetentIncompetent_AcceptIncompetent\":\"incompetent\",\"ProfessionalUnprofessional_AcceptProfessional\":\"professional\",\"ProfessionalUnprofessional_AcceptUnprofessional\":\"unprofessional\",\"AdequateInadequate_AcceptAdequate\":\"adequate\",\"AdequateInadequate_AcceptInadequate\":\"inadequate\",\"Interesting_AcceptHowInteresting\":\"\\\\bhow interesting\",\"Challenging_AcceptHowChallenging\":\"\\\\bhow challenging\",\"Well_AcceptHowWell\":\"\\\\bhow well\",\"HowAccurately_AcceptHowAccurately\":\"\\\\bhow accurately\",\"Knowledgeable_AcceptHowKnowledgeable\":\"\\\\bhow knowledgeable\",\"Familiar_AcceptHowFamiliar\":\"\\\\bhow familiar\"}');
+	} catch(e) {
+		window.choiceScaleTriggers = {};
+	}
+</script>
+	<script type="text/javascript" src="/WRQualtricsShared/JavaScript/RequestContext.7968485.js"></script>
+
+			<script type="text/javascript" src="https://static-assets.qualtrics.com/static/monolith-translations/EN/MessagesControlPanel.js"></script>
+			<script type="text/javascript" src="/cpui/static/web-components-polyfill.70c68c90bafc5d3004ea.min.js"></script>
+			<script type="text/javascript" src="/cpui/static/v_0bad2fb23a/runtime-survey-builder.min.js"></script>
+			<script type="text/javascript" src="/cpui/static/v_0bad2fb23a/vendors~account-usage~admin-security~admin-users~cpui-default-preload-package~distribute-survey~ex-s~458e229c.min.js"></script>
+			<script type="text/javascript" src="/cpui/static/v_0bad2fb23a/vendors~InsertQFile~distribute-survey~library-edit-block~library-edit-survey~library-files~library-g~5da963d1.min.js"></script>
+			<script type="text/javascript" src="/cpui/static/v_0bad2fb23a/survey-builder.min.js"></script>
+			<script type="text/javascript" src="/cpui/v_0bad2fb23a/locale/EN.js"></script>
+			<script type="text/javascript" src="/wrapper/static/client.js"></script>
+	
+	
+	
+	
+	
+				<link type='text/css' rel='stylesheet' href='/WRQualtricsShared/DefaultStyleSheets/BaseStylesEditV2.7968485.css' />
+			<link type='text/css' rel='stylesheet' href='/WRQualtricsShared/JavaScript/Calendar/js/dhtmlgoodies_calendar.7968485.css' />
+	
+	<style>.LogoContainer{
+	padding:0px;
+}</style>
+
+	</head>
+<body  class="ControlPanel Surveys EditSection Blocks webkit CSS3  " id="body">
+
+				<form name="Page" id="Page" action="?" method="POST"  >
+			<input type="hidden" name="ClientAction" value="" />
+			<input type="hidden" name="Section" value="" />
+			<input type="hidden" name="SubSection" value="" />
+			<input type="hidden" name="SubSubSection" value="" />
+			<input type="hidden" name="PageActionOptions" value="" />
+			<input type="hidden" name="TransactionID" value="1" />
+			<input type="hidden" name="Repeatable" value="0" />
+			<input type='hidden' id="SupportAndFeedback" value="https://s.qualtrics.com/SE?SID=SV_80lAi3FjvwPMgDO&UserID=UR_6sO1EE1T0t8MvHv&BrandID=singuser2978b892&Email=benedicte.apouey%40psemail.eu&Username=benedicte.apouey%40psemail.eu&Name=B%C3%A9n%C3%A9dicte+Apouey"/>
+			<input type="hidden" id="T" name="T" value="7ff2IhnV4xTEFupKmtGdlS" />
+			<input type="hidden" id="restrictToBrand" name="restrictToBrand" value="1" />
+			<input type="hidden" id="criteria" name="criteria" value="" />
+				</form> <!-- close the page form so none of the questions are included -->
+		<form name="SectionForm" action="" id="SectionForm" method="POST"> <!-- A form for all the question (or other stuff) to go into -->
+			<input type="hidden" name="ClientAction" value="" />
+			<input type="hidden" name="Section" value="" />
+			<input type="hidden" name="SubSection" value="" />
+			<input type="hidden" name="SubSubSection" value="" />
+			<input type="hidden" name="PageActionOptions" value="" />
+			<input type="hidden" name="TransactionID" value="1" />
+			<input type="hidden" name="Repeatable" value="0" />
+			<input type="hidden" id="T" name="T" value="7ff2IhnV4xTEFupKmtGdlS" />
+		
+			<div id="BottomLocator"></div>
+			<div id="MessageBox"></div>
+			<div id="JobMonitor"></div>
+			<div id="pageDiv" class="Blocks">
+			<div ng-modules="cp.navigation,cp.surveys.edit">
+				<div id="pagefade">
+					<div id="center">
+
+					<!-- for page only element targeting -->
+
+								<div id="BottomLocator"></div>
+	<div class="control-panel-header-container">
+				<div class="navigation-header-container " navigation-header></div>
+	</div>
+</div>
+
+<script>
+	window.Q = window.Q || {};
+	Event.observe(window, 'load', function(){
+		if (!Cookie.acceptsCookies())
+		{
+			alert('Your browser did not accept the session cookie from our site and you will not be able to navigate it.');
+		}
+	});
+</script>
+<div id="ContentContainer" class="ContentContainer">
+	<div id="Content" class="Content">
+<div id="SectionContainer">
+		<div class="clear"></div>
+
+<div id="ToolbarContainer" class="">
+	<div id="Toolbar" dynamic-toolbar class="toolbar">
+			<ul class="SectionTabsList" ng-controller="EditSurveyToolbarController">
+							<li class="LookAndFeel">
+					<div class="btn btn-hover" id="lookandfeel" href="javascript:void(0)"
+						 							 clickcallback="QES_Global.openLookAndFeelV2($evt)"
+						 					>
+						<span class="icon toolbar-icon-paintbrush"></span>
+						<span>Look & Feel</span>
+					</div>
+				</li>
+										<li class="SurveyFlow" onclick="if(!QES_Global.openSurveyFlow()) javascript:return PageActionGet('ChangePage','EditSection','SurveyFlow','', true)">
+					<div class="btn btn-hover" id="surveyflow" href="javascript:void(0)">
+						<span class="icon toolbar-icon-branch"></span>
+						<span>Survey Flow</span>
+					</div>
+				</li>
+										<li class="SurveyOptions">
+					<div class="btn btn-hover" id="surveyoptions" href="javascript:void(0)" clickcallback="QES_Global.openOptions">
+						<span class="icon toolbar-icon-gear"></span>
+						<span>Survey Options</span>
+					</div>
+				</li>
+			
+			<li class="Tools" edit-survey-tools></li>
+			<li class="BrandTools" edit-survey-brand-tools></li>
+		</ul>
+		<div class="right">
+			<div id="Search" class="search">
+				<div class="icon icon-search"></div>
+				<input type="search" id="StatusBarSearchInput" class="form-control search-input AutoClearMessage" keyupcallback="BaseForm.search($val)" size-for-placeholder placeholder="Search"/>
+			</div>
+			<div publish-survey-button></div>
+						<div class="preview-survey btn btn-primary" href="javascript:void(0)" clickcallback="BaseForm.openSurveyPreview()" class="">
+				<span class="icon toolbar-icon-open"></span>
+				<span class="hide-on-toolbar-resize">Preview</span>
+			</div>
+					</div>
+
+		<script>
+			Event.observe(window,'load',function() {
+				window.QSB_Global = {};
+
+				//we dont want to do this in the Scoring Section or the Translate Section, so limit it to the Blocks (default) section.
+				if (window.QSB_Global && Qualtrics.Navigation.subSection == 'Blocks')
+				{
+					//if their survey is active and there are auditable responses, let's lock the survey.
+					QSB_Global.surveyIsActive = window.ToolbarTemplatedData.isActive;
+					QSB_Global.surveyLocked = (window.ToolbarTemplatedData.isActive && window.ToolbarTemplatedData.shouldLockSurvey);
+				}
+			});
+		</script>
+		</div>
+</div>
+<div class="FormEditor FullFormEditor" style="clear:left;" ng-controller="EditSurveyController">
+	<div id="SystemMessageArea"></div>
+	<div id="SystemErrorArea"></div>
+
+	<div id='Survey'>
+		<div class="Loading">Please Wait...</div>
+	</div>
+
+  
+	<div id="ImagePreload">
+		<div class="QuestionIcons"></div>
+		<div class="Funnel"></div>
+	</div>
+</div></div>
+	</div> 	<div id="DebugFooter"></div>
+
+	<!-- Modules loaded through Angular -- used for monolith imports -->
+	<div class="legacy-modules" legacy-modules></div>
+
+				<script type='text/javascript'>
+				var Paths = {
+					WRShared: '/WRQualtricsShared',
+					WRSharedImg: '/WRQualtricsShared',
+					WRSharedJs: '/WRQualtricsShared',
+					WRSharedCss: '/WRQualtricsShared',
+					SEBrand: 'https://survey.eu.qualtrics.com/SE',
+					DistributeBase: 'https://qdistribution.qualtrics.com',
+					GraphicBase: 'https://survey.eu.qualtrics.com/CP/Graphic.php?IM=',
+					FileBase: 'https://survey.eu.qualtrics.com/CP/File.php?F='
+				};
+			</script>
+			<script type='text/javascript'  src='/WRQualtricsShared/JavaScript/Calendar/js/dhtmlgoodies_calendar.7968485.js'></script>
+			<!--BEGIN QUALTRICS SITE INTERCEPT-->
+	<script type='text/javascript'>
+	(function(){var g=function(e,h,f,g){
+	this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
+	this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
+	this.check=function(){var a=this.get(f);if(a)a=a.split(":");else if(100!=e)"v"==h&&(e=Math.random()>=e/100?0:100),a=[h,e,0],this.set(f,a.join(":"));else return!0;var c=a[1];if(100==c)return!0;switch(a[0]){case "v":return!1;case "r":return c=a[2]%Math.floor(100/c),a[2]++,this.set(f,a.join(":")),!c}return!0};
+	this.go=function(){if(this.check()){var a=document.createElement("script");a.type="text/javascript";a.src=g+ "&t=" + (new Date()).getTime();document.body&&document.body.appendChild(a)}};
+	this.start=function(){var a=this;window.addEventListener?window.addEventListener("load",function(){a.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){a.go()})}};
+	try{(new g(100,"r","QSI_S_ZN_5yDLsBWpgRsCCSp","//zn_5ydlsbwpgrsccsp-qps.siteintercept.qualtrics.com/WRSiteInterceptEngine/?Q_ZID=ZN_5yDLsBWpgRsCCSp&Q_LOC="+encodeURIComponent(window.location.href))).start()}catch(i){}})();
+	</script><div id='ZN_5yDLsBWpgRsCCSp'><!--DO NOT REMOVE-CONTENTS PLACED HERE--></div>
+	<!--END SITE INTERCEPT-->
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-570722-15', 'auto');
+		ga('send', 'pageview');
+	</script>
+
+
+	<script type="text/javascript" src="/project-workflow/static/bundle.js"></script>
+	<script type="text/javascript" src="https://static-assets.qualtrics.com/static/survey-tagging-ui/prod/index.js"></script>
+	<script type="text/javascript" src="https://static-assets.qualtrics.com/static/survey-approval-ui/prod/index.js"></script>
+	<script type="text/javascript" src="/lfe/static/js/lfe.js"></script>
+
+</div>
+						</div><!--center-->
+										<div ng-controller="NavigationController">
+						<div q-footer class="q-page-footer" user-id="userId" language="lang" base-url="headerOptions.productBaseUrls.ControlPanel"></div>
+					</div>
+										</div><!--pagefade-->
+				</div><!--ng-modules-->
+			</div><!--page div-->
+						
+		</form>
+	</body>
+</html>
