@@ -914,13 +914,13 @@ relabel_and_rename_c <- function(data, original_names = FALSE, clean_vars = TRUE
   return(data)
 }
 
-find_var <- function(string, data = Q) which(sapply(colnames(Q), function(q) grep('annee', q))>0)
+find_var <- function(string, data = Q) which(sapply(colnames(c), function(q) grep('annee', q))>0)
 
 ## a. Prepare data 3 first sessions
 # load datasets
-Q1e <- read_dta("../données/1e.dta")
-Q1s <- read_dta("../données/1s.dta", encoding = 'utf8')
-Q2e <- read_dta("../données/2e.dta")
+Q1e <- read_dta("../donnees/1e.dta")
+Q1s <- read_dta("../donnees/1s.dta", encoding = 'utf8')
+Q2e <- read_dta("../donnees/2e.dta")
 
 # merge datasets
 Q1e$identifiant[is.na(Q1e$identifiant)] <- paste('NA_1e', seq(1:length(which(is.na(Q1e$identifiant)))), sep='_') # 7 NAs
@@ -942,9 +942,9 @@ CA <- relabel_and_rename_a(Qa, original_names = TRUE, clean_vars = FALSE)
 
 ## b. Prepare data 2s, 3s, 4s
 # load datasets
-Q2s <- read_dta("../données/2s.dta", encoding = 'utf8')
-Q3s <- read_dta("../données/3s.dta", encoding = 'utf8')
-Q4s <- read_dta("../données/4s.dta", encoding = 'utf8')
+Q2s <- read_dta("../donnees/2s.dta", encoding = 'utf8')
+Q3s <- read_dta("../donnees/3s.dta", encoding = 'utf8')
+Q4s <- read_dta("../donnees/4s.dta", encoding = 'utf8')
 
 # merge datasets
 Q2s$identifiant[is.na(Q2s$identifiant)] <- paste('NA_2s', seq(1:length(which(is.na(Q2s$identifiant)))), sep='_') # 2
@@ -962,15 +962,15 @@ Qb$s3_s_timestamp <- as.character(Qb$s3_s_timestamp)
 
 QB <- relabel_and_rename_b(Qb)
 CB <- relabel_and_rename_b(Qb, original_names = TRUE, clean_vars = FALSE)
-Q <- merge(QA, QB, all = TRUE)
+c <- merge(QA, QB, all = TRUE)
 C <- merge(CA, CB, all = TRUE)
 
-Q4e <- read_dta("../données/4e.dta", encoding = 'utf8')
+Q4e <- read_dta("../donnees/4e.dta", encoding = 'utf8')
 Q4e$s4_e_timestamp <- as.character(Q4e$s4_e_timestamp)
 Q4e$identifiant[is.na(Q4e$identifiant)] <- paste('NA_4e', seq(1:length(which(is.na(Q4e$identifiant)))), sep='_') # 4
 Q4E <- relabel_and_rename_c(Q4e)
 C4E <- relabel_and_rename_c(Q4e, original_names = TRUE, clean_vars = FALSE)
-Q <- merge(Q, Q4E, all = TRUE)[,c(1:278, 323:370, 279:322)]
+c <- merge(c, Q4E, all = TRUE)[,c(1:278, 323:370, 279:322)]
 C <- merge(C, C4E, all = TRUE)[,c(1:335, 391:449, 336:390)]
 
 remove(Q1e, Q1s, Q2e, Q2s, Q3s, Q4s, Qa, Qb, Q4e, QA, QB, CA, CB, Q4E, C4E)
@@ -1013,54 +1013,55 @@ C$identifiant_inconnu <- FALSE
 C$identifiant_inconnu[grepl("NA", C$identifiant)] <- TRUE
 C <- C[,-1]
 
-Q <- Q[,-which(grepl("numero_participant", colnames(Q)))]
-Q$identifiant_inconnu <- FALSE
-Q$identifiant_inconnu[grepl("NA", Q$id)] <- TRUE
-Q <- Q[,-1]
+c <- c[,-which(grepl("numero_participant", colnames(c)))]
+c$identifiant_inconnu <- FALSE
+c$identifiant_inconnu[grepl("NA", c$id)] <- TRUE
+c <- c[,-1]
 
-write.csv(Q, '../données/responses.csv', row.names = FALSE)
-write.csv(C, '../données/responses_raw.csv', row.names = FALSE) # pour qui ?
-# write_dta(Q, '../données/responses.dta', version = 11) # variable names too long for Stata 11
-C[38, 213] <- substr(C[38, 213], 1, 208) # string already truncated in raw data (at 244 characters), bug when not truncated a bit more
-write_dta(C, '../données/responses_raw.dta', version = 11)
+saveRDS(c, '../donnees/CCC.Rda')
+write.csv(c, '../donnees/responses.csv', row.names = FALSE)
+write.csv(C, '../donnees/responses_raw.csv', row.names = FALSE) # pour qui ?
+# write_dta(c, '../donnees/responses.dta', version = 11) # variable names too long for Stata 11
+C[38, 209] <- substr(C[38, 209], 1, 208) # string already truncated in raw data (at 244 characters), bug when not truncated a bit more # was 38,213 (check s2_e_notes_sur_le_questionnaire) which(grepl('commentaire', names(c))) max(nchar(c[, 167]), na.rm=T)
+write_dta(C, '../donnees/responses_raw.dta', version = 11)
 
 nb_reponses <- c()
 nb_manquants <- c()
-export_stats_desc(Q, paste(getwd(), 'stats_desc.csv', sep='/'), fill_extern = TRUE)
-export_stats_desc(Q, paste(getwd(), 'stats_desc_sorted.csv', sep='/'), sorted_by_n = TRUE)
+export_stats_desc(c, paste(getwd(), 'stats_desc.csv', sep='/'), fill_extern = TRUE)
+export_stats_desc(c, paste(getwd(), 'stats_desc_sorted.csv', sep='/'), sorted_by_n = TRUE)
 export_stats_desc(C, paste(getwd(), 'stats_desc_raw.csv', sep='/'))
-names(nb_reponses) <- colnames(Q)
-names(nb_manquants) <- colnames(Q)
+names(nb_reponses) <- colnames(c)
+names(nb_manquants) <- colnames(c)
 
 # TODO: Recoder questions comme s2_e_q8
 
-# Q <- read.csv('responses.csv')
+# c <- read.csv('responses.csv')
 # TODO moi: regarder la représentativité (Bernard Reber, Jean-Michel Fourniau, Bénédicte Apouey (confiance, satisfaction))
 # todo autres: identifier les 50 qui répondent tout le temps, sont-ils représentatifs des 150; récupérer les gens dont id=NA; voir si sur chaque question de recherche on est capable de répondre (lister questions)
 sessions <- c('1e', '1s', '2e', '2s', '3s', '4e', '4s')
 stats <- data.frame(id = sessions)
 for (s in sessions) {
-  stats$mean_n[stats$id==s] <- mean(nb_reponses[grepl(s, colnames(Q))], na.rm = T)
-  stats$sd_n[stats$id==s] <- sd(nb_reponses[grepl(s, colnames(Q))], na.rm = T)
-  stats$min_n[stats$id==s] <- min(nb_reponses[grepl(s, colnames(Q))], na.rm = T)
-  stats$max_n[stats$id==s] <- max(nb_reponses[grepl(s, colnames(Q))], na.rm = T)
-  stats$q1_n[stats$id==s] <- quantile(nb_reponses[grepl(s, colnames(Q))], 0.25, na.rm = T)
-  stats$median_n[stats$id==s] <- median(nb_reponses[grepl(s, colnames(Q))], na.rm = T)
-  stats$q3_n[stats$id==s] <- quantile(nb_reponses[grepl(s, colnames(Q))], 0.75, na.rm = T)
+  stats$mean_n[stats$id==s] <- mean(nb_reponses[grepl(s, colnames(c))], na.rm = T)
+  stats$sd_n[stats$id==s] <- sd(nb_reponses[grepl(s, colnames(c))], na.rm = T)
+  stats$min_n[stats$id==s] <- min(nb_reponses[grepl(s, colnames(c))], na.rm = T)
+  stats$max_n[stats$id==s] <- max(nb_reponses[grepl(s, colnames(c))], na.rm = T)
+  stats$q1_n[stats$id==s] <- quantile(nb_reponses[grepl(s, colnames(c))], 0.25, na.rm = T)
+  stats$median_n[stats$id==s] <- median(nb_reponses[grepl(s, colnames(c))], na.rm = T)
+  stats$q3_n[stats$id==s] <- quantile(nb_reponses[grepl(s, colnames(c))], 0.75, na.rm = T)
 }
 View(stats)
 
 ##### Représentativité #####
 # changement climatique: CCC 20-30% plus préoccupés et pessimistes concernant le CC. ADEME: juillet 2019 => trouver données solange.martin@ademe.fr
-decrit(Q$cause_catastrophes_1e) # *** ADEME (2019: 43) changement: 58% (88%) / personne: 20% (9%) / naturels: 20% (3%) / NSP: 2%
-decrit(Q$effets_CC_1e) # ** ADEME (2019: 54) pénibles: 65% (85%) / s'adaptera: 32% (15%) / positif: 2% / NSP: 1%
-decrit(Q$issue_CC_1e) # ~ ADEME (2019: 69) -2: 13% (6%) / -1: 50% (52%) / 1: 31% (39%) / 2: 5% (3%)
-decrit(Q$solution_CC_1e) # ** modifier: 52% (75%) / états: 19% (15%) / inévitable: 17% (4%) / progrès: 11% (5%)
-decrit(Q$ag) # ADEME (2019: 115)
-decrit(Q$importance_environnement_1e) # ADEME (2019: 174) 
-decrit(Q$pour_) # 102
-decrit(Q$obstacles_) # 
+decrit(c$cause_catastrophes_1e) # *** ADEME (2019: 43) changement: 58% (88%) / personne: 20% (9%) / naturels: 20% (3%) / NSP: 2%
+decrit(c$effets_CC_1e) # ** ADEME (2019: 54) pénibles: 65% (85%) / s'adaptera: 32% (15%) / positif: 2% / NSP: 1%
+decrit(c$issue_CC_1e) # ~ ADEME (2019: 69) -2: 13% (6%) / -1: 50% (52%) / 1: 31% (39%) / 2: 5% (3%)
+decrit(c$solution_CC_1e) # ** modifier: 52% (75%) / états: 19% (15%) / inévitable: 17% (4%) / progrès: 11% (5%)
+decrit(c$ag) # ADEME (2019: 115)
+decrit(c$importance_environnement_1e) # ADEME (2019: 174) 
+decrit(c$pour_) # 102
+decrit(c$obstacles_) # 
 
-decrit(Q$situation_revenus_1e) # Ipsos (2017) mais résultats non donnés
-decrit(Q$redistribution_1e) # Ipsos (2019) 66% d'accord 
-decrit(Q$problemes_invisibilises_1e) # Très: 18% (12%) / Assez souvent: 33% (45%) / Rarement: 17% (peu souvent: 41%) / jamais: 31% (3%) / NSP: 2%.  CREDOC, Enquête « Conditions de vie et Aspirations », 2015 
+decrit(c$situation_revenus_1e) # Ipsos (2017) mais résultats non donnés
+decrit(c$redistribution_1e) # Ipsos (2019) 66% d'accord 
+decrit(c$problemes_invisibilises_1e) # Très: 18% (12%) / Assez souvent: 33% (45%) / Rarement: 17% (peu souvent: 41%) / jamais: 31% (3%) / NSP: 2%.  CREDOC, Enquête « Conditions de vie et Aspirations », 2015 

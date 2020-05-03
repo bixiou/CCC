@@ -38,9 +38,8 @@ package("ivmodel")
 package("rattle")
 package("data.table")
 package("reshape2")
-package("margins")
-package("rddtools")
-package("rddapp")
+# package("rddtools") # not available
+# package("rddapp") # not available
 # package("mets")
 package("plyr")
 package("descr")
@@ -63,15 +62,18 @@ package("snakecase")
 package("rdd")
 package("corrplot")
 package("psy")
+package("lavaan")
 package("devtools")
+install_github("rstudio/webshot2")
+package("webshot2")
+package("htmlwidgets")
+# package("magick") # Bug sur Ubuntu, ne surtout pas décommenter sur Ubuntu
+library(magick) # TODO
 # install_github(repo = "MatthieuStigler/RCompAngrist", subdir = "RCompAngrist")
 # package("RCompAngrist")
 
-
-package("lavaan")
 # package("psych") # library(psych, exclude = "describe")
 # package("semTools")
-
 # package("interplot")
 # package("jtools")
 # package("effects")
@@ -87,7 +89,7 @@ Label <- function(var) {
   if (length(annotation(var))==1) { annotation(var)[1] }
   else { label(var)  }
 }
-decrit <- function(variable, miss = FALSE, weights = NULL, numbers=FALSE) { 
+decrit <- function(variable, miss = FALSE, weights = NULL, numbers=FALSE) { # TODO: allow for boolean weights
   if (length(annotation(variable))>0 & !numbers) {
     if (!miss) {
       # if (is.element("Oui", levels(as.factor(variable))) | grepl("(char)", annotation(variable)) | is.element("quotient", levels(as.factor(variable)))  | is.element("Pour", levels(as.factor(variable))) | is.element("Plutôt", levels(as.factor(variable))) ) { describe(as.factor(variable[variable!="" & !is.na(variable)]), weights = weights[variable!="" & !is.na(variable)], descript=Label(variable)) }
@@ -338,7 +340,7 @@ oui_non <- function(vars, file, labels = vars, data = s, display_value = T, sort
   # api_create(bars, filename=file, sharing="public")
   return(bars) # bugs most often than not
 }
-data5 <- function(vars, data=s, miss=T, weights=T, rev=FALSE) {
+data5 <- function(vars, data=e, miss=T, weights=T, rev=FALSE) {
   matrice <- c()
   colors <-  c(rainbow(4, end=4/15), "forestgreen") # c("red", "orange", "yellow", "green", "darkgreen") # rainbow(5, end=1/3)
   for (var in vars) {
@@ -360,7 +362,7 @@ data5 <- function(vars, data=s, miss=T, weights=T, rev=FALSE) {
   else return(matrice)
   # return(as.data.frame(matrice))
 }
-data1 <- function(vars, data=s, weights=T) {
+data1 <- function(vars, data=e, weights=T) {
   res <- c()
   for (var in vars) {
     if (weights) { res <- c(res, sum(data[['weight']][which(data[[var]]==TRUE)])/sum(data[['weight']][which(data[[var]]==TRUE | data[[var]]==FALSE)])) }
@@ -368,13 +370,14 @@ data1 <- function(vars, data=s, weights=T) {
   }
   return( matrix(res, ncol=length(vars)) )
 }
-dataN <- function(var, data=s, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
+dataN <- function(var, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
   mat <- c()
   if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]])))) v <- as.factor(data[[var]])
   else v <- data[[var]]
   if (is.null(annotation(v))) levels <- levels(v)
   else levels <- labels(v)@.Data
   levels <- levels[!(levels %in% c("NSP", "PNR", "Non concerné·e"))]
+  if (rev_legend) levels <- rev(levels) # new (05/20)
   for (val in levels) { # before: no %in% nowherer below
     if (weights) mat <- c(mat, sum(data[['weight']][which(v==val)])/sum(data[['weight']][!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))]))
     else mat <- c(mat, length(which(v==val))/length(which(!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))))) }
@@ -392,10 +395,12 @@ dataN <- function(var, data=s, miss=T, weights = T, return = "", fr=T, rev=FALSE
   else if ((return %in% c("levels", "legend")) & (!(miss))) return(levels)
   else return(matrix(mat, ncol=1))
 }
-dataKN <- function(vars, data=s, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
-  res <- c()
-  for (var in vars) res <- c(res, dataN(var, data, miss, weights, return, fr, rev))
-  return(matrix(res, ncol=length(vars)))
+dataKN <- function(vars, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
+  if (is.logical(data[[vars[1]]])) return(data1(vars, data, weights))
+  else {
+    res <- c()
+    for (var in vars) res <- c(res, dataN(var, data, miss, weights, return, fr, rev))
+    return(matrix(res, ncol=length(vars))) }
 }
 color5 <- c(rainbow(4, end=4/15)[1:3], "#00FF00", "#228B22") # the last two are: green, forestgreen
 color <- function(v, grey=FALSE, grey_replaces_last = T, rev_color = FALSE, theme='RdBu') {
@@ -413,7 +418,7 @@ color <- function(v, grey=FALSE, grey_replaces_last = T, rev_color = FALSE, them
     else if (n == 7) cols <- c("#000000", rainbow(7)[c(1:3,5:7)])
     else cols <- rainbow(n) # diverge_hcl green2red brewer.pal(n, Spectral/RdBu...)  https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf
   } else {
-    cols <- rev(brewer.pal(n, theme))
+    cols <- rev(brewer.pal(max(n, 3), theme))
     if (n == 1) cols <- cols[1]
     # if (n == 2) cols <- cols[c(1,3)]
     else if (n %% 2 == 0) cols <- rev(brewer.pal(n+2, theme))[c(1:(n/2),(n/2+2):(n+1))] }
@@ -427,7 +432,14 @@ yes_no5 <- c("Not at all", "Not really", "Indifferent/PNR", "Rather yes", "Yes, 
 # agree5 <- c("Strongly disagree", "Disagree", "Indifferent", "Agree", "Strongly agree")
 # evol5 <- c("Baisser fortement", "Baisser légèrement", "Maintenir au niveau", "Augmenter légèrement", "Augmenter fortement")
 # evolve5 <- c("Strongly decrease", "Slightly decrease", "Maintain", "Slightly increase", "Strongly increase")
-barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, display_values=T, thin=FALSE, legend_x=NA, show_ticks=T, xrange=NA) {
+barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
+                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e, miss=T, weights = T, fr=T, rev=T) {
+  if (!missing(miss)) nsp <- miss
+  if (missing(data) & !missing(vars)) {
+    data <- dataKN(vars, data=df, miss=miss, weights = weights, return = "", fr=fr, rev=rev)
+    if (missing(legend) & missing(hover)) { 
+      if (is.logical(df[[vars[1]]])) hover <- legend <- labels # data1(var = vars[1], data=df, weights = weights)
+      else hover <- legend <- dataN(var = vars[1], data=df, miss=miss, weights = weights, return = "legend", fr=fr, rev_legend = rev) } }
   if (length(color)==0) color <- color(data, nsp, rev_color = rev_color)
   margin_t <- 0 + 25*(!(thin))
   if (title!="") { margin_t <- 100 }
@@ -451,11 +463,15 @@ barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, h
   if (ncol(data)==1) legendY = 1.5 + 0.3*thin
   if (sort) {
     agree <- c()
-    if (nrow(data)==5 | nrow(data)==6) { for (i in 1:length(labels)) { agree <- c(agree, data[4, i] + data[5, i]) } }
-    else if (nrow(data)==7) { for (i in 1:length(labels)) { agree <- c(agree, data[6, i] + data[7, i]) } }
-    else { for (i in 1:length(labels)) { agree <- c(agree, data[1, i]) } }
-    labels <- labels[order(agree)]
-    data <- matrix(data[, order(agree)], nrow=nrow(data))
+    if (!missing(miss)) {
+      if (miss) for (i in 1:length(labels)) agree <- c(agree, sum(data[floor(nrow(data)/2+1):min(1,(nrow(data)-1)),i]))
+      else for (i in 1:length(labels)) agree <- c(agree, sum(data[min(1,ceiling(nrow(data)/2+1)):nrow(data),i]))
+    } else {
+      if (nrow(data)==5 | nrow(data)==6) { for (i in 1:length(labels)) { agree <- c(agree, data[4, i] + data[5, i]) } }
+      else if (nrow(data)==7) { for (i in 1:length(labels)) { agree <- c(agree, data[6, i] + data[7, i]) } }
+      else { for (i in 1:length(labels)) { agree <- c(agree, data[1, i]) } } }
+    labels <- labels[order(agree, decreasing = rev)]
+    data <- matrix(data[, order(agree, decreasing = rev)], nrow=nrow(data))
   }
   if (nrow(data)==1 & sort) {  
     hover <- hover[order(agree)]
@@ -477,7 +493,7 @@ barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, h
       }
       for (j in 1:length(labels)) {
         hovers <- c(hovers, paste(hover[length(hover)], '<br>', round(100*data[length(hover), j]/(1+data[length(hover), j])), '% des réponses<br>') )
-          values <- c(values, paste(round(100*data[length(hover), j]/(1+data[length(hover), j])), '%', sep=''))
+        values <- c(values, paste(round(100*data[length(hover), j]/(1+data[length(hover), j])), '%', sep=''))
       }
     }
     else {
@@ -525,14 +541,16 @@ barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, h
                  zeroline = FALSE),
     hovermode = 'closest',
     barmode = 'stack',
-    title = title,
-    titlefont = list(color='black'),
+    title = list(text = title, font = list(color = 'black')),
+    # title = title,
+    # titlefont = list(color='black'),
     font = list(color='black', size=legendSize-1),
     # paper_bgcolor = 'rgb(248, 248, 255)', plot_bgcolor = 'rgb(248, 248, 255)',
     margin = list(l = margin_l, r = margin_r, t = margin_t, b = 24, autoexpand = thin), # 21, autoexpand=FALSE removes useless margin at bottom but creates bug with legend
     # margin = list(b = 20, t = margin_t),
     legend = list(orientation='h', y=legendY, x=legendX, traceorder='normal', font=list(size=legendSize, color='black')), # family='Balto',  , family=legendFont
-    showlegend = (showLegend & (!("Yes" %in% legend) & !("Oui" %in% legend)))) %>%
+    # showlegend = (showLegend & !((("Yes" %in% legend) | ("Oui" %in% legend)) & (length(legend)<4)))) %>% 
+    showlegend = (showLegend & !(setequal(legend, c('Yes', 'No', 'PNR')) | setequal(legend, c('Oui', 'Non', 'NSP'))))) %>%
     
     # labeling the y-axis
     add_annotations(xref = 'paper', yref = 'y', x = 0.14, y = labels,
@@ -541,7 +559,7 @@ barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, h
                     font = list(family = 'Arial', size = 14, color = 'black'),
                     showarrow = FALSE, align = 'right') # %>%
     # Legend in the Yes/No case
-    if (("Yes" %in% legend) | ("Oui" %in% legend)) { 
+    if ((setequal(legend, c('Yes', 'No', 'PNR')) | setequal(legend, c('Oui', 'Non', 'NSP')))) { 
       bars <- bars %>% add_annotations(xref = 'x', yref = 'paper',
                     x = c(0.1, 0.9, 1.1),
                     y = 1.5,
@@ -549,14 +567,32 @@ barres <- function(data, file, title="", labels, color=c(), rev_color = FALSE, h
                     font = list(family = 'Arial', size = 16, color = 'black'),
                     showarrow = FALSE) } # %>%
   # print(nrow(data))
+  # print(hover)
   # print(nrow(hovers))
   # print(ncol(hovers))
-  if (nrow(data)>1) { for (i in 2:nrow(data)) {
-    bars <- add_trace(bars, evaluate=TRUE, x = data[i,], name=legend[i], text = values[,i], hoverinfo = 'text', hovertext = hovers[,i], marker = list(color = color[i]))
+  if (nrow(data)>1) { for (i in 2:nrow(data)) { # evaluate=TRUE, 
+    bars <- add_trace(bars, x = data[i,], name=legend[i], text = values[,i], hoverinfo = 'text', hovertext = hovers[,i], marker = list(color = color[i]))
   } }
   if (online) { api_create(bars, filename=file, sharing="public") }
+  if (!missing(file) & save) save_plotly(bars, filename = file) # new
   return(bars)
 }
+# plot(1:3,1:3) # example
+# dev.copy(png, filename="test.png") # save plot from R (not plotly)
+# dev.off()
+# orca(example, file = "image.png") # BEST METHOD, cf. below
+save_plotly <- function(plot, filename = deparse(substitute(plot)), folder = '../images/', width = dev.size('px')[1], height = dev.size('px')[2], method='orca', trim = T) {
+  file <- paste(folder, filename, ".png", sep='')
+  if (grepl('webshot', method)) { # four times faster: 2.5s (vs. 10s) but saves useless widgets and doesn't exactly respect the display
+    saveWidget(politiques_1, 'temp.html')
+    webshot('temp.html', file, delay = 0.1, vwidth = width, vheight = height)  
+    file.remove('temp.html')}
+  else orca(plot, file = file, width = width, height = height)
+  if (trim) image_write(image_trim(image_read(file)), file)
+}
+
+
+##### Other #####
 CImedian <- function(vec) { # 95% confidence interval
   res <- tryCatch(unlist(ci.median(vec[!is.na(vec) & vec!=-1])), error=function(e) {print('NA')})
   return(paste(res[paste('ci.lower')], res[paste('ci.median')], res[paste('ci.upper')], length(which(!is.na(vec) & vec!=-1)))) }
@@ -969,3 +1005,4 @@ print.Crosstab <- function(x,dec.places=x$dec.places,subtotals=x$subtotals,...) 
   }
   
 }
+
