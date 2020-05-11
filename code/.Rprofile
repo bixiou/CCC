@@ -10,7 +10,7 @@ package <- function(p) {
 
 package("xtable")
 package('tidyverse')
-package("rms")
+# package("rms")
 package('pwr')
 package("foreign")
 package("memisc")
@@ -23,11 +23,11 @@ package("survey")
 package("plotly")
 package('gdata')
 package("Hmisc")
-package("quantreg")
+# package("quantreg")
 package("rcompanion")
 package("DescTools")
-package("VCA")
-package("glmnet")
+# package("VCA")
+# package("glmnet")
 # package("installr") # not for linux
 package("plotly")
 package("processx")
@@ -68,7 +68,7 @@ install_github("rstudio/webshot2")
 package("webshot2")
 package("htmlwidgets")
 # package("magick") # Bug sur Ubuntu, ne surtout pas décommenter sur Ubuntu
-library(magick) # TODO
+# library(magick) # TODO
 # install_github(repo = "MatthieuStigler/RCompAngrist", subdir = "RCompAngrist")
 # package("RCompAngrist")
 

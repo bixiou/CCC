@@ -213,8 +213,6 @@ save_plotly(gilets_jaunes)
 
 (gauche_droite <- barres(vars = "gauche_droite", miss = F, labels="Comment vous définiriez-vous ?", rev=F, rev_color = T))
 save_plotly(gauche_droite) 
-e$gauche_droite_nsp <- e$gauche_droite
-e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'NSP'
 (gauche_droite_nsp <- barres(vars = "gauche_droite_nsp", miss = T, labels="Comment vous définiriez-vous ?", rev=F, rev_color = T))
 save_plotly(gauche_droite_nsp) # TODO: NSP => Indeterminate
 
@@ -294,4 +292,4 @@ for (v in variables_qualite_enfant) labels_qualite_enfant <- c(labels_qualite_en
 (qualite_enfant <- barres(vars = variables_qualite_enfant, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
 save_plotly(qualite_enfant) 
 
-# TODO: pour_taxe_carbone, part_anthropique, obstacles, solution_CC
+# TODO: pour_taxe_carbone, part_anthropique, obstacles, solution_CC, nb_politiques_env

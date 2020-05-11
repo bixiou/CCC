@@ -1,6 +1,6 @@
 # setwd("/var/www/beliefs_climate_policies/code")
 
-source("packages_functions.R")
+source(".Rprofile")
 
 ##### Correspondance zipcode - region #####
 # communes_agglo <- read.xls("table-appartenance-geo-communes-18_V2.xls", pattern="CODGEO") # 2018
@@ -577,6 +577,8 @@ convert_e <- function(e) {
   levels(e$Gauche_droite) <- c("Extreme-left", "Left", "Center", "Right", "Extreme-right", "Indeterminate")
   e$Gauche_droite[is.na(e$Gauche_droite)] <- "Indeterminate"
   e$indeterminate <- e$Gauche_droite == "Indeterminate"
+  e$gauche_droite_nsp <- e$gauche_droite
+  e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'NSP'
   
   temp <- Label(e$interet_politique)
   e$interet_politique <- 1*(e$interet_politique=='Un peu') + 2*(e$interet_politique=='Beaucoup')
@@ -996,8 +998,8 @@ e <- prepare_e()
 
 export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 
-b <- readRDS("../donnees/beliefs_climate_policies.Rda")
-c <- readRDS("../donnees/CCC.Rda")
+b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
+c <- readRDS("../donnees/CCC.Rda") # données CCC
  
 # write.csv2(e, "survey_prepared.csv", row.names=FALSE)
 
@@ -1020,26 +1022,5 @@ c <- readRDS("../donnees/CCC.Rda")
 # variables_comportement_CC <- c("mode_vie_ecolo", "changer_si_politiques", "changer_si_moyens", "changer_si_tous", "changer_non_riches", "changer_non_interet", "changer_non_negation", "changer_deja_fait", "changer_essaie")
 # variables_toutes <- c(variables_approbation, variables_qualite, variables_aleatoires, variables_demo, variables_energie, "simule_gagnant", 
 #                       "simule_gain", variables_politiques, variables_gilets_jaunes, "gilets_jaunes", variables_connaissances_CC, variables_avis_CC, variables_comportement_CC)
-
-
-# Pearson's chi-square test of equality of distributions
-fq <- list()
-fq[['sexe']] <- list(name=c("Féminin", "Masculin"), 
-                     freq=c(0.516,0.484))
-fq[['csp']] <- list(name=c("Inactif", "Ouvrier", "Cadre", "Indépendant", "Intermédiaire", "Retraité", "Employé", "Agriculteur"), 
-                    freq=c(0.129,0.114,0.101,0.035,0.136,0.325,0.15,0.008))
-fq[['region']] <- list(name=c("autre","ARA", "Est", "Nord", "IDF", "Ouest", "SO", "Occ", "Centre", "PACA"), 
-                       freq=c(0.00001,0.12446,0.12848,0.09237,0.1902,0.10294,0.09299,0.09178,0.09853,0.07831))
-fq[['age']] <- list(name=c("18-24", "25-34", "35-49", "50-64", "65+"), 
-                    freq=c(0.120,0.150,0.240,0.240,0.250))
-fq[['taille_agglo']] <- list(name=c(1:5), 
-                             freq=c(0.2166,0.1710,0.1408,0.3083,0.1633))
-fq[['diplome4']] <- list(name=c("Aucun diplôme ou brevet", "CAP ou BEP", "Baccalauréat", "Supérieur"), 
-                         freq=c(0.290, 0.248, 0.169, 0.293))
-for (v in c('sexe', 'age', 'csp', 'diplome4', 'taille_agglo', 'region')) {
-  freq_sample <- c()
-  for (i in fq[[v]]$name) freq_sample <- c(freq_sample, sum((e[[v]]==i))) # *e$weight
-  print(paste(v, round(chisq.test(freq_sample, p = fq[[v]]$freq)$p.value, 3)))
-} # Equality rejected at .01 except for sex and CSP
 
 # TODO: pb cause_CC: la variante paraît pas 50/50
