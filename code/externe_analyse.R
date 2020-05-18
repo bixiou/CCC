@@ -1,5 +1,5 @@
 ###### Efforts relatifs #####
-decrit(e$efforts_relatifs)
+decrit(e$efforts_relatifs, weight = T)
 decrit(e$efforts_relatifs[e$variante_efforts_vous==1])
 decrit(e$efforts_relatifs[e$variante_efforts_vous==0])
 summary(lm(efforts_relatifs ~ variante_efforts_vous, data=e)) # +1
@@ -167,7 +167,7 @@ labels_variables_politiques_1 <- c("Réduire le gaspillage alimentaire", "Oblige
                                         "Densifier les villes", "Développer les énergies renouvelables", "Taxer l'acheminement polluants des marchandises")
 # (politiques_1 <- barres(title="", data=dataKN(variables_politiques_1, miss=FALSE, rev = T),  thin=T, 
 #        nsp=FALSE, labels=labels_variables_politiques_1, legend = dataN(variables_politiques_1[1], return="legend", rev_legend = T), show_ticks=T))
-(politiques_1 <- barres(vars = variables_politiques_1, miss=FALSE, labels=labels_variables_politiques_1))
+(politiques_1 <- barres(vars = variables_politiques_1, miss=FALSE,  labels=labels_variables_politiques_1))
 save_plotly(politiques_1) 
 
 labels_variables_politiques_2_long <- c()
@@ -196,7 +196,7 @@ save_plotly(devoile)
 (confiance_sortition <- barres(vars = "confiance_sortition", miss = F, labels="Confiance dans la capacité de citoyens tirés au sort \nà délibérer de manière productive sur des questions politiques complexes"))
 save_plotly(confiance_sortition)
 
-(pour_sortition <- barres(vars = "pour_sortition", miss = T, thin=F, labels="Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement"))
+(pour_sortition <- barres(vars = "pour_sortition", miss = T, rev=F, thin=F, labels="Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement"))
 save_plotly(pour_sortition)
 
 (connait_CCC <- barres(vars = "connait_CCC", miss = F, labels="Avez-vous entendu parler de \nla Convention Citoyenne pour le Climat ?"))
@@ -252,20 +252,20 @@ save_plotly(parle_CC)
 (issue_CC <- barres(vars = "issue_CC", miss = F, labels="Le changement climatique sera limité \nà un niveau acceptable d’ici la fin du siècle"))
 save_plotly(issue_CC) 
 
-(effets_CC_CCC <- barres(vars = "effets_CC_CCC", miss = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
-save_plotly(effets_CC_CCC) # TODO, aussi effets_CC_AT
+(effets_CC_CCC <- barres(vars = "effets_CC_CCC", miss = F, rev = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
+save_plotly(effets_CC_CCC) 
 
 (effets_CC_AT <- barres(vars = "effets_CC_AT", rev = F, miss = T, labels="Effets du changement climatique, \nsi rien n'est fait pour le limiter ?"))
 save_plotly(effets_CC_AT) 
 
-(cause_CC_CCC <- barres(vars = "cause_CC_CCC", rev = F, miss = T, labels="Le changement climatique est dû à"))
-save_plotly(cause_CC_CCC) # TODO: check NSP
+(cause_CC_CCC <- barres(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
+save_plotly(cause_CC_CCC)
 
 (France_CC <- barres(vars = "France_CC", thin = F, rev = F, miss = T, labels="La France doit prendre de l’avance \nsur d’autres pays dans la lutte contre le changement climatique"))
 save_plotly(France_CC) 
 
 (echelle_politique_CC <- barres(vars = "echelle_politique_CC", thin = F, rev = F, miss = F, labels="Le changement climatique exige\n d’être pris en charge par des politiques ..."))
-save_plotly(echelle_politique_CC)  # TODO: as.item
+save_plotly(echelle_politique_CC) 
 
 (patrimoine <- barres(vars = "patrimoine", rev = F, rev_color = T, miss = T, labels="Patrimoine net du ménage"))
 save_plotly(patrimoine) 

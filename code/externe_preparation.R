@@ -376,7 +376,7 @@ convert_e <- function(e) {
     e[[i]][e[[i]] == "Ne se prononce pas"] <- "NSP"
   }
   
-  # e$mauvaise_qualite <- 0 # 99% if we exclude those from revenu, 92% otherwise # TODO (concentration)
+  # e$mauvaise_qualite <- 0 # 99% if we exclude those from revenu, 92% otherwise # TODO! (concentration)
   # e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] <- 1 + e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] # 164
   # e$mauvaise_qualite[n(e$revenu) > 10000] <- 1 + e$mauvaise_qualite[n(e$revenu) > 10000] # 58
   # e$mauvaise_qualite[n(e$rev_tot) > 10000] <- 1 + e$mauvaise_qualite[n(e$rev_tot) > 10000] # 55
@@ -589,15 +589,22 @@ convert_e <- function(e) {
   e$gilets_jaunes[e$gilets_jaunes_oppose==T] <- -1 # 2 oppose et soutien en même temps
   e$gilets_jaunes[e$gilets_jaunes_soutien==T] <- 1
   e$gilets_jaunes[e$gilets_jaunes_dedans==T] <- 2
-  e$gilets_jaunes <- as.item(e$gilets_jaunes, missing.values=-0.1, labels = structure(c(-0.1,-1:2), names=c('NSP', 'oppose', 'comprend', 'soutient', 'est_dedans')),
+  e$gilets_jaunes <- as.item(e$gilets_jaunes, missing.values=-0.1, labels = structure(c(-0.1,-1:2), names=c('NSP', "s'oppose", 'comprend', 'soutient', 'en est')),
                              annotation="gilets_jaunes: Que pensez-vous des gilets jaunes ? -1: s'oppose / 0: comprend sans soutenir ni s'opposer / 1: soutient / 2: fait partie des gilets jaunes (gilets_jaunes_compris/oppose/soutien/dedans/NSP)" )
   e$Gilets_jaunes <- as.factor(as.character(e$gilets_jaunes))
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'soutient')
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'comprend')
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'NSP')
-  e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'oppose')
+  e$Gilets_jaunes <- relevel(e$Gilets_jaunes, "s'oppose")
   label(e$Gilets_jaunes) <- "Gilets_jaunes: Que pensez-vous des gilets jaunes ? -1: s'oppose / 0: comprend sans soutenir ni s'opposer / 1: soutient / 2: fait partie des gilets jaunes (gilets_jaunes_compris/oppose/soutien/dedans/NSP)"
-  
+
+  e$echelle_politique_CC <- -2*(e$echelle_politique_CC=='à toutes les échelles') -1*(e$echelle_politique_CC=='mondiales') + (e$echelle_politique_CC=='nationales') + 2*(e$echelle_politique_CC=='locales')
+  e$echelle_politique_CC <- as.item(e$echelle_politique_CC, labels = structure(c(-2:2), names=c('à toutes les échelles', "mondiales", 'européennes', 'nationales', 'locales')), annotation=Label(e$echelle_politique_CC) )
+  # e$echelle_politique_CC <- relevel(as.factor(e$echelle_politique_CC), 'nationales')
+  # e$echelle_politique_CC <- relevel(e$echelle_politique_CC, 'européennes')
+  # e$echelle_politique_CC <- relevel(e$echelle_politique_CC, 'mondiales')
+  # e$echelle_politique_CC <- relevel(e$echelle_politique_CC, 'à toutes les échelles')
+    
   e$retraites <- e$statut_emploi == 'retraité·e' 
   e$actifs <- e$statut_emploi %in% c("autre actif", "CDD", "CDI", "fonctionnaire", "intérimaire ou contrat précaire")
   e$etudiants <- e$statut_emploi == 'étudiant·e'
@@ -738,9 +745,9 @@ convert_e <- function(e) {
   # cf. consistency_belief_losses.py pour les imputations. Average of BdF in each bin has been used.
   e$perte_min <- -30*(e$perte==-1) + 1*(e$perte==1) + 30*(e$perte==2) + 70*(e$perte==3) + 120*(e$perte==4) + 190*(e$perte==5)
   e$perte_max <-   0*(e$perte==-1) + 30*(e$perte==1) + 70*(e$perte==2) + 120*(e$perte==3) + 190*(e$perte==4) + 2000*(e$perte==5)
-  temp <- 224.25*(e$perte==5) + 147.91*(e$perte==4) + 92.83*(e$perte==3) + 48.28*(e$perte==2) + 13.72*(e$perte==1) - 1.66*(e$perte==-1) # TODO: recalculer, surtout perte==5 (qui correspond à [190;280] au lieu de >190) et perte==-1 (ne sait pas d'où il sort). Pour info 405.55*(perte==6)
+  temp <- 224.25*(e$perte==5) + 147.91*(e$perte==4) + 92.83*(e$perte==3) + 48.28*(e$perte==2) + 13.72*(e$perte==1) - 1.66*(e$perte==-1) # TODO?: recalculer, surtout perte==5 (qui correspond à [190;280] au lieu de >190) et perte==-1 (ne sait pas d'où il sort). Pour info 405.55*(perte==6)
   e$perte <- as.item(temp, labels = structure(c(224.25, 147.91, 92.83, 48.28, 13.72, 0, -1.66), names = c(">190", "120-190", "70-120", "30-70", "0-30", "0", "<0")), annotation=Label(e$perte))
-# TODO: s => e
+
   e$simule_gain_menage <- 16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses # élasticité de 0.15 sur le gaz
   e$simule_gain <- e$simule_gain_menage / e$uc
   e$simule_gain_repondant <- 16.1 + 110 - e$hausse_depenses
@@ -858,7 +865,6 @@ convert_e <- function(e) {
   for (i in 1:8)  {
     for (v in obstacles) e[[paste("obstacle", i, sep="_")]][e[[paste("obstacles", v, sep="_")]]==i] <- v
     label(e[[paste("obstacle", i, sep="_")]]) <- paste("obstacle_", i, ": Obstacle à la lutte contre le CC classé en position ", i, " (1: le plus - 7: le moins important) (", paste(obstacles, collapse = "/"), ")", sep="") }
-  # TODO!: connaissance_CCC
   
   e$Connaissance_CCC <- NA
   e$connaissance_CCC_bon_francais <- e$connaissance_CCC_sortition <- e$connaissance_CCC_mesures <- e$connaissance_CCC_temporalite <- e$connaissance_CCC_internet <- e$connaissance_CCC == "FALSE"
@@ -877,17 +883,17 @@ convert_e <- function(e) {
   e$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
   e$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566,607,609,611,613,646,670,689)] <- "mesures"
   e$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562,581,598,609,611,613,665,691,700,728,729,732,741,752)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
-  e$Connaissance_CCC[c(876,891,883,887,893,897,899)] <- "aucune" # ex: 598
-  e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 doublon ?
-  e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902)] <- "trop vague" # ex: 374, 457, 490
-  e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877)] <- "approximatif"
-  e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
-  e$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504,590,592,632,743,866,871)] <- "faux" # ex: 239, 326
+  e$Connaissance_CCC[c(876,891,883,887,893,897,899,908,909,911,913,915,916,917,926,930,939,940,943,944,946,955,956,957,960,962,965,966,967,973,977,978,986,992,995,998,1000,1001,1002,1003)] <- "aucune" # ex: 598, 915
+  e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895,921,927,928,936,945,953,959,964,984,999)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 1001-1003 doublon ? TODO
+  e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902,912,934,954)] <- "trop vague" # ex: 374, 457, 490
+  e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877,906,914,920,937,938,972,982,987,988)] <- "approximatif"
+  e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898,910,923,935,941,950,991)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+  e$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504,590,592,632,743,866,871,929,951,952,993)] <- "faux" # ex: 239, 326
   e$connaissance_CCC_internet[c(44,70,239,279,512,606,701)] <- "internet"
-  e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898)] <- "sortition" 
-  e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898)] <- "mesures"
+  e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898,906,910,914,923,929,941,972,991)] <- "sortition" 
+  e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898,920,938,941,950,982,991,993)] <- "mesures"
   e$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
-  e$connaissance_CCC_bon_francais[c(770,776,779,796,797,875,877,895,898)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+  e$connaissance_CCC_bon_francais[c(770,776,779,796,797,875,877,895,898,935,937,988,991,993)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
   e$connaissance_CCC_150[which(c(grepl('150', e$connaissance_CCC)),470)] <- "150"
   variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
   for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
@@ -901,14 +907,13 @@ convert_e <- function(e) {
   label(e$connaissance_CCC_temporalite) <- "connaissance_CCC_temporalite: Indicatrice que la réponse à connaissance_CCC mentionne un élément de la temporalité de la CCC (date de début ou de fin, ou fréquence de ses réunions)"
   label(e$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
   label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
-  # TODO!: connaissance_CCC >572 = "/"
   
   e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139)] # 39:49, 
   return(e)
 }
-e <- prepare_e()
-
-export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
+# e <- prepare_e()
+# 
+# export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 
 # convert_e()
 # prepare_e(exclude_screened=FALSE, exclude_speeder=FALSE, only_finished=T)
@@ -985,8 +990,6 @@ prepare_e <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished
   e$sample[e$fini=="True" & n(e$duree) > duree_max & e$test_qualite=='Un peu'] <- "f" # "q"? excluded because out of quotas
   e$sample[e$fini=="True" & n(e$duree) > duree_max & e$exclu==""] <- "r"
   
-  # e <- e[-which(is.element(e$id, e$id[duplicated(e$id)]) & !duplicated(e$id)),] # TODO: check duplicates
-  # TODO!: relâcher quota Employé, Bac
   return(e)
 }
 
@@ -1022,5 +1025,3 @@ c <- readRDS("../donnees/CCC.Rda") # données CCC
 # variables_comportement_CC <- c("mode_vie_ecolo", "changer_si_politiques", "changer_si_moyens", "changer_si_tous", "changer_non_riches", "changer_non_interet", "changer_non_negation", "changer_deja_fait", "changer_essaie")
 # variables_toutes <- c(variables_approbation, variables_qualite, variables_aleatoires, variables_demo, variables_energie, "simule_gagnant", 
 #                       "simule_gain", variables_politiques, variables_gilets_jaunes, "gilets_jaunes", variables_connaissances_CC, variables_avis_CC, variables_comportement_CC)
-
-# TODO: pb cause_CC: la variante paraît pas 50/50

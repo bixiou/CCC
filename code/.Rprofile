@@ -10,7 +10,7 @@ package <- function(p) {
 
 package("xtable")
 package('tidyverse')
-# package("rms")
+package("rms")
 package('pwr')
 package("foreign")
 package("memisc")
@@ -23,11 +23,11 @@ package("survey")
 package("plotly")
 package('gdata')
 package("Hmisc")
-# package("quantreg")
+package("quantreg")
 package("rcompanion")
 package("DescTools")
-# package("VCA")
-# package("glmnet")
+package("VCA")
+package("glmnet")
 # package("installr") # not for linux
 package("plotly")
 package("processx")
@@ -40,7 +40,7 @@ package("data.table")
 package("reshape2")
 # package("rddtools") # not available
 # package("rddapp") # not available
-# package("mets")
+package("mets")
 package("plyr")
 package("descr")
 package("stargazer")
@@ -64,11 +64,11 @@ package("corrplot")
 package("psy")
 package("lavaan")
 package("devtools")
-install_github("rstudio/webshot2")
-package("webshot2")
+# install_github("rstudio/webshot2")
+# package("webshot2")
 package("htmlwidgets")
 # package("magick") # Bug sur Ubuntu, ne surtout pas décommenter sur Ubuntu
-# library(magick) # TODO
+library(magick) # TODO
 # install_github(repo = "MatthieuStigler/RCompAngrist", subdir = "RCompAngrist")
 # package("RCompAngrist")
 
@@ -89,7 +89,14 @@ Label <- function(var) {
   if (length(annotation(var))==1) { annotation(var)[1] }
   else { label(var)  }
 }
-decrit <- function(variable, miss = FALSE, weights = NULL, numbers=FALSE) { # TODO: allow for boolean weights
+decrit <- function(variable, miss = FALSE, weights = NULL, numbers = FALSE, data = e, which = NULL, weight = FALSE) { # TODO!: allow for boolean weights
+  # if (!missing(data)) variable <- data[[variable]]
+  if (is.character(variable)) variable <- data[[variable]]
+  if (!missing(which)) variable <- variable[which] 
+  if (weight) { 
+    # if (length(variable) > 1) warning("Field 'variable' is a vector instead of a character, weight will not be used.")
+    weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else { 
+    if (!missing(which)) weights <- weights[which] }
   if (length(annotation(variable))>0 & !numbers) {
     if (!miss) {
       # if (is.element("Oui", levels(as.factor(variable))) | grepl("(char)", annotation(variable)) | is.element("quotient", levels(as.factor(variable)))  | is.element("Pour", levels(as.factor(variable))) | is.element("Plutôt", levels(as.factor(variable))) ) { describe(as.factor(variable[variable!="" & !is.na(variable)]), weights = weights[variable!="" & !is.na(variable)], descript=Label(variable)) }
@@ -464,8 +471,8 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
   if (sort) {
     agree <- c()
     if (!missing(miss)) {
-      if (miss) for (i in 1:length(labels)) agree <- c(agree, sum(data[floor(nrow(data)/2+1):min(1,(nrow(data)-1)),i]))
-      else for (i in 1:length(labels)) agree <- c(agree, sum(data[min(1,ceiling(nrow(data)/2+1)):nrow(data),i]))
+      if (miss) for (i in 1:length(labels)) agree <- c(agree, sum(data[floor(nrow(data)/2+1):max(1,(nrow(data)-1)),i]))
+      else for (i in 1:length(labels)) agree <- c(agree, sum(data[ifelse(nrow(data)==1,1,ceiling(nrow(data)/2+1)):nrow(data),i]))
     } else {
       if (nrow(data)==5 | nrow(data)==6) { for (i in 1:length(labels)) { agree <- c(agree, data[4, i] + data[5, i]) } }
       else if (nrow(data)==7) { for (i in 1:length(labels)) { agree <- c(agree, data[6, i] + data[7, i]) } }
