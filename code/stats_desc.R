@@ -1025,6 +1025,12 @@ write.csv(C, '../donnees/responses_raw.csv', row.names = FALSE) # pour qui ?
 C[38, 209] <- substr(C[38, 209], 1, 208) # string already truncated in raw data (at 244 characters), bug when not truncated a bit more # was 38,213 (check s2_e_notes_sur_le_questionnaire) which(grepl('commentaire', names(c))) max(nchar(c[, 167]), na.rm=T)
 write_dta(C, '../donnees/responses_raw.dta', version = 11)
 
+convert_c <- function(c) {
+  c$confiance_gens <- relabel(as.factor(c$confiance_gens_1e), "on n'est jamais assez prudent"="Méfiant", "on peut faire confiance"="Confiant")
+  
+  return(c)
+}
+
 nb_reponses <- c()
 nb_manquants <- c()
 export_stats_desc(c, paste(getwd(), 'stats_desc.csv', sep='/'), fill_extern = TRUE)

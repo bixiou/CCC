@@ -63,6 +63,13 @@ package("rdd")
 package("corrplot")
 package("psy")
 package("lavaan")
+package("StatMatch")
+package("np")
+package("AMR")
+package("KSgeneral")
+package("dgof")
+package("equivalence")
+package("Peacock.test")
 package("devtools")
 # install_github("rstudio/webshot2")
 # package("webshot2")
@@ -89,14 +96,18 @@ Label <- function(var) {
   if (length(annotation(var))==1) { annotation(var)[1] }
   else { label(var)  }
 }
-decrit <- function(variable, miss = FALSE, weights = NULL, numbers = FALSE, data = e, which = NULL, weight = FALSE) { # TODO!: allow for boolean weights
+decrit <- function(variable, miss = FALSE, weights = NULL, numbers = FALSE, data = e, which = NULL, weight = T) { # TODO!: allow for boolean weights
   # if (!missing(data)) variable <- data[[variable]]
-  if (is.character(variable)) variable <- data[[variable]]
+  if (is.character(variable) & length(variable)==1) variable <- data[[variable]]
   if (!missing(which)) variable <- variable[which] 
   if (weight) { 
     # if (length(variable) > 1) warning("Field 'variable' is a vector instead of a character, weight will not be used.")
     weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else { 
-    if (!missing(which)) weights <- weights[which] }
+    if (!missing(which)) weights <- weights[which]
+    if (length(weights)!=length(variable)) {
+      warning("Lengths of weight and variable differ, non-weighted results are provided")
+      weights <- NULL
+  } }
   if (length(annotation(variable))>0 & !numbers) {
     if (!miss) {
       # if (is.element("Oui", levels(as.factor(variable))) | grepl("(char)", annotation(variable)) | is.element("quotient", levels(as.factor(variable)))  | is.element("Pour", levels(as.factor(variable))) | is.element("Plutôt", levels(as.factor(variable))) ) { describe(as.factor(variable[variable!="" & !is.na(variable)]), weights = weights[variable!="" & !is.na(variable)], descript=Label(variable)) }

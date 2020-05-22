@@ -347,7 +347,7 @@ relabel_and_rename <- function(e) {
   
   for (i in 1:length(e)) names(e)[i] <- sub(':.*', '', label(e[[i]]))
   return(e)
-} # TODO!: hausse_depenses
+}
 
 convert_e <- function(e) {
   # lab <- label(e$csp)
@@ -380,7 +380,7 @@ convert_e <- function(e) {
   # e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] <- 1 + e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] # 164
   # e$mauvaise_qualite[n(e$revenu) > 10000] <- 1 + e$mauvaise_qualite[n(e$revenu) > 10000] # 58
   # e$mauvaise_qualite[n(e$rev_tot) > 10000] <- 1 + e$mauvaise_qualite[n(e$rev_tot) > 10000] # 55
-  e$revenu <- clean_number(e$revenu, high_numbers='divide')
+  e$revenu <- clean_number(e$revenu, high_numbers='divide') # TODO: traiter les revenu = 0
   e$rev_tot <- clean_number(e$rev_tot, high_numbers='divide') # TODO: check ça
   # e$revenu[e$revenu > 10000] <- wtd.mean(e$revenu[e$revenu < 10000], weights = e$weight[e$revenu < 10000], na.rm=T)
   # e$rev_tot[e$rev_tot > 10000] <- wtd.mean(e$rev_tot[e$rev_tot < 10000], weights = e$weight[e$rev_tot < 10000], na.rm=T)
@@ -509,11 +509,11 @@ convert_e <- function(e) {
                           # names = c("NSP","Insignifiants, voire bénéfiques","Faibles, car les humains sauraient vivre avec","Graves, car il y aurait plus de catastrophes naturelles","Désastreux, les modes de vie seraient largement altérés","Cataclysmiques, l'humanité disparaîtrait")),
                         missing.values = -1, annotation=Label(e$effets_CC_AT))
   
-  # e$cause_CC_CCC <- relabel(e$cause_CC_CCC, c("Uniquement à des processus naturels"="Uniquement naturel", "Principalement à des processus naturels"="Principalement naturel", "Autant à des processus naturels qu'à l'activité humaine"="Autant",  "Principalement à l'activité humaine"="Principalement anthropique", "Uniquement à l'activité humaine"="Uniquement anthropique"))
-  temp <- 1*grepl("uement à l'activité hu", e$cause_CC_CCC) - grepl("Autant", e$cause_CC_CCC) - 2*grepl("incipalement à des processus na", e$cause_CC_CCC) - 3*grepl("iquement à des processus nat", e$cause_CC_CCC)
+  # e$cause_CC_CCC <- relabel(e$cause_CC_CCC, "Uniquement à des processus naturels"="Uniquement naturel", "Principalement à des processus naturels"="Principalement naturel", "Autant à des processus naturels qu'à l'activité humaine"="Autant",  "Principalement à l'activité humaine"="Principalement anthropique", "Uniquement à l'activité humaine"="Uniquement anthropique")
+  temp <- 1*grepl("uement à l'activité hu", e$cause_CC_CCC) - grepl("Autant", e$cause_CC_CCC) - 2*grepl("incipalement à des processus na", e$cause_CC_CCC) - 3*grepl("iquement à des processus nat", e$cause_CC_CCC) - 4*grepl("ne pense pas", e$cause_CC_CCC)
   temp[is.na(e$cause_CC_CCC)] <- NA
-  e$cause_CC_CCC <- as.item(temp, labels = structure(c(-3:1),
-                      names = c("Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(e$cause_CC_CCC))
+  e$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1),
+                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(e$cause_CC_CCC))
 
   temp <- -3*(e$problemes_invisibilises=='Jamais') - (e$problemes_invisibilises=='Peu souvent') + (e$problemes_invisibilises=='Assez souvent') + 3*(e$problemes_invisibilises=='Très souvent')
   e$problemes_invisibilises <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Jamais', 'Peu souvent', 'Assez souvent', 'Très souvent')), annotation=Label(e$problemes_invisibilises))
@@ -565,9 +565,9 @@ convert_e <- function(e) {
   e$Diplome <- (e$diplome == "Brevet des collèges") + 2*(e$diplome=="CAP ou BEP") + 3*(e$diplome=="Baccalauréat") + 4*(e$diplome=="Bac +2 (BTS, DUT, DEUG, écoles de formation sanitaires et sociales...)") + 5*(e$diplome=="Bac +3 (licence...)") + 6*(e$diplome=="Bac +5 ou plus (master, école d'ingénieur ou de commerce, doctorat, médecine, maîtrise, DEA, DESS...)") - (e$diplome=="NSP (Ne se prononce pas)")
   e$diplome4 <- as.item(pmin(pmax(e$Diplome, 1), 4), labels = structure(1:4, names = c("Aucun diplôme ou brevet", "CAP ou BEP", "Baccalauréat", "Supérieur")), annotation=Label(e$diplome))  
 
-  e$chauffage <- relabel(e$chauffage, c("Gaz de ville"="Gaz réseau", "Butane, propane, gaz en citerne"="Gaz bouteille", "Fioul, mazout, pétrole"="Fioul", "Électricité"="Électricité", "Bois, solaire, géothermie, aérothermie (pompe à chaleur)"="Bois, solaire...", "Autre"="Autre", "NSP"="NSP"))
-  e$cause_CC_AT <- relabel(e$cause_CC_AT, c("n'est pas une réalité"="n'existe pas", "est principalement dû à la variabilité naturelle du climat"="naturel", "est principalement dû à l'activité humaine"="anthropique", "NSP"="NSP"))
-  e$confiance_gens <- relabel(e$confiance_gens, c("On n’est jamais assez prudent quand on a affaire aux autres"="Confiant", "On n’est jamais assez prudent quand on a affaire aux autres"="Méfiant"))
+  e$chauffage <- relabel(e$chauffage, "Gaz de ville"="Gaz réseau", "Butane, propane, gaz en citerne"="Gaz bouteille", "Fioul, mazout, pétrole"="Fioul", "Électricité"="Électricité", "Bois, solaire, géothermie, aérothermie (pompe à chaleur)"="Bois, solaire...", "Autre"="Autre", "NSP"="NSP")
+  e$cause_CC_AT <- relabel(e$cause_CC_AT, "n'est pas une réalité"="n'existe pas", "est principalement dû à la variabilité naturelle du climat"="naturel", "est principalement dû à l'activité humaine"="anthropique", "NSP"="NSP")
+  e$confiance_gens <- relabel(as.factor(e$confiance_gens), "On peut faire confiance à la plupart des gens"="Confiant", "On n’est jamais assez prudent quand on a affaire aux autres"="Méfiant")
   
   e$gauche_droite <- pmax(-2,pmin(2,-2 * e$extr_gauche - 1*e$gauche + 1*e$droite + 2 * e$extr_droite))
   is.na(e$gauche_droite) <- (e$gauche_droite == 0) & !e$centre
@@ -577,8 +577,9 @@ convert_e <- function(e) {
   levels(e$Gauche_droite) <- c("Extreme-left", "Left", "Center", "Right", "Extreme-right", "Indeterminate")
   e$Gauche_droite[is.na(e$Gauche_droite)] <- "Indeterminate"
   e$indeterminate <- e$Gauche_droite == "Indeterminate"
-  e$gauche_droite_nsp <- e$gauche_droite
+  e$gauche_droite_nsp <- as.character(e$gauche_droite)
   e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'NSP'
+  # e$gauche_droite_nsp <- as.factor(e$gauche_droite_nsp)
   
   temp <- Label(e$interet_politique)
   e$interet_politique <- 1*(e$interet_politique=='Un peu') + 2*(e$interet_politique=='Beaucoup')
@@ -652,9 +653,11 @@ convert_e <- function(e) {
   e$km_original <- e$km
   e$conso_original <- e$conso
   e$surface_original <- e$surface
-  e$km <- pmin(e$km, 200000) # 4
-  e$conso <- pmin(e$conso, 30) # 75
-  e$surface <- pmin(e$surface, 650) # 5
+  e$km <- pmin(e$km, 200000) # TODO e$km[877] <- 1130 [586] <- 2250
+  e$conso <- pmin(e$conso, 30) # e$conso[851] <- 6.1
+  e$surface <- pmin(e$surface, 650) # 
+  e$conso_1 <- pmin(e$conso_1, 30) # 
+  e$conso_2 <- pmin(e$conso_2, 30) # 
   
   e$age_18_24 <- 1*(e$age == '18-24')
   e$age_25_34 <- 1*(e$age == '25-34')
@@ -671,6 +674,7 @@ convert_e <- function(e) {
   label(e$tax_feedback_approval) <- "tax_feedback_approval: Approbation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation=='Oui'"
   label(e$tax_feedback_acceptance) <- "tax_feedback_acceptance: Acceptation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation!='Non'"
 
+  # TODO: simule_gagnant faux
   e$update_correct <- ((e$simule_gagnant==1 & e$gagnant_feedback_categorie=='Gagnant' & e$gagnant_categorie!='Gagnant')
                        + (e$simule_gagnant==0 & e$gagnant_feedback_categorie=='Perdant' & e$gagnant_categorie!='Perdant')
                        - (e$simule_gagnant==1 & e$gagnant_feedback_categorie=='Perdant' & e$gagnant_categorie!='Perdant')
@@ -701,6 +705,7 @@ convert_e <- function(e) {
 #   e$gaz <- grepl('gaz', e$chauffage, ignore.case = T)
 #   e$fioul <- grepl('fioul', e$chauffage, ignore.case = T)
 #   e$hausse_chauffage <- -55.507189 + e$gaz * 124.578484 + e$fioul * 221.145441 + e$surface * 0.652174  
+  # hausses telles que calculées sans bug
 	e$hausse_diesel_verif[e$nb_vehicules == 0] <- (0.5*(6.39/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 0] # share_diesel * conso * km * price * (1-elasticite) * price_increase
 	e$hausse_diesel_verif[e$nb_vehicules == 1] <- ((e$fuel_1=='Diesel') * (ifelse(is.na(e$conso_1), 6.39, e$conso_1)/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 1] # DONE: replaced e$conso
   e$hausse_diesel_verif[e$nb_vehicules == 2] <- (((e$fuel_2_1=='Diesel')*2/3 + (e$fuel_2_2=='Diesel')/3) * (ifelse(is.na(e$conso_2), 6.39, e$conso_2)/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 2]
@@ -708,6 +713,7 @@ convert_e <- function(e) {
 	e$hausse_essence_verif[e$nb_vehicules == 1] <- ((e$fuel_1!='Diesel') * (ifelse(is.na(e$conso_1), 7.31, e$conso_1)/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 1]
   e$hausse_essence_verif[e$nb_vehicules == 2] <- (((e$fuel_2_1!='Diesel')*2/3 + (e$fuel_2_2!='Diesel')/3) * (ifelse(is.na(e$conso_2), 7.31, e$conso_2)/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 2]
 
+  # hausses sans tenir compte de la conso renseignée
   e$hausse_diesel_verif_na[e$nb_vehicules == 0] <- (0.5*(6.39/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 0] # share_diesel * conso * km * price * (1-elasticite) * price_increase
 	e$hausse_diesel_verif_na[e$nb_vehicules == 1] <- ((e$fuel_1=='Diesel') * (6.39/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 1] # DONE: replaced e$conso
   e$hausse_diesel_verif_na[e$nb_vehicules == 2] <- (((e$fuel_2_1=='Diesel')*2/3 + (e$fuel_2_2=='Diesel')/3) * (6.39/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 2]
@@ -715,10 +721,11 @@ convert_e <- function(e) {
 	e$hausse_essence_verif_na[e$nb_vehicules == 1] <- ((e$fuel_1!='Diesel') * (7.31/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 1]
   e$hausse_essence_verif_na[e$nb_vehicules == 2] <- (((e$fuel_2_1!='Diesel')*2/3 + (e$fuel_2_2!='Diesel')/3) * (7.31/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 2]
   
-  e$hausse_depenses_verif <- e$hausse_diesel_verif + e$hausse_essence_verif + e$hausse_chauffage
-  e$hausse_depenses_verif_na <- e$hausse_diesel_verif_na + e$hausse_essence_verif_na + e$hausse_chauffage
-  e$feedback_correct <- round(e$conso)==7 & !(e$fuel_2_1 %in% c('Diesel'))
-  # TODO: avant 28/04 18h55 FR, hausse_diesel et _essence correspondaient à _verif_na, i.e. la conso renseignée n'étaient pas prise en compte. Il y avait un bug quand fuel_2_1 == Diesel, de sorte que tous ces gens avaient le feedback Gagnant et conso = NaN
+  e$bug <- e$date_enregistree < "2020-04-28 05:55:00" # 1:792: T / 793:1003: F
+  e$hausse_depenses_verif <- e$hausse_diesel_verif + e$hausse_essence_verif + e$hausse_chauffage # hausses telles que calculées sans bug (celle utilisée pour bug==F)
+  e$hausse_depenses_verif_na <- e$hausse_diesel_verif_na + e$hausse_essence_verif_na + e$hausse_chauffage # hausses sans tenir compte de la conso renseignée (celle utilisée pour bug==T)
+  e$feedback_correct <- (round(e$conso)==7 & !(e$fuel_2_1 %in% c('Diesel'))) | (!e$bug)
+  # /!\ avant 28/04 18h55 FR, hausse_diesel et _essence correspondaient à _verif_na, i.e. la conso renseignée n'étaient pas prise en compte. Il y avait un bug quand fuel_2_1 == Diesel, de sorte que tous ces gens avaient le feedback Gagnant et conso = NaN
 #   e$hausse_carburants <- e$hausse_diesel + e$hausse_essence
 #   e$depense_carburants <- (e$hausse_diesel / 0.090922 + e$hausse_essence / 0.076128) / (1 - 0.4)
 #   label(e$hausse_carburants) <- "hausse_carburant: Hausse des dépenses de carburants simulées pour le ménage, suite à la taxe (élasticité de 0.4) (hausse_diesel + hausse_essence)"
@@ -748,13 +755,14 @@ convert_e <- function(e) {
   temp <- 224.25*(e$perte==5) + 147.91*(e$perte==4) + 92.83*(e$perte==3) + 48.28*(e$perte==2) + 13.72*(e$perte==1) - 1.66*(e$perte==-1) # TODO?: recalculer, surtout perte==5 (qui correspond à [190;280] au lieu de >190) et perte==-1 (ne sait pas d'où il sort). Pour info 405.55*(perte==6)
   e$perte <- as.item(temp, labels = structure(c(224.25, 147.91, 92.83, 48.28, 13.72, 0, -1.66), names = c(">190", "120-190", "70-120", "30-70", "0-30", "0", "<0")), annotation=Label(e$perte))
 
-  e$simule_gain_menage <- 16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses # élasticité de 0.15 sur le gaz
+  e$simule_gain_menage <- 16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses # NA pour les répondants chez qui le fuel_2_1=='Diesel' créait un bug (et qui avait tout le temps simule_gagnant==1) (élasticité de 0.15 sur le gaz)
   e$simule_gain <- e$simule_gain_menage / e$uc
   e$simule_gain_repondant <- 16.1 + 110 - e$hausse_depenses
   label(e$simule_gain_menage) <- "simule_gain_menage: Gain net annuel simulé pour le ménage du répondant suite à une hausse de taxe carbone compensée: 16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses"
   label(e$simule_gain) <- "simule_gain: Gain net annuel simulé par UC pour le ménage du répondant suite à une hausse de taxe carbone compensée: (16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses)/UC"
   label(e$simule_gain_repondant) <- "simule_gain_repondant: Gain net annuel simulé pour le répondant (sans tenir compte du potentiel versement reçu par les autres adultes du ménage) suite à une hausse de taxe carbone compensée: 116.1 - hausse_depenses"
   e$simule_gain_verif <- (16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_verif) / e$uc # élasticité de 0.15 sur le gaz
+  label(e$simule_gain_verif) <- "simule_gain_verif: Gain net annuel simulé par UC suite à une hausse de taxe carbone compensée (avec le bon calcul)"
 
   # e$hausse_chauffage_interaction_inelastique <- 152.6786*e$fioul + e$surface * (1.6765*e$gaz + 1.1116*e$fioul) # TODO
   # e$depense_chauffage <- ((1*(e$fioul) * (152.6786 + 1.1116*e$surface)) / 0.148079 + 1.6765*e$gaz*e$surface / 0.133456)
@@ -794,10 +802,12 @@ convert_e <- function(e) {
   e$variante_taxe_carbone <- relevel(as.factor(e$variante_taxe_carbone), 'neutre')
   
   e$hausse_depenses_par_uc <- e$hausse_depenses/e$uc # TODO: hausse_depenses_interaction_par_uc
-  label(e$hausse_depenses_par_uc) <- "hausse_depenses_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
-  e$biais <- e$hausse_depenses_par_uc - as.numeric(e$perte)
-  e$biais_plus <- e$hausse_depenses_par_uc - as.numeric(e$perte_min)
-  e$biais_moins <- e$hausse_depenses_par_uc - as.numeric(e$perte_max)
+  label(e$hausse_depenses_par_uc) <- "hausse_depenses_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (utilise la variable buggué hausse_depenses) (élasticité de 0.4/0.2 pour carburants/chauffage)"
+  e$hausse_depenses_verif_par_uc <- e$hausse_depenses_verif/e$uc # TODO: hausse_depenses_interaction_par_uc
+  label(e$hausse_depenses_verif_par_uc) <- "hausse_depenses_verif_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
+  e$biais <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte)
+  e$biais_plus <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte_min)
+  e$biais_moins <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte_max)
   label(e$biais) <- "biais: hausse_depenses_par_uc - perte Différence entre la hausse objective et subjective (moyenne de l'intervalle) de dépenses par UC d'énergies fossiles:  (< 0 : pessimisme)"
   label(e$biais_plus) <- "biais_plus: hausse_depenses_par_uc - perte_min Différence entre la hausse objective et subjective (min de l'intervalle) de dépenses par UC d'énergies fossiles: (< 0 : pessimisme)"
   label(e$biais_moins) <- "biais_moins: hausse_depenses_par_uc - perte_max Différence entre la hausse objective et subjective (max de l'intervalle) de dépenses par UC d'énergies fossiles: (< 0 : pessimisme)"
@@ -870,36 +880,36 @@ convert_e <- function(e) {
   e$connaissance_CCC_bon_francais <- e$connaissance_CCC_sortition <- e$connaissance_CCC_mesures <- e$connaissance_CCC_temporalite <- e$connaissance_CCC_internet <- e$connaissance_CCC == "FALSE"
   e$connaissance_CCC_150 <- e$connaissance_CCC == "FALSE"
   e$Connaissance_CCC[c(1,3,10,13,17,19,29,30,34,45,49,51,54,57,64,68,74,77,78,86,93,97,103,121,129,136,139,151,153,155,156,159,162,163,164,174,179,181,182,183,184,187,191,194,196,197,201)] <- "aucune" #
-  e$Connaissance_CCC[c(208,210,217,218,223,232,236,242,250,255,259,260,266,268,271,272,278,282,285,289,291,297,298,301,310,312,313,324,327,328,349,352,355,357,361,372)] <- "aucune" # 
+  e$Connaissance_CCC[c(208,210,217,218,223,232,236,242,250,255,259,260,266,268,271,272,278,282,285,289,291,297,298,301,310,312,313,324,327,328,349,352,355,357,361,372)] <- "aucune" #
   e$Connaissance_CCC[c(383,385,389,390,394,402,410,411,415,416,417,419,421,422,424,425,429,431,442,444,446,450,451,457,458,461,463,465,466,468,469,472,476,485,487,488,492)] <- "aucune" # ex: "nsp" 19, 402, # doublons 450-451, 421-422, 468-469, 515-516?
   e$Connaissance_CCC[c(496,502,515,516,520,526,532,533,534,535,537,540,541,546,548,550,551,552,553,555,557,560,561,562,564,567,568,572,578,582,584,586,587,588,589,597,598,602,603,604)] <- "aucune" # ex: 598
   e$Connaissance_CCC[c(610,619,621,622,625,626,629,630,631,634,636,638,639,650,654,656,657,659,660,665,666,667,669,674,677,678,681,686,688,690,694,698,699,702,707,709,712,713,720,721,725,727)] <- "aucune" # ex: 598
   e$Connaissance_CCC[c(731,733,738,747,748,752,753,757,760,762,763,765,766,768,771,772,775,781,782,783,785,787,790,793,798,823,826,830,844,845,846,847,848,859,860,862,865,868,872,873)] <- "aucune" # ex: 598
-  e$Connaissance_CCC[c(6,22,25,66,72,80,90,100,107,110,111,152,166,170,177,188,214,227,238,276,281,316,319,320,323,339,360,387,393,396,399,408,432,452,454,474,498,503)] <- "hors sujet" # ex: 25, 71, 90, 107 # 25-110-432 doublon ?
-  e$Connaissance_CCC[c(8,15,18,20,26,27,28,43,65,75,84,85,89,101,123,132,135,140,142,144,145,147,165,168,172,176,207,220,222,240,247,275,288,303,308,341,347,348,351,356,364,377,473,493)] <- "approximatif" # ex: 607
-  e$Connaissance_CCC[c(7,24,62,67,71,84,91,106,117,127,130,131,134,150,154,158,173,175,186,202,209,226,246,247,253,262,284,302,307,334,337,380,386,391,400,407,418,420,428,440,448,449,470,481)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
-  e$connaissance_CCC_bon_francais[c(6,15,18,20,24,27,62,84,85,91,130,134,140,145,154,158,165,170,175,193,202,207,220,226,242,247,248,253,262,288,347,348,351,356,360,364,377,380,386,387,391)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
-  e$connaissance_CCC_sortition[c(7,62,67,71,91,106,127,130,131,134,150,154,158,165,173,175,186,202,207,209,239,246,247,253,262,284,302,308,334,348,380,407,420,428,440,448,449,470,481)] <- "sortition"
-  e$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
-  e$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566,607,609,611,613,646,670,689)] <- "mesures"
-  e$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562,581,598,609,611,613,665,691,700,728,729,732,741,752)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
   e$Connaissance_CCC[c(876,891,883,887,893,897,899,908,909,911,913,915,916,917,926,930,939,940,943,944,946,955,956,957,960,962,965,966,967,973,977,978,986,992,995,998,1000,1001,1002,1003)] <- "aucune" # ex: 598, 915
-  e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895,921,927,928,936,945,953,959,964,984,999)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 1001-1003 doublon ? TODO
-  e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902,912,934,954)] <- "trop vague" # ex: 374, 457, 490
-  e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877,906,914,920,937,938,972,982,987,988)] <- "approximatif"
-  e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898,910,923,935,941,950,991)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
   e$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504,590,592,632,743,866,871,929,951,952,993)] <- "faux" # ex: 239, 326
-  e$connaissance_CCC_internet[c(44,70,239,279,512,606,701)] <- "internet"
-  e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898,906,910,914,923,929,941,972,991)] <- "sortition" 
-  e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898,920,938,941,950,982,991,993)] <- "mesures"
-  e$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
+  e$Connaissance_CCC[c(6,22,25,66,72,80,90,100,107,110,111,152,166,170,177,188,214,227,238,276,281,316,319,320,323,339,360,387,393,396,399,408,432,452,454,474,498,503)] <- "hors sujet" # ex: 25, 71, 90, 107 # 25-110-432 doublon ?
+  e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895,921,927,928,936,945,953,959,964,984,999)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 1001-1003 doublon ? TODO
+  e$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
+  e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902,912,934,954)] <- "trop vague" # ex: 374, 457, 490
+  e$Connaissance_CCC[c(8,15,18,20,26,27,28,43,65,75,84,85,89,101,123,132,135,140,142,144,145,147,165,168,172,176,207,220,222,240,247,275,288,303,308,341,347,348,351,356,364,377,473,493)] <- "approximatif" # ex: 607
+  e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877,906,914,920,937,938,972,982,987,988)] <- "approximatif"
+  e$Connaissance_CCC[c(7,24,62,67,71,84,91,106,117,127,130,131,134,150,154,158,173,175,186,202,209,226,246,247,253,262,284,302,307,334,337,380,386,391,400,407,418,420,428,440,448,449,470,481)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+  e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898,910,923,935,941,950,991)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+  e$connaissance_CCC_bon_francais[c(6,15,18,20,24,27,62,84,85,91,130,134,140,145,154,158,165,170,175,193,202,207,220,226,242,247,248,253,262,288,347,348,351,356,360,364,377,380,386,387,391)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+  e$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562,581,598,609,611,613,665,691,700,728,729,732,741,752)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
   e$connaissance_CCC_bon_francais[c(770,776,779,796,797,875,877,895,898,935,937,988,991,993)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+  e$connaissance_CCC_sortition[c(7,62,67,71,91,106,127,130,131,134,150,154,158,165,173,175,186,202,207,209,239,246,247,253,262,284,302,308,334,348,380,407,420,428,440,448,449,470,481)] <- "sortition"
+  e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898,906,910,914,923,929,941,972,991)] <- "sortition"
+  e$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566,607,609,611,613,646,670,689)] <- "mesures"
+  e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898,920,938,941,950,982,991,993)] <- "mesures"
+  e$connaissance_CCC_internet[c(44,70,239,279,512,606,701)] <- "internet"
+  e$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
   e$connaissance_CCC_150[which(c(grepl('150', e$connaissance_CCC)),470)] <- "150"
   variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
   for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
   temp <- -2*(e$Connaissance_CCC=="hors sujet") -1*(e$Connaissance_CCC=="faux") + 1*(e$Connaissance_CCC=="trop vague") + 2*(e$Connaissance_CCC=="approximatif") + 3*(e$Connaissance_CCC=="bonne")
   temp[e$connaissance_CCC_internet==T] <- 2
-  e$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")), 
+  e$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")),
                                 annotation="Connaissance_CCC: connaissance_CCC recodé en hors sujet/faux/aucune/approximatif/bonne (incl. internet) - Décrivez ce que vous savez de la Convention Citoyenne pour le Climat. (champ libre)")
   label(e$connaissance_CCC_bon_francais) <- "connaissance_CCC_bon_francais: Indicatrice que la réponse à connaissance_CCC est constituée d'une phrase grammaticalement correcte et sans faute d'orthographe (à l'exception des phrases très courtes type 'Je ne sais pas')"
   label(e$connaissance_CCC_sortition) <- "connaissance_CCC_sortition: Indicatrice que la réponse à connaissance_CCC mentionne le tirage au sort, ou du moins le caractère 'lambda' ou hétérogène des citoyens de la CCC"
@@ -914,11 +924,6 @@ convert_e <- function(e) {
 # e <- prepare_e()
 # 
 # export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
-
-# convert_e()
-# prepare_e(exclude_screened=FALSE, exclude_speeder=FALSE, only_finished=T)
-# sa <- s
-# prepare_e()
 
 weighting_e <- function(data, printWeights = T) { # cf. google sheet
   d <- data
