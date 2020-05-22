@@ -199,6 +199,12 @@ save_plotly(devoile)
 (confiance_sortition <- barres(vars = "confiance_sortition", miss = F, labels="Confiance dans la capacité de citoyens tirés au sort \nà délibérer de manière productive sur des questions politiques complexes"))
 save_plotly(confiance_sortition)
 
+(confiance_sortition_CCC <- barres(vars = "confiance_sortition", df = c, miss = F, labels="Confiance dans la capacité de citoyens tirés au sort \nà délibérer de manière productive sur des questions politiques complexes"))
+save_plotly(confiance_sortition_CCC)
+
+(confiance_sortition_both <- barres(data=dataN2("confiance_sortition", miss = F), sort = F, miss = F, rev_color = T, labels = c('CCC', 'Population'), legend=dataN2("confiance_sortition", miss = F, return = 'legend')))
+save_plotly(confiance_sortition_both)
+
 (pour_sortition <- barres(vars = "pour_sortition", miss = T, rev=F, thin=F, labels="Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement"))
 save_plotly(pour_sortition)
 
@@ -243,8 +249,20 @@ save_plotly(trop_impots)
 (problemes_invisibilises <- barres(vars = "problemes_invisibilises", miss = F, rev=F, labels="Se sent confronté à des difficultés ignorées\n des pouvoirs publics et des médias"))
 save_plotly(problemes_invisibilises) 
 
-(confiance_gens <- barres(vars = "confiance_gens", miss = F, thin=F, labels=""))
-save_plotly(confiance_gens) 
+(problemes_invisibilises_CCC <- barres(vars = "problemes_invisibilises", df = c, miss = F, labels="Se sent confronté à des difficultés ignorées\n des pouvoirs publics et des médias"))
+save_plotly(problemes_invisibilises_CCC)
+
+(problemes_invisibilises_both <- barres(data=dataN2("problemes_invisibilises", miss = F), miss = F, sort = F, rev_color = T, labels = c('CCC', 'Population'), legend=dataN2("problemes_invisibilises", miss = F, return = 'legend')))
+save_plotly(problemes_invisibilises_both)
+
+(confiance_gens2 <- barres(vars = "confiance_gens", miss = F, labels="Confiance dans les autres"))
+save_plotly(confiance_gens2) 
+
+(confiance_gens_CCC <- barres(vars = "confiance_gens", df = c, miss = F, labels="Confiance dans les autres"))
+save_plotly(confiance_gens_CCC)
+
+(confiance_gens_both <- barres(data=dataN2("confiance_gens", miss = F), miss = F, sort = F, rev_color = T, labels = c('CCC', 'Population'), legend=dataN2("confiance_gens", miss = F, return = 'legend')))
+save_plotly(confiance_gens_both)
 
 (efforts_relatifs <- barres(vars = "efforts_relatifs", miss = F, labels="Prêt à faire plus d'efforts que la majorité \ndes Français contre le changement climatique"))
 save_plotly(efforts_relatifs) 
@@ -255,29 +273,82 @@ save_plotly(parle_CC)
 (issue_CC <- barres(vars = "issue_CC", miss = F, labels="Le changement climatique sera limité \nà un niveau acceptable d’ici la fin du siècle"))
 save_plotly(issue_CC) 
 
-(effets_CC_CCC <- barres(vars = "effets_CC_CCC", miss = F, rev = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
-save_plotly(effets_CC_CCC) 
+(issue_CC_CCC <- barres(vars = "issue_CC", df = c, miss = F, labels="Le changement climatique sera limité \nà un niveau acceptable d’ici la fin du siècle"))
+save_plotly(issue_CC_CCC)
+
+(issue_CC_both <- barres(data=dataN2("issue_CC", miss = F), miss = F, sort = F, rev_color = T, labels = c('CCC', 'Population'), legend=dataN2("issue_CC", miss = F, return = 'legend')))
+save_plotly(issue_CC_both)
+
+(effets_CC_CCC2 <- barres(vars = "effets_CC_CCC", miss = F, rev = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
+save_plotly(effets_CC_CCC2) 
+
+(effets_CC_CCC_CCC <- barres(vars = "effets_CC_CCC", df = c, miss = F, rev = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
+save_plotly(effets_CC_CCC_CCC)
+
+(effets_CC_CCC_both <- barres(data=dataN2("effets_CC_CCC", miss = F), miss = F, sort = F, labels = c('CCC', 'Population'), legend=dataN2("effets_CC_CCC", miss = F, return = 'legend')))
+save_plotly(effets_CC_CCC_both)
 
 (effets_CC_AT <- barres(vars = "effets_CC_AT", rev = F, miss = T, labels="Effets du changement climatique, \nsi rien n'est fait pour le limiter ?"))
 save_plotly(effets_CC_AT) 
 
-(cause_CC_CCC <- barres(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
-save_plotly(cause_CC_CCC)
+(cause_CC_CCC2 <- barres(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
+save_plotly(cause_CC_CCC2)
 
-(France_CC <- barres(vars = "France_CC", thin = F, rev = F, miss = T, labels="La France doit prendre de l’avance \nsur d’autres pays dans la lutte contre le changement climatique"))
-save_plotly(France_CC) 
+(cause_CC_CCC_CCC <- barres(vars = "cause_CC_CCC", df = c, miss = F, labels="Cause du changement climatique"))
+save_plotly(cause_CC_CCC_CCC)
 
-(echelle_politique_CC <- barres(vars = "echelle_politique_CC", thin = F, rev = F, miss = F, labels="Le changement climatique exige\n d’être pris en charge par des politiques ..."))
-save_plotly(echelle_politique_CC) 
+(cause_CC_CCC_both <- barres(data=dataN2("cause_CC_CCC", miss = F, rev = T), miss = F, sort = F, labels = c('CCC', 'Population'), legend=rev(dataN2("cause_CC_CCC", miss = F, return = 'legend'))))
+save_plotly(cause_CC_CCC_both)
+
+(France_CC2 <- barres(vars = "France_CC", thin = F, miss = F, labels="La France doit prendre de l’avance \nsur d’autres pays dans la lutte contre le changement climatique"))
+save_plotly(France_CC2) 
+
+(France_CC_CCC <- barres(vars = "France_CC", df = c, thin = F, miss = F, labels="La France doit prendre de l’avance \nsur d’autres pays dans la lutte contre le changement climatique"))
+save_plotly(France_CC_CCC)
+
+(France_CC_both <- barres(data=dataN2("France_CC", miss=F, rev = T), miss = F, sort = F, labels = c('CCC', 'Population'), legend=rev(dataN2("France_CC", return = 'legend', miss=F))))
+save_plotly(France_CC_both)
+
+(effets_CC_AT <- barres(vars = "effets_CC_AT", rev = F, miss = T, labels="Effets du changement climatique, \nsi rien n'est fait pour le limiter ?"))
+save_plotly(effets_CC_AT) 
+
+(echelle_politique_CC2 <- barres(vars = "echelle_politique_CC", thin = F, rev = F, miss = F, labels="Le changement climatique exige\n d’être pris en charge par des politiques ..."))
+save_plotly(echelle_politique_CC2) 
+
+(echelle_politique_CC_CCC <- barres(vars = "echelle_politique_CC", df = c, thin = F, rev = F,  miss = F, labels="Le changement climatique exige\n d’être pris en charge par des politiques ..."))
+save_plotly(echelle_politique_CC_CCC)
+
+(echelle_politique_CC_both <- barres(data=dataN2("echelle_politique_CC", miss = F), miss = F, sort = F, labels = c('CCC', 'Population'), legend=dataN2("echelle_politique_CC", miss = F, return = 'legend')))
+save_plotly(echelle_politique_CC_both)
 
 (patrimoine <- barres(vars = "patrimoine", rev = F, rev_color = T, miss = T, labels="Patrimoine net du ménage"))
 save_plotly(patrimoine) 
 
-(redistribution <- barres(vars = "redistribution", rev = F, miss = F, labels="Il faudrait prendre aux riches pour donner aux pauvres"))
-save_plotly(redistribution) 
+(redistribution2 <- barres(vars = "redistribution", rev = F, miss = F, labels="Il faudrait prendre aux riches pour donner aux pauvres"))
+save_plotly(redistribution2) 
+
+(redistribution_CCC <- barres(vars = "redistribution", df = c, rev = F,  miss = F, labels="Il faudrait prendre aux riches pour donner aux pauvres"))
+save_plotly(redistribution_CCC)
+
+(redistribution_both <- barres(data=dataN2("redistribution", miss = F), rev = F,  miss = F, sort = F, labels = c('CCC', 'Population'), legend=dataN2("redistribution", miss = F, return = 'legend')))
+save_plotly(redistribution_both)
 
 (importance <- barres(vars = variables_importance, rev = F, rev_color = T, miss = F, labels=c("L'action sociale et associative", "La protection de l'environnement", "L’amélioration de mon niveau de vie et de confort")))
 save_plotly(importance) 
+
+data_importance_CCC <- matrix(0, nrow = 11, ncol = 3)
+for (i in 0:10) for (j in 1:3) data_importance_CCC[i+1, j] <- length(which(c[[paste(variables_importance[j], '_1e', sep='')]]==i))/length(which(!is.na(c[[paste(variables_importance[j], '_1e', sep='')]])))
+(variables_importance_CCC <- barres(data = data_importance_CCC, rev = F,  rev_color = T, miss = F, legend = 0:10, labels=c("L'action sociale et associative", "La protection de l'environnement", "L’amélioration de mon niveau de vie et de confort")))
+save_plotly(variables_importance_CCC)
+
+(importance_associatif_both <- barres(data=cbind(data_importance_CCC[,1], dataN("importance_associatif", miss = F)), rev = F, rev_color = T,  miss = F, sort = F, labels = c('CCC', 'Population'), legend=0:10))
+save_plotly(importance_associatif_both)
+
+(importance_environnement_both <- barres(data=cbind(data_importance_CCC[,2], dataN("importance_environnement", miss = F)), rev = F, rev_color = T,  miss = F, sort = F, labels = c('CCC', 'Population'), legend=0:10))
+save_plotly(importance_environnement_both)
+
+(importance_confort_both <- barres(data=cbind(data_importance_CCC[,3], dataN("importance_confort", miss = F)), rev = F, rev_color = T,  miss = F, sort = F, labels = c('CCC', 'Population'), legend=0:10))
+save_plotly(importance_confort_both)
 
 labels_responsible <- c("Each one of us", "Governments", "Certain foreign countries", "The richest", "Natural causes", "Past generations")
 labels_responsable <- c("Chacun d'entre nous", "Les gouvernements", "Certains pays étrangers", "Les plus riches", "Des causes naturelles", "Les générations passées")

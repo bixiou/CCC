@@ -389,6 +389,7 @@ data1 <- function(vars, data=e, weights=T) {
   return( matrix(res, ncol=length(vars)) )
 }
 dataN <- function(var, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
+  if (is.null(data[['weight']])) weights <- F # TODO? warning
   mat <- c()
   if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]])))) v <- as.factor(data[[var]])
   else v <- data[[var]]
@@ -420,6 +421,9 @@ dataKN <- function(vars, data=e, miss=T, weights = T, return = "", fr=T, rev=FAL
     for (var in vars) res <- c(res, dataN(var, data, miss, weights, return, fr, rev))
     return(matrix(res, ncol=length(vars))) }
 }
+dataN2 <- function(var, df = list(c, e), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
+  if (return %in% c("levels", "legend")) return(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev, return = return))
+  else return(cbind(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev), dataN(var, df[[2]], miss = miss, weights = weights, fr = fr, rev = rev))) }
 color5 <- c(rainbow(4, end=4/15)[1:3], "#00FF00", "#228B22") # the last two are: green, forestgreen
 color <- function(v, grey=FALSE, grey_replaces_last = T, rev_color = FALSE, theme='RdBu') {
   if (is.matrix(v)) n <- nrow(v)
@@ -452,6 +456,7 @@ yes_no5 <- c("Not at all", "Not really", "Indifferent/PNR", "Rather yes", "Yes, 
 # evolve5 <- c("Strongly decrease", "Slightly decrease", "Maintain", "Slightly increase", "Strongly increase")
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
                    display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e, miss=T, weights = T, fr=T, rev=T) {
+  if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   if (missing(data) & !missing(vars)) {
     data <- dataKN(vars, data=df, miss=miss, weights = weights, return = "", fr=fr, rev=rev)

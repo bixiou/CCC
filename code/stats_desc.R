@@ -1025,11 +1025,50 @@ write.csv(C, '../donnees/responses_raw.csv', row.names = FALSE) # pour qui ?
 C[38, 209] <- substr(C[38, 209], 1, 208) # string already truncated in raw data (at 244 characters), bug when not truncated a bit more # was 38,213 (check s2_e_notes_sur_le_questionnaire) which(grepl('commentaire', names(c))) max(nchar(c[, 167]), na.rm=T)
 write_dta(C, '../donnees/responses_raw.dta', version = 11)
 
+c <- readRDS('../donnees/CCC.Rda')
 convert_c <- function(c) {
-  c$confiance_gens <- relabel(as.factor(c$confiance_gens_1e), "on n'est jamais assez prudent"="Méfiant", "on peut faire confiance"="Confiant")
+  # c$confiance_gens <- c$confiance_gens_1e
+  # c$confiance_gens <- relabel(as.factor(c$confiance_gens_1e), "on n'est jamais assez prudent"="Méfiant", "on peut faire confiance"="Confiant", ""="NSP")
+  # levels(c$confiance_gens)[levels(c$confiance_gens)==""] <- 'NSP'
+  # label(c$confiance_gens) <- "confiance_gens: D’une manière générale, diriez-vous que… ? (On peut faire confiance à la plupart des gens/On n’est jamais assez prudent quand on a affaire aux autres) - Q65"
+  c$confiance_gens <- as.item(as.character(c$confiance_gens_1e), labels = structure(c("on peut faire confiance", "on n'est jamais assez prudent", "NSP"), names = c("Confiance", "Méfiance", "NSP")), annotation=Label(c$confiance_gens_1e))
+
+  temp <- -3*(c$tirage_sort_1e=='Pas du tout confiance') - (c$tirage_sort_1e=='Plutot pas confiance') + (c$tirage_sort_1e=='Plutot confiance') + 3*(c$tirage_sort_1e=='Tout à fait confiance')
+  c$confiance_sortition <- as.item(temp, missing.values = 0, labels=structure(c(-3, -1, 0, 1, 3), names = c('Pas du tout confiance', 'Plutôt pas confiance', 'NSP', 'Plutôt confiance', 'Tout à fait confiance')), annotation=Label(c$tirage_sort_1e))
+
+  temp <- -3*(c$problemes_invisibilises_1e=='jamais') - (c$problemes_invisibilises_1e=='peu souvent') + (c$problemes_invisibilises_1e=='assez souvent') + 3*(c$problemes_invisibilises_1e=='très souvent')
+  c$problemes_invisibilises <- as.item(temp, missing.values = 0, labels=structure(c(-3, -1, 0, 1, 3), names = c('Jamais', 'Peu souvent', 'NSP', 'Assez souvent', 'Très souvent')), annotation=Label(c$problemes_invisibilises_1e))
+
+  temp <- -3*(c$issue_CC_1e=='Non certainement pas') - (c$issue_CC_1e=='NOn probablement pas') + (c$issue_CC_1e=='Oui probablement') + 3*(c$issue_CC_1e=='Oui certainement')
+  c$issue_CC <- as.item(temp, labels=structure(c(-3, -1, 0, 1, 3), names = c('Non, certainement pas', 'Non, probablement pas', 'NSP', 'Oui, probablement', 'Oui, certainement')), annotation=Label(c$issue_CC_1e))
+
+  temp <- -1*grepl("positif", c$effets_CC_1e) + grepl("pénible", c$effets_CC_1e)
+  temp[is.na(c$effets_CC_1e)] <- NA
+  c$effets_CC_CCC <- as.item(temp, labels = structure(-1:1, names = c("Effets positifs", "Adaptation sans problème", "Extrêmement pénible")), annotation = Label(c$effets_CC_1e))
+
+  temp <- 1*grepl("uement activité hu", c$cause_CC_1e) - grepl("autant", c$cause_CC_1e) - 2*grepl("incipalement processus na", c$cause_CC_1e) - 3*grepl("iquement à des processus nat", c$cause_CC_1e) - 4*grepl("y a pas", c$cause_CC_1e)
+  temp[is.na(c$cause_CC_1e) | c$cause_CC_1e=='NR'] <- NA
+  c$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1),
+                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(c$cause_CC_1e))
+    
+  # c$France_CC <- c$France_CC_1e
+  # c$France_CC[c$France_CC_1e=='NR'] <- 'NSP'
+  # c$France_CC[c$France_CC_1e==''] <- NA
+  # c$France_CC <- as.factor(as.character(c$France_CC))
+  temp <- -1*grepl('Non', c$France_CC_1e) + grepl('Oui', c$France_CC_1e)
+  temp[is.na(c$France_CC_1e)] <- NA
+  c$France_CC <- as.item(temp, labels = structure(c(-1:1), names = c('Non', ' NSP ', 'Oui')), annotation=Label(c$France_CC_1e)) # missing.values = 0, 
+
+  c$echelle_politique_CC <- -2*(c$echelle_politique_CC_1e=='Toute échelle') -1*(c$echelle_politique_CC_1e=='Mondiale') + (c$echelle_politique_CC_1e=='Nationale') + 2*(c$echelle_politique_CC_1e=='Locale')
+  c$echelle_politique_CC <- as.item(c$echelle_politique_CC, labels = structure(c(-2:2), names=c('à toutes les échelles', "mondiales", 'européennes', 'nationales', 'locales')), annotation=Label(c$echelle_politique_CC_1e) )
+  
+  c$redistribution <- c$redistribution_1e
+  c$redistribution[28] <- 1 # so that there is one answer "1", avoiding a bug
   
   return(c)
 }
+
+c <- convert_c(c)
 
 nb_reponses <- c()
 nb_manquants <- c()

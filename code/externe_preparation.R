@@ -515,6 +515,10 @@ convert_e <- function(e) {
   e$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1),
                       names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(e$cause_CC_CCC))
 
+  temp <- -1*grepl("positif", e$effets_CC_CCC) + grepl("pénible", e$effets_CC_CCC)
+  temp[is.na(e$effets_CC_CCC)] <- NA
+  e$effets_CC_CCC <- as.item(temp, labels = structure(-1:1, names = c("Effets positifs", "Adaptation sans problème", "Extrêmement pénible")), annotation = Label(e$effets_CC_CCC))
+  
   temp <- -3*(e$problemes_invisibilises=='Jamais') - (e$problemes_invisibilises=='Peu souvent') + (e$problemes_invisibilises=='Assez souvent') + 3*(e$problemes_invisibilises=='Très souvent')
   e$problemes_invisibilises <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Jamais', 'Peu souvent', 'Assez souvent', 'Très souvent')), annotation=Label(e$problemes_invisibilises))
 
@@ -541,6 +545,9 @@ convert_e <- function(e) {
   temp <- - grepl("Aucune", e$sait_CCC_devoilee) + grepl("Oui", e$sait_CCC_devoilee)
   is.na(temp) <- is.na(e$sait_CCC_devoilee)
   e$sait_CCC_devoilee <- as.item(temp, labels=structure(c(-1:1), names = c('Non', 'Pas sûr', 'Oui')), annotation=Label(e$sait_CCC_devoilee))
+
+  temp <- -1*grepl('Non', e$France_CC) + grepl('Oui', e$France_CC)
+  e$France_CC <- as.item(temp, labels = structure(-1:1, names = c('Non', ' NSP ', 'Oui')), annotation=Label(e$France_CC)) # missing.values = 0, 
   
   e$question_confiance <- e$question_confiance > 0
   e$avant_modifs <- e$avant_modifs != 2
@@ -567,7 +574,10 @@ convert_e <- function(e) {
 
   e$chauffage <- relabel(e$chauffage, "Gaz de ville"="Gaz réseau", "Butane, propane, gaz en citerne"="Gaz bouteille", "Fioul, mazout, pétrole"="Fioul", "Électricité"="Électricité", "Bois, solaire, géothermie, aérothermie (pompe à chaleur)"="Bois, solaire...", "Autre"="Autre", "NSP"="NSP")
   e$cause_CC_AT <- relabel(e$cause_CC_AT, "n'est pas une réalité"="n'existe pas", "est principalement dû à la variabilité naturelle du climat"="naturel", "est principalement dû à l'activité humaine"="anthropique", "NSP"="NSP")
-  e$confiance_gens <- relabel(as.factor(e$confiance_gens), "On peut faire confiance à la plupart des gens"="Confiant", "On n’est jamais assez prudent quand on a affaire aux autres"="Méfiant")
+  # e$confiance_gens <- relabel(as.factor(e$confiance_gens), "On peut faire confiance à la plupart des gens"="Confiant", "On n’est jamais assez prudent quand on a affaire aux autres"="Méfiant")
+  # label(e$confiance_gens) <- "confiance_gens: D’une manière générale, diriez-vous que… ? (On peut faire confiance à la plupart des gens/On n’est jamais assez prudent quand on a affaire aux autres) - Q65"
+  
+  e$confiance_gens <- as.item(as.character(e$confiance_gens), labels = structure(c("On peut faire confiance à la plupart des gens", "On n’est jamais assez prudent quand on a affaire aux autres"), names = c("Confiance", "Méfiance")), annotation=Label(e$confiance_gens))
   
   e$gauche_droite <- pmax(-2,pmin(2,-2 * e$extr_gauche - 1*e$gauche + 1*e$droite + 2 * e$extr_droite))
   is.na(e$gauche_droite) <- (e$gauche_droite == 0) & !e$centre
