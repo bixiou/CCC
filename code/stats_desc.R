@@ -564,7 +564,7 @@ relabel_and_rename_b <- function(data, original_names = FALSE, clean_vars = TRUE
   # names(data)[44] <- ""
   # label(data[[44]]) <- "_4s: "
   names(data)[45] <- "pour_cantines_vertes_4s"
-  label(data[[45]]) <- "pour_cantines_vertes_4s: Obliger la restauration collective publique à proposer une offre de menu végétarien, biologique et/ou de saiso - Pour limiter les émissions de GES, est-il souhaitable de ... (Très; Assez; Pas vraiment; Pas du tout souhaitable)"
+  label(data[[45]]) <- "pour_cantines_vertes_4s: Obliger la restauration collective publique à proposer une offre de menu végétarien, biologique et/ou de saison - Pour limiter les émissions de GES, est-il souhaitable de ... (Très; Assez; Pas vraiment; Pas du tout souhaitable)"
   names(data)[46] <- "pour_fin_gaspillage_4s"
   label(data[[46]]) <- "pour_fin_gaspillage_4s: Réduire le gaspillage alimentaire de moitié - Pour limiter les émissions de GES, est-il souhaitable de ... (Très; Assez; Pas vraiment; Pas du tout souhaitable)"
   names(data)[47] <- "France_CC_4s"
@@ -1064,6 +1064,32 @@ convert_c <- function(c) {
   
   c$redistribution <- c$redistribution_1e
   c$redistribution[28] <- 1 # so that there is one answer "1", avoiding a bug
+  
+  variables_politiques_c <- names(c)[49:60]
+  for (v in variables_politiques_c) {
+    temp <- -3 *(c[[v]]=='pas du tout') - 1*(c[[v]]=='pas vraiment') + 1*(c[[v]]=='Assez souhitable') + 3*(c[[v]]=='très souhaitable')
+    # temp[!(temp %in% c(-3,-1, 1,3))] <- NA
+    c[[sub('_1e', '', v)]] <- as.item(temp, labels = structure(c(-3,-1, 0,1,3), names = c('Pas du tout', 'Pas vraiment', 'NSP', 'Assez', 'Très')), annotation = Label(c[[v]]))
+  }
+  
+  variables_qualite_enfant <- names(c)[11:21]
+  for (v in variables_qualite_enfant) c[[sub('_1e', '', v)]] <- as.logical(c[[v]])
+  
+  variables_obstacles <- names(c)[62:69] # 68
+  for (v in variables_obstacles) c[[sub('_1e', '', v)]] <- as.numeric(c[[v]])
+  
+  c$solution_CC_changer <- grepl('faudra modifier', c$solution_CC_1e)
+  c$solution_CC_traite <- grepl('niveau mondial', c$solution_CC_1e)
+  c$solution_CC_progres <- grepl('solutions', c$solution_CC_1e)
+  c$solution_CC_rien <- grepl('rien', c$solution_CC_1e)
+  c$solution_CC_changer[is.na(c$solution_CC_1e)] <- NA
+  c$solution_CC_traite[is.na(c$solution_CC_1e)] <- NA
+  c$solution_CC_progres[is.na(c$solution_CC_1e)] <- NA
+  c$solution_CC_rien[is.na(c$solution_CC_1e)] <- NA
+  label(c$solution_CC_changer) <- "solution_CC_changer: Il faudra modifier de façon importante nos modes de vie pour empêcher le changement climatique - De ces quatre opinions, laquelle se rapproche le plus de la vôtre (Le progrès technique permettra de trouver des solutions pour empêcher le changement climatique; Il faudra modifier de façon importante nos modes de vie pour empêcher le changement climatique; C’est aux États de réglementer, au niveau mondial, le changement climatique; Il n’y a rien à faire, le changement climatique est inévitable) - Q50"
+  label(c$solution_CC_traite) <- "solution_CC_traite: C’est aux États de réglementer, au niveau mondial, le changement climatique - De ces quatre opinions, laquelle se rapproche le plus de la vôtre (Le progrès technique permettra de trouver des solutions pour empêcher le changement climatique; Il faudra modifier de façon importante nos modes de vie pour empêcher le changement climatique; C’est aux États de réglementer, au niveau mondial, le changement climatique; Il n’y a rien à faire, le changement climatique est inévitable) - Q50"
+  label(c$solution_CC_progres) <- "solution_CC_progres: Le progrès technique permettra de trouver des solutions pour empêcher le changement climatique - De ces quatre opinions, laquelle se rapproche le plus de la vôtre (Le progrès technique permettra de trouver des solutions pour empêcher le changement climatique; Il faudra modifier de façon importante nos modes de vie pour empêcher le changement climatique; C’est aux États de réglementer, au niveau mondial, le changement climatique; Il n’y a rien à faire, le changement climatique est inévitable) - Q50"
+  label(c$solution_CC_rien) <- "solution_CC_rien: Il n’y a rien à faire, le changement climatique est inévitable - De ces quatre opinions, laquelle se rapproche le plus de la vôtre (Le progrès technique permettra de trouver des solutions pour empêcher le changement climatique; Il faudra modifier de façon importante nos modes de vie pour empêcher le changement climatique; C’est aux États de réglementer, au niveau mondial, le changement climatique; Il n’y a rien à faire, le changement climatique est inévitable) - Q50"
   
   return(c)
 }

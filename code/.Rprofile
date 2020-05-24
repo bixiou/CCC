@@ -384,7 +384,7 @@ data1 <- function(vars, data=e, weights=T) {
   res <- c()
   for (var in vars) {
     if (weights) { res <- c(res, sum(data[['weight']][which(data[[var]]==TRUE)])/sum(data[['weight']][which(data[[var]]==TRUE | data[[var]]==FALSE)])) }
-    else { res <- c(res, length(which(data[[var]]==T)))/length(which(data[[var]]==T | data[[var]]==FALSE)) }
+    else { res <- c(res, length(which(data[[var]]==T))/length(which(data[[var]]==T | data[[var]]==FALSE))) }
   }
   return( matrix(res, ncol=length(vars)) )
 }
@@ -455,7 +455,7 @@ yes_no5 <- c("Not at all", "Not really", "Indifferent/PNR", "Rather yes", "Yes, 
 # evol5 <- c("Baisser fortement", "Baisser légèrement", "Maintenir au niveau", "Augmenter légèrement", "Augmenter fortement")
 # evolve5 <- c("Strongly decrease", "Slightly decrease", "Maintain", "Slightly increase", "Strongly increase")
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
-                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e, miss=T, weights = T, fr=T, rev=T) {
+                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e, miss=T, weights = T, fr=T, rev=T, grouped = F) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   if (missing(data) & !missing(vars)) {
@@ -563,7 +563,7 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
                  # automargin = T,
                  zeroline = FALSE),
     hovermode = 'closest',
-    barmode = 'stack',
+    barmode = ifelse(grouped, 'group', 'stack'),
     title = list(text = title, font = list(color = 'black')),
     # title = title,
     # titlefont = list(color='black'),

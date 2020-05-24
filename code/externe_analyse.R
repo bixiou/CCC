@@ -119,7 +119,7 @@ decrit(e$obstacle_4) # inegalites 20%, demographie 18%
 decrit(e$obstacle_5) # incertitudes 21%, technologies 18%, demographie 18%
 decrit(e$obstacle_6) # incertitudes 24%, demographie 21%
 decrit(e$obstacle_7) # technologies 24%, incertitudes 21%
-decrit(e$obstacle_8) # rien de tout cela 67%
+decrit(e$obstacle_8) # rien de tout cela 67% (mais n = 50 au lieu de ~900)
 
 
 ##### Problème conso L/100km #####
@@ -188,6 +188,22 @@ labels_variables_referendum <- c("Obligation de rénovation thermique assortie d
                                  "Taxe de 4% sur les dividendes des grandes entreprises\n finançant la transition", "Système de consigne de verre et plastique")
 (referendum <- barres(vars = variables_referendum, miss=T, labels=labels_variables_referendum))
 save_plotly(referendum)
+
+# variables_politiques_c <- c("pour_vitesse_110", "pour_taxe_abions", "pour_obligation_renovation", "pour_compteurs_intelligents", "pour_taxe_distance", "pour_taxe_carbone", "pour_renouvelables", "pour_densification", "pour_taxe_vehicules", "pour_voies_reservees", "pour_cantines_vertes", "pour_fin_gaspillage")
+variables_politiques_c <- names(c)[375:386] #sub('_1e', '', names(c)[49:60])
+# labels_politiques_c <- c()
+# for (v in variables_politiques_c) labels_politiques_c <- c(labels_politiques_c, sub('.*: ', '', sub(' -.*', '', Label(c[[paste(v, '1e', sep='_')]]))))
+labels_politiques_c <- c("Abaisser la vitesse limite sur autoroute à 110 km/heure", "Taxer le transport aérien pour favoriser le transport par train", 
+                         "Obliger les propriétaires à rénover et à isoler\n les logements lors d’une vente ou d’une location", " Installer dans les foyers des compteurs électriques qui analysent les \nconsommations pour permettre aux gens des faire des économies d’énergie",
+                         "Augmenter le prix des produits de consommation \nqui sont acheminés par des modes de transport polluants", "Augmenter la taxe carbone",
+                         "Développer les énergies renouvelables même si, dans certains cas,\n les coûts de production sont plus élevés, pour le moment", "Densifier les villes en limitant l’habitat\n pavillonnaire au profit d’immeubles collectifs",
+                         "Taxer les véhicules les plus émetteurs de gaz à effet de serre", "Favoriser l’usage (voies de circulation, place de stationnement réservées)\n des véhicules peu polluants ou partagés (covoiturage)",
+                         "Obliger la restauration collective publique à proposer\n une offre de menu végétarien, biologique et/ou de saison", "Réduire le gaspillage alimentaire de moitié")
+(politiques_c2 <- barres(vars = variables_politiques_c, df = c, miss=F, labels=labels_politiques_c))
+save_plotly(politiques_c2)
+
+(politiques_c1 <- barres(vars = variables_politiques_1, df = c, miss=F, labels=labels_variables_politiques_1))
+save_plotly(politiques_c1) # TODO: alterner lignes CCC et externe ?
 
 labels_variables_devoile_long <- c()
 for (v in variables_devoile) labels_variables_devoile_long <- c(labels_variables_devoile_long, sub(' - .*', '', sub('.*]', '', Label(e[[v]]))))
@@ -363,10 +379,73 @@ save_plotly(CCC_avis)
 
 labels_qualite_enfant <- c()
 for (v in variables_qualite_enfant) labels_qualite_enfant <- c(labels_qualite_enfant, sub(' - .*', '', sub('.*: ', '', Label(e[[v]]))))
-(qualite_enfant <- barres(vars = variables_qualite_enfant, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
-save_plotly(qualite_enfant) 
+(qualite_enfant2 <- barres(vars = variables_qualite_enfant, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
+save_plotly(qualite_enfant2) 
 
-# TODO: pour_taxe_carbone, part_anthropique, obstacles, solution_CC, nb_politiques_env, qualite_enfant, cause_CC_AT
+(qualite_enfant_CCC <- barres(vars = variables_qualite_enfant, df = c, rev = F, weights = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
+save_plotly(qualite_enfant_CCC) 
+
+data_qualite_enfant <- matrix(NA, ncol = length(variables_qualite_enfant), nrow = 2)
+for (j in 1:length(variables_qualite_enfant)) data_qualite_enfant[1,j] <- length(which(c[[variables_qualite_enfant[j]]]==T))/length(which(!is.missing(c[[variables_qualite_enfant[j]]])))
+for (j in 1:length(variables_qualite_enfant)) data_qualite_enfant[2,j] <- sum(e$weight[e[[variables_qualite_enfant[j]]]==T])/sum(e$weight)
+(qualite_enfant_both <- barres(data = data_qualite_enfant, grouped = T, rev = F, miss=F, labels=labels_qualite_enfant, legend = c('CCC', 'Population')))
+save_plotly(qualite_enfant_both) # TODO: alterner lignes CCC et externe ?
+
+(cause_CC_AT <- barres(vars = "cause_CC_AT", miss = T, rev = F, labels="Cause du changement climatique"))
+save_plotly(cause_CC_AT)
+decrit(b$cause_CC, data = b)
+decrit(b$cause_CC) # part anthropique objective : ~ 75%
+
+plot(Ecdf(e$part_anthropique)$x, Ecdf(e$part_anthropique)$y, type='s', xlab='Pourcentage estimé de Français estimant que le changement climatique est anthropique', ylab='Proportion < x') + grid()
+data_anthropique <- (rbind(length(which(e$part_anthropique <= 45)), length(which(e$part_anthropique %between% c(46, 55))), length(which(e$part_anthropique %between% c(56, 65))), length(which(e$part_anthropique %between% c(66, 75))), length(which(e$part_anthropique >75)))/nrow(e))
+(part_anthropique <- barres(data = data_anthropique, rev = F, rev_color = T,  miss = F, sort = F, labels = "Part des Français considérant que \nle changement climatique est anthropique ?", legend=c("Moins de 45%", "De 46 à 55%", "De 56 à 65%", "De 66 à 75%", "Plus de 75%")))
+save_plotly(part_anthropique)
+
+data_taxe_carbone <- cbind(dataN("pour_taxe_carbone", data = e[e$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = e[e$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = e[e$variante_taxe_carbone=='neutre',]))
+(pour_taxe_carbone2 <- barres(data = data_taxe_carbone, rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est pour", "Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est contre", "Favorable à une augmentation de la taxe carbone\nVariante: sans information"), legend=c('Oui', 'Non', 'NSP')))
+save_plotly(pour_taxe_carbone2) # TODO: margin errors
+
+(pour_taxe_carbone_neutre <- barres(vars = "pour_taxe_carbone", df = e[e$variante_taxe_carbone=='neutre',], rev = F, thin = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sans information")))
+save_plotly(pour_taxe_carbone_neutre)
+
+# labels_solution <- c()
+# for (v in variables_solution) labels_solution <- c(labels_solution, sub(' - .*', '', sub('.*: ', '', Label(e[[v]]))))
+labels_solution <- c("Le progrès technique permettra de trouver des\n solutions pour empêcher le changement climatique", "Il faudra modifier de façon importante nos \nmodes de vie pour empêcher le changement climatique", "C’est aux États de réglementer, \nau niveau mondial, le changement climatique", "Il n’y a rien à faire, \nle changement climatique est inévitable")
+(solution_CC <- barres(vars = variables_solution, rev = F, miss = F, showLegend=F, labels=labels_solution))
+save_plotly(solution_CC) 
+
+(solution_CC_CCC <- barres(vars = variables_solution, df = c, rev = F, weights = F, miss = F, showLegend=F, labels=labels_solution))
+save_plotly(solution_CC_CCC) # /!\ Choix multiples dans externe mais pas dans CCC
+
+data_solution <- matrix(NA, ncol = length(variables_solution), nrow = 2)
+for (j in 1:length(variables_solution)) data_solution[1,j] <- length(which(c[[variables_solution[j]]]==T))/length(which(!is.na(c[[variables_solution[j]]])))
+for (j in 1:length(variables_solution)) data_solution[2,j] <- sum(e$weight[e[[variables_solution[j]]]==T])/sum(e$weight)
+(solution_CC_both <- barres(data = data_solution, grouped = T, rev = F, miss=F, labels=labels_solution, legend = c('CCC', 'Population')))
+save_plotly(solution_CC_both)
+
+labels_obstacles <- c()
+for (v in variables_obstacles) labels_obstacles <- c(labels_obstacles, sub(' - .*', '', sub('[a-z_]*: ', '', Label(e[[v]]))))
+data_obstacles_e <- matrix(NA, nrow = 7, ncol = length(variables_obstacles))
+for (j in 1:length(variables_obstacles)) for (i in 1:7) data_obstacles_e[i,j] <- sum(e$weight[e[[variables_obstacles[j]]]==i], na.rm=T)/sum(e$weight)
+(obstacles <- barres(data = data_obstacles_e[,c(5,7,6,4,2,3,1)], rev = F, miss = F, sort = F, showLegend=T, legend = 1:7, labels=labels_obstacles[c(5,7,6,4,2,3,1)])) # rev(1:7): ordre d'apparition dans questionnaire
+save_plotly(obstacles) 
+
+data_obstacles_c <- matrix(NA, nrow = 7, ncol = length(variables_obstacles))
+for (j in 1:length(variables_obstacles)) for (i in 1:7) data_obstacles_c[i,j] <- sum(c[[variables_obstacles[j]]]==i, na.rm=T)/sum(!is.na(c[[variables_obstacles[j]]]))
+(obstacles_CCC <- barres(data = data_obstacles_c[,c(5,7,6,4,2,3,1)], rev = F, weights = F, sort = F, miss = F, showLegend=T, legend = 1:7, labels=labels_obstacles[c(5,7,6,4,2,3,1)]))
+save_plotly(obstacles_CCC) 
+
+data_obstacles_both <- matrix(NA, ncol = length(variables_obstacles), nrow = 2)
+for (j in 1:length(variables_obstacles)) data_obstacles_both[1,j] <- length(which(c[[variables_obstacles[j]]]<=2))/length(which(!is.na(c[[variables_obstacles[j]]])))
+for (j in 1:length(variables_obstacles)) data_obstacles_both[2,j] <- sum(e$weight[e[[variables_obstacles[j]]]<=2],na.rm=T)/sum(e$weight)
+(obstacles_both <- barres(data = data_obstacles_both, grouped = T, rev = F, miss=F, labels=labels_obstacles[1:7], legend = c('CCC', 'Population')))
+save_plotly(obstacles_both)
+
+plot(Ecdf(e$nb_politiques_env)$x, Ecdf(e$nb_politiques_env)$y, type='s', xlab='Nombre de politiques environnementales soutenues', ylab='Proportion < x') + grid()
+data_nb_politiques_env <- (rbind(length(which(e$nb_politiques_env <= 6)), length(which(e$nb_politiques_env %between% c(7, 8))), length(which(e$nb_politiques_env == 9)), length(which(e$nb_politiques_env == 10)), length(which(e$nb_politiques_env >10)))/nrow(e))
+(nb_politiques_env <- barres(data = data_nb_politiques_env, rev = F, rev_color = T,  miss = F, sort = F, labels = "Nombre de politiques climatiques soutenues", legend=c("De 0 à 6", "7 ou 8", "9", "10", "11 ou 12")))
+save_plotly(nb_politiques_env)
+
 
 ##### Champ libre #####
 # 988: "Bonjour !.\nDepuis des lustres je n'ai aucune confiance dans notre système de gouvernance.\nTrop de Députés,\ndes Sénateurs inutiles,\nles Régions sont une entité faisant double emploi avec les Départements,\n
@@ -430,7 +509,7 @@ decrit(e$solution_CC_progres, weight=F) # 13%
 decrit(e$solution_CC_traite, weight=F) # 19%
 decrit(e$solution_CC_rien, weight=F) # 12%
 decrit(c$echelle_politique_CC_1e) # pareil
-decrit(e$echelle_politique_CC) # TODO: recoder labels pour qu'ils coïncident
+decrit(e$echelle_politique_CC)
 decrit(c$pour_taxe_distance_1e) # CCC plus écolo
 decrit(e$pour_taxe_distance)
 decrit(c$pour_renouvelables_1e)

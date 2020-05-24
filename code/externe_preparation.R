@@ -451,6 +451,7 @@ convert_e <- function(e) {
       label(e[[j]]) <- temp
     }
   }
+  variables_solution <<- names(e)[grepl('solution_CC', names(e))]
   variables_qualite_enfant <<- names(e)[grepl('qualite_enfant', names(e))]
   variables_responsable_CC <<- paste('responsable_CC', c('chacun', 'govts', 'etranger', 'riches', 'nature', 'passe'), sep='_')
   variables_CCC_avis <<- paste('CCC', c("inutile", "prometteuse_climat", "espoir_institutions", "vouee_echec", "operation_comm", "initiative_sincere", 
@@ -810,6 +811,7 @@ convert_e <- function(e) {
   e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'inconnue')
   e$label_taxe <- relevel(as.factor(e$label_taxe), 'taxe')
   e$variante_taxe_carbone <- relevel(as.factor(e$variante_taxe_carbone), 'neutre')
+  label(e$variante_taxe_carbone) <- "variante_taxe_carbone: Variante aléatoire pour pour_taxe_carbone: neutre/pour/contre: no info / Selon un sondage de 2018/2019, une majorité de Français est pour/contre une augmentation de la taxe carbone"
   
   e$hausse_depenses_par_uc <- e$hausse_depenses/e$uc # TODO: hausse_depenses_interaction_par_uc
   label(e$hausse_depenses_par_uc) <- "hausse_depenses_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (utilise la variable buggué hausse_depenses) (élasticité de 0.4/0.2 pour carburants/chauffage)"
