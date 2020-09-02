@@ -20,6 +20,7 @@ package("lsr")
 package("ggplot2")
 package("stringr")
 package("survey")
+Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "/home/adrien/anaconda3/bin", sep = .Platform$path.sep))
 package("plotly")
 package('gdata')
 package("Hmisc")
@@ -1029,3 +1030,4 @@ print.Crosstab <- function(x,dec.places=x$dec.places,subtotals=x$subtotals,...) 
   
 }
 
+inflate_for_miss <- function(v) return(c(v[1:(length(v)-1)]/(1-v[length(v)]), v[length(v)]))

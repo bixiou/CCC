@@ -466,7 +466,7 @@ relabel_and_rename_a <- function(data, original_names = FALSE, clean_vars = TRUE
   if (original_names) names(data) <- question_numbers
 
   if (clean_vars) {
-    data <- data[,-c(2, 5, 7, 9, 13:21, 24, 26, 43, 47, 49:55, 72, 79, 82, 87, 93, 110, 112, 117, 121, 123, 125, 131, 134, 138, 143, 145, 151, 153, 158)]
+    data <- data[,-c(2, 5, 7, 9, 13:21, 24, 26, 43, 47, 49:54, 72, 79, 82, 87, 93, 110, 112, 117, 121, 123, 125, 131, 134, 138, 143, 145, 151, 153, 158)]
     data <- data[,c(58:170,1:57)]  
   } else data <- data[,c(85:213,1:84)]  
   return(data)
@@ -916,6 +916,9 @@ relabel_and_rename_c <- function(data, original_names = FALSE, clean_vars = TRUE
 
 find_var <- function(string, data = Q) which(sapply(colnames(c), function(q) grep('annee', q))>0)
 
+## 0. Load Bénédicte merged data
+call <- read_dta("../donnees/all_benedicte.dta")
+
 ## a. Prepare data 3 first sessions
 # load datasets
 Q1e <- read_dta("../donnees/1e.dta")
@@ -925,7 +928,9 @@ Q2e <- read_dta("../donnees/2e.dta")
 # merge datasets
 Q1e$identifiant[is.na(Q1e$identifiant)] <- paste('NA_1e', seq(1:length(which(is.na(Q1e$identifiant)))), sep='_') # 7 NAs
 Q1s$identifiant[is.na(Q1s$identifiant)] <- paste('NA_1s', seq(1:length(which(is.na(Q1s$identifiant)))), sep='_') # 13
-Q2e$identifiant[is.na(Q2e$identifiant)] <- paste('NA_2e', seq(1:length(which(is.na(Q2e$identifiant)))), sep='_') # 5
+# Q2e$identifiant[is.na(Q2e$identifiant)] <- paste('NA_2e', seq(1:length(which(is.na(Q2e$identifiant)))), sep='_') # 5
+Q2e$identifiant <- Q2e$nouvel_identifiant
+Q2e$identifiant[is.na(Q2e$nouvel_identifiant)] <- paste('NA_2e', seq(1:length(which(is.na(Q2e$nouvel_identifiant)))), sep='_') # 5
 Q1e <- Q1e[!duplicated(Q1e$identifiant),] # same answers for duplicate id=74 except for s1_e_q49_technologies
 Qa <- merge(Q2e, merge(Q1e, Q1s, all = TRUE), all = TRUE)
 
@@ -1065,7 +1070,7 @@ convert_c <- function(c) {
   c$redistribution <- c$redistribution_1e
   c$redistribution[28] <- 1 # so that there is one answer "1", avoiding a bug
   
-  variables_politiques_c <- names(c)[49:60]
+  variables_politiques_c <- names(c)[50:61]
   for (v in variables_politiques_c) {
     temp <- -3 *(c[[v]]=='pas du tout') - 1*(c[[v]]=='pas vraiment') + 1*(c[[v]]=='Assez souhitable') + 3*(c[[v]]=='très souhaitable')
     # temp[!(temp %in% c(-3,-1, 1,3))] <- NA
@@ -1075,7 +1080,7 @@ convert_c <- function(c) {
   variables_qualite_enfant <- names(c)[11:21]
   for (v in variables_qualite_enfant) c[[sub('_1e', '', v)]] <- as.logical(c[[v]])
   
-  variables_obstacles <- names(c)[62:69] # 68
+  variables_obstacles <- names(c)[63:70] # 68
   for (v in variables_obstacles) c[[sub('_1e', '', v)]] <- as.numeric(c[[v]])
   
   c$solution_CC_changer <- grepl('faudra modifier', c$solution_CC_1e)

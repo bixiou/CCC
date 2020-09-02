@@ -930,7 +930,7 @@ convert_e <- function(e) {
   label(e$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
   label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
   
-  e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139)] # 39:49, 
+  e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)] # 39:49,
   return(e)
 }
 # e <- prepare_e()
@@ -999,6 +999,7 @@ prepare_e <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished
   } else {
     e$Diplome <- (e$diplome == "Brevet des collèges") + 2*(e$diplome=="CAP ou BEP") + 3*(e$diplome=="Baccalauréat") + 4*(e$diplome=="Bac +2 (BTS, DUT, DEUG, écoles de formation sanitaires et sociales...)") + 5*(e$diplome=="Bac +3 (licence...)") + 6*(e$diplome=="Bac +5 ou plus (master, école d'ingénieur ou de commerce, doctorat, médecine, maîtrise, DEA, DESS...)") - (e$diplome=="NSP (Ne se prononce pas)")
     e$diplome4 <- as.item(pmin(pmax(e$Diplome, 1), 4), labels = structure(1:4, names = c("Aucun diplôme ou brevet", "CAP ou BEP", "Baccalauréat", "Supérieur")), annotation=Label(e$diplome))  
+    e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)]    
   }
   
   e$sample <- "a"
@@ -1019,8 +1020,24 @@ e <- prepare_e()
 export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 
 b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
-c <- readRDS("../donnees/CCC.Rda") # données CCC
+c <- readRDS("../donnees/CCC.Rda") # données CCC 
  
+ccc <- read.dta13("../donnees/all_benedicte.dta")
+ccc$appartenance_france <- grepl("France", ccc$s2_e_q10)
+ccc$appartenance_monde <- grepl("monde", ccc$s2_e_q10)
+ccc$appartenance_Europe <- grepl("Europe", ccc$s2_e_q10)
+ccc$appartenance_commune <- grepl("commune", ccc$s2_e_q10)
+ccc$appartenance_region <- grepl("region", ccc$s2_e_q10)
+ccc$appartenance_departement <- grepl("departement", ccc$s2_e_q10)
+ccc$appartenance_nr <- grepl("nr", ccc$s2_e_q10)
+decrit(ccc$appartenance_france)
+decrit(ccc$appartenance_monde)
+decrit(ccc$appartenance_Europe)
+decrit(ccc$appartenance_commune)
+decrit(ccc$appartenance_region)
+decrit(ccc$appartenance_departement)
+decrit(ccc$appartenance_nr)
+
 # write.csv2(e, "survey_prepared.csv", row.names=FALSE)
 
 # Pooling variables
