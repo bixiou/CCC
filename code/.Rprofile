@@ -8,8 +8,8 @@ package <- function(p) {
   library(p, character.only = TRUE)
 } # loads packages with automatical install if needed
 
-package("xtable")
 package('tidyverse')
+package("xtable")
 package("rms")
 package('pwr')
 package("foreign")

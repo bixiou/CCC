@@ -123,7 +123,7 @@ decrit(e$obstacle_7) # technologies 24%, incertitudes 21%
 decrit(e$obstacle_8) # rien de tout cela 67% (mais n = 50 au lieu de ~900)
 
 
-##### Problème conso L/100km #####
+##### Problème conso L/100km ##### TODO2wave
 length(which(abs(e$hausse_essence_verif_na - e$hausse_essence) > 0.001)) # toutes dans e$bug==F
 length(which(abs(e$hausse_diesel_verif_na - e$hausse_diesel) > 0.001)) # hausse_diesel et _essence ont été calculées avec la conso moyenne (pas celle renseignée par le répondant) pour bug = T
 length(which(abs(e$hausse_essence_verif - e$hausse_essence) > 0.001)) # toutes dans e$bug==T
@@ -628,7 +628,7 @@ save_plotly(cause_pauvrete) # CREDOC janvier 2019 toplot /!\ 50% de non réponse
 #  70: "Le  Réchauffement climatique est un problème majeur  aussi parce qu' il provoque  beaucoup de  discussions   et de dissensions  dans les familles.  Par exemple  certains  végans voudraient nous imposer  
 #       leur régime alimentaire  comme une religion.  lls   brandissent  le spectre d un cataclysme éminent si nous ne changeons pas totalement notre mode  de vie. et c 'est très angoissant.."
 #   1: "je souhaite de vivre bien"
-# critiques questionnaire: trop long, questions pas assez précises ou réponses manquant de nuances, la police devrait être noire plutôt que grise, et plus petite
+# critiques questionnaire: trop long, questions pas assez précises ou réponses manquant de nuances, la police devrait être noire plutôt que grise, et plus petite TODO2wave
 
 
 ##### Comparaison avec sondage Adrien Thomas #####
