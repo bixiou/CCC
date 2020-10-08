@@ -83,6 +83,51 @@ prop.table(table(data_all$s1_s_q17c_clean, (data_all$s1_e_q49_lobbies)==1), 1) #
 # De manière générale, pas de lien très clair entre Q49 S1E et Q17 S1S
 
 
+# Interaction avec confiance envers les autres
+prop.table(table(data_all$s1_e_q7, data_all$s1_e_q4), 2) # plus de confiance envers les autres -> plus de confiance envers capacité citoyens
+
+# Intéraction avec les principaux obstacles à la lutte contre le CC
+prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_lobbies)==1), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont moins nombreux à identifier les lobbies comme principal obstacle
+prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_volonte)<3), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont plus nombreux à identifier le manque de volonté politique comme un des deux principaux obstacles
+
+# Intéraction avec se sent mieux informé vie politique
+prop.table(table(data_all$s2_e_q11 < 5))
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q11)>6), 2) # les citoyens qui se sentent le mieux informés par rapport aux autres ont aussi plus confiance dans les capacités des citoyens tirés au sort
+
+
+
+##### Confiance différentes sources d’information #####
+# Analyse univariée
+prop.table(table(data_all$s1_s_q17a_clean)) # anecdotes perso : 7-27-50-10 de pas du tout à totalement
+prop.table(table(data_all$s1_s_q17b_clean)) # journaux et émissions TV : 10-32-44-2
+prop.table(table(data_all$s1_s_q17c_clean)) # réseaux sociaux : 18-44-26-2
+prop.table(table(data_all$s1_s_q17d_clean)) # sources gouvernementales : 6-22-55-5
+prop.table(table(data_all$s1_s_q17e_clean)) # document dossier participant CCC : 0-3-72-21
+prop.table(table(data_all$s1_s_q17f_clean)) # rapports d'experts : 0-2-47-47
+dotchart(as.matrix(table(data_all$s1_s_q17b_clean))[, 1], main = "Confiance journaux/émissions TV comme source d'info :", 
+         pch = 19)
+dotchart(as.matrix(table(data_all$s1_s_q17d_clean))[, 1], main = "Confiance gouvernement comme source d'info :", 
+         pch = 19)
+dotchart(as.matrix(table(data_all$s1_s_q17e_clean))[, 1], main = "Confiance dossier CCC comme source d'info :", 
+         pch = 19)
+dotchart(as.matrix(table(data_all$s1_s_q17f_clean))[, 1], main = "Confiance experts comme source d'info :", 
+         pch = 19)
+
+# Interaction avec confiance envers les autres
+prop.table(table(data_all$s1_s_q17a_clean, data_all$s1_e_q4), 2) # plus de confiance envers les autres -> plus de confiance envers anecdotes
+prop.table(table(data_all$s1_s_q17b_clean, data_all$s1_e_q4), 2)
+prop.table(table(data_all$s1_s_q17c_clean, data_all$s1_e_q4), 2) # moins de confiance envers les autres -> défiance plus forte envers réseaux sociaux
+prop.table(table(data_all$s1_s_q17d_clean, data_all$s1_e_q4), 2) # plus de confiance envers les autres -> plus de confiance envers gouvernement
+prop.table(table(data_all$s1_s_q17e_clean, data_all$s1_e_q4), 2)
+prop.table(table(data_all$s1_s_q17f_clean, data_all$s1_e_q4), 2)
+
+# Intéraction avec les principaux obstacles à la lutte contre le CC
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Rien de très clair qui se dégage, pas assez significatif
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_volonte)<3), 1) # Rien de très clair qui se dégage, pas assez significatif
+prop.table(table(data_all$s1_s_q17c_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Les citoyens les plus méfiants envers les réseaux sociaux sont plus nombreux à voir les lobbies comme le princpal obstacle
+# De manière générale, pas de lien très clair entre Q49 S1E et Q17 S1S
+
+
 
 ##### Limitation 110km/h #####
 # Analyse univariée
@@ -102,6 +147,14 @@ prop.table(table(data_all$s2_e_q41, data_all$s1_e_q36), 1) # On ne discerne rien
 # Analyse univariée
 prop.table(table(data_all$s1_e_q37)) # Environ 20% sont défavorables
 dotchart(as.matrix(table(data_all$s1_e_q37))[, 1], main = "Q37. Taxer transport aérien pour financer ferré :", 
+         pch = 19)
+
+
+
+##### Obligation rénovation thermique pour les propriétaires #####
+# Analyse univariée
+prop.table(table(data_all$s1_e_q38)) # Environ 20% sont défavorables
+dotchart(as.matrix(table(data_all$s1_e_q38))[, 1], main = "Q38. Obliger les propriétaires à rénover/isoler logement avant vente ou location :", 
          pch = 19)
 
 
@@ -143,3 +196,33 @@ prop.table(table(data_all$s2_e_q41, (data_all$s2_e_q12 < 5)), 2) # Rien de préc
 # Intéraction avec plus impacté par le CC que reste de ma génération
 prop.table(table(data_all$s2_e_q41, data_all$s2_e_q42), 2) # Rien de précis n'en ressort, trop de catégories
 mosaicplot(s2_e_q41 ~ s2_e_q42, data = data_all, shade = TRUE, main = "Plus exposé au CC et aux CP")
+
+
+
+
+##### Plus impacté que le reste de ma génération par le CC #####
+prop.table(table(data_all$s2_e_q42)) # la plupart des gens pensent être autant impactés, un certain nombre plus impactés, très peu moins impactés.
+dotchart(as.matrix(table(data_all$s2_e_q42))[, 1], main = "Les pol. clim. vous demanderont plus d'efforts qu'à la moyenne :", 
+         pch = 19)
+
+# Intéraction avec difficultés financières
+prop.table(table(data_all$s2_e_q42, data_all$s1_e_q3), 2) # Trop de catégories pour que quoique ce soit émerge de significatif
+
+
+
+##### Echelle prise en charge CC #####
+prop.table(table(data_all$s1_e_q35))
+dotchart(as.matrix(table(data_all$s1_e_q35))[, 1], main = "Echelles politiques climatiques", 
+         pch = 19)
+
+# Intéraction avec obstacles
+prop.table(table(data_all$s1_e_q35, (data_all$s1_e_q49_lobbies)==1), 2) # Rien de très clair qui se dégage
+prop.table(table(data_all$s1_e_q35, (data_all$s1_e_q49_volonte)<3), 2) # Rien de très clair qui se dégage
+
+
+
+
+#### Avance de la France dans la lutte face au CC #####
+prop.table(table(data_all$s1_e_q48)) # Une écrasante majorité pense qu'il faut que la France prenne de l'avance (89% oui, 2% non, 8% NSP)
+dotchart(as.matrix(table(data_all$s1_e_q48))[, 1], main = "La France doit-elle prendre de l'avance dans la lutte face au CC  ?", 
+         pch = 19)
