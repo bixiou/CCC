@@ -4,17 +4,49 @@ library(psych)
 #data_all <- read.dta("C:/Users/thoma/Documents/Github/CCC/donnees/1e.dta")
 data_all <- read.dta("C:/Users/thoma/Documents/Github/CCC/donnees/all_benedicte.dta")
 
-
-
 ##### Sexe #####
 # Analyse univariée
 prop.table(table(data_all$sexe)) # 53% de femmes
 
-# Intéraction avec age
+# Interaction avec age
 prop.table(table(data_all$sexe, data_all$age), 2) # les hommes sont sur-représentés chez les 25-34 ans, les femmes chez les 65 ans et plus
 
-# Intéraction avec diplome
+# Interaction avec diplome
 prop.table(table(data_all$sexe, data_all$diplome), 2) # les proportions sont relativement équilibrées, à comparer avec données Insee
+
+### Interaction avec politiques environnementales
+# Interaction avec taxe carbone
+prop.table(table(data_all$s1_e_q41_clean, data_all$sexe), 2)
+
+# Interaction avec taxe aviation financant ferré
+prop.table(table(data_all$s1_e_q37, data_all$sexe), 2)
+
+# Interaction avec limitation 110 km/h
+prop.table(table(data_all$s1_e_q36, data_all$sexe), 2)
+
+# Interaction avec obligation rénovation thermique
+prop.table(table(data_all$s1_e_q38, data_all$sexe), 2)
+
+# Interaction avec installation compteurs intelligents
+prop.table(table(data_all$s1_e_q39, data_all$sexe), 2)
+
+# Interaction avec augmenter prix produits acheminés par transports polluants
+prop.table(table(data_all$s1_e_q40_clean, data_all$sexe), 2)
+
+# Interaction avec développer énergies renouvelables même si plus cher
+prop.table(table(data_all$s1_e_q42, data_all$sexe), 2) # politique plébiscitée, mêmes résultats pour les 2 sexes
+
+# Interaction avec densifier villes
+prop.table(table(data_all$s1_e_q43, data_all$sexe), 2)
+
+# Interaction avec taxer véhicules plus émetteurs de GES
+prop.table(table(data_all$s1_e_q44, data_all$sexe), 2) # Les hommes sont moins favorables à la taxation des véhicules plus émetteurs
+
+# Interaction avec menus végé/bios/de saison
+prop.table(table(data_all$s1_e_q46, data_all$sexe), 2) # Les femmes sont plus favorables à la promotion de ces menus écolos
+
+# Interaction avec la France doit-elle prendre de l'avance
+prop.table(table(data_all$s1_e_q48, data_all$sexe), 2) # Davantage d'hommes pensent que la France doit prendre de l'avance
 
 
 
@@ -25,7 +57,7 @@ prop.table(table(data_all$s1_e_q4)) # 72 on n'est jamais assez prudent, 67 on pe
 dotchart(as.matrix(table(data_all$s1_e_q4))[, 1], main = "Q4. D’une manière générale, diriez-vous que… ? :", 
          pch = 19)
 
-# Intéraction avec les principaux obstacles à la lutte contre le CC
+# Interaction avec les principaux obstacles à la lutte contre le CC
 prop.table(table(data_all$s1_e_q4, (data_all$s1_e_q49_lobbies)==1), 1) # les citoyens qui ont plus de confiance envers les autres sont moins nombreux à identifier les lobbies comme principal obstacle
 prop.table(table(data_all$s1_e_q4, (data_all$s1_e_q49_volonte)<3), 1) # Pas de différence très significative sur ce point
 
@@ -41,11 +73,11 @@ dotchart(as.matrix(table(data_all$s1_e_q7))[, 1], main = "Q7. Confiance capacit�
 # Interaction avec confiance envers les autres
 prop.table(table(data_all$s1_e_q7, data_all$s1_e_q4), 2) # plus de confiance envers les autres -> plus de confiance envers capacité citoyens
 
-# Intéraction avec les principaux obstacles à la lutte contre le CC
+# Interaction avec les principaux obstacles à la lutte contre le CC
 prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_lobbies)==1), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont moins nombreux à identifier les lobbies comme principal obstacle
 prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_volonte)<3), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont plus nombreux à identifier le manque de volonté politique comme un des deux principaux obstacles
 
-# Intéraction avec se sent mieux informé vie politique
+# Interaction avec se sent mieux informé vie politique
 prop.table(table(data_all$s2_e_q11 < 5))
 prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q11)>6), 2) # les citoyens qui se sentent le mieux informés par rapport aux autres ont aussi plus confiance dans les capacités des citoyens tirés au sort
 
@@ -76,7 +108,7 @@ prop.table(table(data_all$s1_s_q17d_clean, data_all$s1_e_q4), 2) # plus de confi
 prop.table(table(data_all$s1_s_q17e_clean, data_all$s1_e_q4), 2)
 prop.table(table(data_all$s1_s_q17f_clean, data_all$s1_e_q4), 2)
 
-# Intéraction avec les principaux obstacles à la lutte contre le CC
+# Interaction avec les principaux obstacles à la lutte contre le CC
 prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Rien de très clair qui se dégage, pas assez significatif
 prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_volonte)<3), 1) # Rien de très clair qui se dégage, pas assez significatif
 prop.table(table(data_all$s1_s_q17c_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Les citoyens les plus méfiants envers les réseaux sociaux sont plus nombreux à voir les lobbies comme le princpal obstacle
@@ -86,11 +118,11 @@ prop.table(table(data_all$s1_s_q17c_clean, (data_all$s1_e_q49_lobbies)==1), 1) #
 # Interaction avec confiance envers les autres
 prop.table(table(data_all$s1_e_q7, data_all$s1_e_q4), 2) # plus de confiance envers les autres -> plus de confiance envers capacité citoyens
 
-# Intéraction avec les principaux obstacles à la lutte contre le CC
+# Interaction avec les principaux obstacles à la lutte contre le CC
 prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_lobbies)==1), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont moins nombreux à identifier les lobbies comme principal obstacle
 prop.table(table(data_all$s1_e_q7, (data_all$s1_e_q49_volonte)<3), 1) # les citoyens qui ont plus de confiance envers la capacité de citoyens tirés au sort sont plus nombreux à identifier le manque de volonté politique comme un des deux principaux obstacles
 
-# Intéraction avec se sent mieux informé vie politique
+# Interaction avec se sent mieux informé vie politique
 prop.table(table(data_all$s2_e_q11 < 5))
 prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q11)>6), 2) # les citoyens qui se sentent le mieux informés par rapport aux autres ont aussi plus confiance dans les capacités des citoyens tirés au sort
 
@@ -121,7 +153,7 @@ prop.table(table(data_all$s1_s_q17d_clean, data_all$s1_e_q4), 2) # plus de confi
 prop.table(table(data_all$s1_s_q17e_clean, data_all$s1_e_q4), 2)
 prop.table(table(data_all$s1_s_q17f_clean, data_all$s1_e_q4), 2)
 
-# Intéraction avec les principaux obstacles à la lutte contre le CC
+# Interaction avec les principaux obstacles à la lutte contre le CC
 prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Rien de très clair qui se dégage, pas assez significatif
 prop.table(table(data_all$s1_s_q17d_clean, (data_all$s1_e_q49_volonte)<3), 1) # Rien de très clair qui se dégage, pas assez significatif
 prop.table(table(data_all$s1_s_q17c_clean, (data_all$s1_e_q49_lobbies)==1), 1) # Les citoyens les plus méfiants envers les réseaux sociaux sont plus nombreux à voir les lobbies comme le princpal obstacle
@@ -135,10 +167,10 @@ prop.table(table(data_all$s1_e_q36)) # 17 pas du tout souhaitable, 53 pas vraime
 dotchart(as.matrix(table(data_all$s1_e_q36))[, 1], main = "Q36. Limitation à 110km/h :", 
          pch = 19)
 
-# Intéraction avec ruraux/urbains
+# Interaction avec ruraux/urbains
 prop.table(table(data_all$s1_e_q1_clean, data_all$s1_e_q36), 1)
 
-# Intéraction avec perception de l'effort demandé par les CP par rapport aux autres
+# Interaction avec perception de l'effort demandé par les CP par rapport aux autres
 prop.table(table(data_all$s2_e_q41, data_all$s1_e_q36), 1) # On ne discerne rien de précis, trop de catégories
 
 
@@ -167,13 +199,85 @@ prop.table(table(data_all$s1_e_q41_clean)) # Une majorité des citoyen est favor
 dotchart(as.matrix(table(data_all$s1_e_q41_clean))[, 1], main = "Q41. Augmenter la taxe carbone :", 
          pch = 19)
 
-# Intéraction avec ruraux/urbains
+### Interaction socio-démos :
+# Interaction avec ruraux/urbains
 prop.table(table(data_all$s1_e_q1_clean, data_all$s1_e_q41_clean), 1)
 
-# Intéraction avec perception de l'effort demandé par les CP par rapport aux autres
+# Interaction avec nombre de voitures
+prop.table(table(data_all$s1_s_q22, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec distance domicile-travail
+prop.table(table(data_all$s1_s_q23, data_all$s1_e_q41_clean), 1) # Attention, question mal posée
+
+# Interaction avec âge
+prop.table(table(data_all$age, data_all$s1_e_q41_clean), 1) # Les plus jeunes sont les plus réfractaires
+
+# Interaction avec sexe
+prop.table(table(data_all$sexe, data_all$s1_e_q41_clean), 1) # Les hommes sont nettement plus réfractaires que les femmes
+
+# Interaction avec diplôme
+prop.table(table(data_all$diplome, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec CSP
+prop.table(table(data_all$pcs, data_all$s1_e_q41_clean), 1)
+
+### Interaction autres politiques :
+# Interaction avec 110km/h
+prop.table(table(data_all$s1_e_q36, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec taxe aviation
+prop.table(table(data_all$s1_e_q37, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec infrastructures pour favoriser les véhicules propres
+prop.table(table(data_all$s1_e_q45_clean, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec menu écolos
+prop.table(table(data_all$s1_e_q46, data_all$s1_e_q41_clean), 1)
+
+
+### Interaction avec valeurs / perceptions
+# Interaction avec perception de l'effort demandé par les CP par rapport aux autres
 prop.table(table(data_all$s2_e_q41, data_all$s1_e_q41_clean), 1) # On ne discerne rien de précis, trop de catégories
 
+# Interaction avec confiance envers les autres
+prop.table(table(data_all$s1_e_q4, data_all$s1_e_q41_clean), 1)
 
+# Interaction avec confiance capacité citoyens tirés au sort
+prop.table(table(data_all$s1_e_q7, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec déterminants pauvreté
+prop.table(table(data_all$s1_e_q12_clean, data_all$s1_e_q41_clean), 1) #
+
+# Interaction avec mieux informé vie politique
+prop.table(table((data_all$s2_e_q11 > 7), data_all$s1_e_q41_clean), 1) # Les mieux informés sont plus favorables
+prop.table(table((data_all$s2_e_q11 < 4), data_all$s1_e_q41_clean), 1) # Les moins bien informés sont moins favorables
+
+# Interaction avec importance amélioration niveau de vie
+prop.table(table(data_all$s1_e_q15, data_all$s1_e_q41_clean), 1) # rien de clair qui se dégage
+prop.table(table((data_all$s1_e_q15 > 6), data_all$s1_e_q41_clean), 1)
+prop.table(table((data_all$s1_e_q15 < 5), data_all$s1_e_q41_clean), 1)
+
+# Interaction avec anticipation situation éco perso future
+prop.table(table(data_all$s2_e_q12, data_all$s1_e_q41_clean), 1)
+prop.table(table((data_all$s2_e_q12 > 5), data_all$s1_e_q41_clean), 1)
+prop.table(table((data_all$s2_e_q12 < 4), data_all$s1_e_q41_clean), 1)
+
+# Interaction avec satisfaction dans la vie
+prop.table(table(data_all$s1_e_q8, data_all$s1_e_q41_clean), 1)
+prop.table(table((data_all$s1_e_q8 > 7), data_all$s1_e_q41_clean), 1)
+prop.table(table((data_all$s1_e_q8 < 6), data_all$s1_e_q41_clean), 1)
+
+# Interaction avec origine CC
+prop.table(table(data_all$s1_e_q20, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec salaire moyen de la profession
+prop.table(table((data_all$s2_e_q14_clean > 1800), data_all$s1_e_q41_clean), 1)
+
+# Interaction avec salaire moyen de la profession
+prop.table(table(data_all$s1_e_q10_tranche, data_all$s1_e_q41_clean), 1)
+
+# Interaction avec difficultés ignorées des dirigeants/médias
+prop.table(table(data_all$s1_e_q11_clean, data_all$s1_e_q41_clean), 1)
 
 
 ##### Perception de l'effort demandé par les politiques climatiques par rapport à la moyenne #####
@@ -181,19 +285,19 @@ prop.table(table(data_all$s2_e_q41)) # 50% pensent que cela leur demandera davan
 dotchart(as.matrix(table(data_all$s2_e_q41))[, 1], main = "Les pol. clim. vous demanderont plus d'efforts qu'à la moyenne :", 
          pch = 19)
 
-# Intéraction avec ruraux/urbains
+# Interaction avec ruraux/urbains
 prop.table(table(data_all$s1_e_q1_clean, data_all$s2_e_q41), 1) # les habitants des petites villes se sentent les plus concernés par ces efforts
 
-# Intéraction avec age
+# Interaction avec age
 prop.table(table(data_all$age, data_all$s2_e_q41), 1) # les 35-49 se sentent les plus concernés par ces efforts
 
-# Intéraction avec difficultés ignorées par pouvoirs publics et médias
+# Interaction avec difficultés ignorées par pouvoirs publics et médias
 prop.table(table(data_all$s1_e_q11, data_all$s2_e_q41), 1) # Rien de précis n'en ressort
 
-# Intéraction avec perception évolution propre situation éco et sociale
+# Interaction avec perception évolution propre situation éco et sociale
 prop.table(table(data_all$s2_e_q41, (data_all$s2_e_q12 < 5)), 2) # Rien de précis n'en ressort
 
-# Intéraction avec plus impacté par le CC que reste de ma génération
+# Interaction avec plus impacté par le CC que reste de ma génération
 prop.table(table(data_all$s2_e_q41, data_all$s2_e_q42), 2) # Rien de précis n'en ressort, trop de catégories
 mosaicplot(s2_e_q41 ~ s2_e_q42, data = data_all, shade = TRUE, main = "Plus exposé au CC et aux CP")
 
@@ -205,7 +309,7 @@ prop.table(table(data_all$s2_e_q42)) # la plupart des gens pensent être autant 
 dotchart(as.matrix(table(data_all$s2_e_q42))[, 1], main = "Les pol. clim. vous demanderont plus d'efforts qu'à la moyenne :", 
          pch = 19)
 
-# Intéraction avec difficultés financières
+# Interaction avec difficultés financières
 prop.table(table(data_all$s2_e_q42, data_all$s1_e_q3), 2) # Trop de catégories pour que quoique ce soit émerge de significatif
 
 
@@ -215,7 +319,7 @@ prop.table(table(data_all$s1_e_q35))
 dotchart(as.matrix(table(data_all$s1_e_q35))[, 1], main = "Echelles politiques climatiques", 
          pch = 19)
 
-# Intéraction avec obstacles
+# Interaction avec obstacles
 prop.table(table(data_all$s1_e_q35, (data_all$s1_e_q49_lobbies)==1), 2) # Rien de très clair qui se dégage
 prop.table(table(data_all$s1_e_q35, (data_all$s1_e_q49_volonte)<3), 2) # Rien de très clair qui se dégage
 
