@@ -289,6 +289,37 @@ prop.table(table(data_all$s1_e_q11_clean, data_all$s1_e_q41_clean), 1)
 
 
 
+##### Taxe carbone sondage 2019 #####
+### Analyse univariée
+decrit(s$si_pauvres, weights = s$weight) # 45% - 17% - 38% (Oui, NSP, Non)
+decrit(s$si_compensee, weights = s$weight) # 37% - 17% - 46%
+decrit(s$si_contraints, weights = s$weight) # 55% - 22% - 23%
+decrit(s$si_baisse_cotsoc, weights = s$weight) # 51% - 23% - 26%
+decrit(s$si_baisse_tva, weights = s$weight) # 61% - 18% - 21%
+decrit(s$si_baisse_deficit, weights = s$weight) # 44% - 29% - 27%
+decrit(s$si_renovation, weights = s$weight) # 55% - 24% - 20%
+decrit(s$si_renouvelables, weights = s$weight) # 59% - 22% - 20%
+decrit(s$si_transports, weights = s$weight) # 65% - 18% - 17%
+
+### Socio démo taxe compensée tous les Français
+# Sexe
+prop.table(table(s$sexe, s$si_compensee), 1) # approbation légèrement supérieure chez les femmes : 37,9% vs. 35,5%
+prop.table(table(data_all$sexe, (data_all$s2_e_q32 > 5)), 1) # approbation très supérieure chez les femmes : 34,0% vs 23,3%
+
+# Age
+prop.table(table(s$age, s$si_compensee), 1) # Approbation décroit avec l'âge
+prop.table(table(data_all$age, (data_all$s2_e_q32 > 5)), 1) # Approbation non-monotone en fonction de l'âge
+
+# Rural-urbain
+prop.table(table(s$taille_agglo, s$si_compensee), 1) # pas de différence géographique notable
+prop.table(table(data_all$s1_e_q1_clean, (data_all$s2_e_q32 > 5)), 1) # Approbation nettement plus faible en campagne
+
+# Nombre véhicules
+prop.table(table(s$nb_vehicules, s$si_compensee), 1) # Rien de clairement discernable
+prop.table(table(data_all$s1_s_q22, (data_all$s2_e_q32 > 5)), 1) # Rien de clairement discernable
+
+
+
 ##### Taxe carbone selon mode de redistribution #####
 prop.table(table((data_all$s2_e_q31 > 5))) # Majorité favorabe (57%) si les 50% les plus modestes sont compensés
 prop.table(table((data_all$s2_e_q32 > 5))) # Majorité défavorable (28% pour) si finance versement à tous les Français
@@ -355,8 +386,8 @@ prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q36 > 5)), 1) #
 prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q36 > 5)), 1) #
 
 
-
-table(data_all$s1_s_q17d_clean)
+##### Sources financement CCC #####
+table(data_all$s7_q29_9) # 3 sont favorables à la taxe carbone comme source de financement, vs. 60 qui n'y sont pas.
 
 
 
