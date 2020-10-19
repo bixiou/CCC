@@ -245,6 +245,13 @@ prop.table(table(data_all$s1_e_q4, data_all$s1_e_q41_clean), 1)
 # Interaction avec confiance capacité citoyens tirés au sort
 prop.table(table(data_all$s1_e_q7, data_all$s1_e_q41_clean), 1)
 
+# Interaction avec confiance médias
+prop.table(table(data_all$s1_s_q17b_clean, data_all$s1_e_q41_clean), 1)
+# Interaction avec confiance gouvernement
+prop.table(table(data_all$s1_s_q17d_clean, data_all$s1_e_q41_clean), 1)
+# Interaction avec confiance experts
+prop.table(table(data_all$s1_s_q17f_clean, data_all$s1_e_q41_clean), 1)
+
 # Interaction avec déterminants pauvreté
 prop.table(table(data_all$s1_e_q12_clean, data_all$s1_e_q41_clean), 1) #
 
@@ -278,6 +285,92 @@ prop.table(table(data_all$s1_e_q10_tranche, data_all$s1_e_q41_clean), 1)
 
 # Interaction avec difficultés ignorées des dirigeants/médias
 prop.table(table(data_all$s1_e_q11_clean, data_all$s1_e_q41_clean), 1)
+
+
+
+
+##### Taxe carbone selon mode de redistribution #####
+prop.table(table((data_all$s2_e_q31 > 5))) # Majorité favorabe (57%) si les 50% les plus modestes sont compensés
+prop.table(table((data_all$s2_e_q32 > 5))) # Majorité défavorable (28% pour) si finance versement à tous les Français
+prop.table(table((data_all$s2_e_q33 > 5))) # Majorité favorabe (65%) si finance versement pour ménages contraints
+prop.table(table((data_all$s2_e_q34 > 5))) # Majorité défavorable (38% pour) si finance baisse cotisations sociales
+prop.table(table((data_all$s2_e_q35 > 5))) # Majorité défavorabe (45% pour) si finance baisse TVA
+prop.table(table((data_all$s2_e_q36 > 5))) # Majorité défavorabe (45% pour) si finance baisse déficit public
+prop.table(table((data_all$s2_e_q37 > 5))) # Majorité favorabe (86%) si finance la rénovation thermique des bâtiments
+prop.table(table((data_all$s2_e_q38 > 5))) # Majorité favorabe (85%) si finance des énergies renouvelables
+prop.table(table((data_all$s2_e_q39 > 5))) # Majorité favorabe (90%) si finance des transports non-polluants
+
+### Interaction avec approbation taxe carbone 1ere session
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q31 > 5)), 1)
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q32 > 5)), 1)
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q33 > 5)), 1)
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q34 > 5)), 1)
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q35 > 5)), 1)
+prop.table(table(data_all$s1_e_q41_clean, (data_all$s2_e_q36 > 5)), 1)
+
+### Interaction avec confiance
+# Taxe compensée 50% des plus modestes
+prop.table(table(data_all$s1_s_q17a_clean, (data_all$s2_e_q31 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q31 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q31 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q31 > 5)), 1) #
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q31 > 5)), 1) #
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q31 > 5)), 1) #
+
+# Taxe compensée tous les Français
+prop.table(table(data_all$s1_s_q17a_clean, (data_all$s2_e_q32 > 5)), 1) # Aucun effet
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q32 > 5)), 1) # Effet très fort : plus de confiance envers les médias, plus d'approbation envers T&D
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q32 > 5)), 1) # Effet très fort : plus de confiance envers le gvt, plus d'approbation envers T&D
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q32 > 5)), 1) # Effet fort : plus de confiance envers le dossier CCC, plus d'approbation envers T&D
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q32 > 5)), 1) # Plus de confiance envers les autres, moins d'approbation de T&D
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q32 > 5)), 1) # Plus de confiance envers capacité des citoyens, moins d'approbation de T&D
+
+# Taxe compensée pour les plus contraints
+prop.table(table(data_all$s1_s_q17a_clean, (data_all$s2_e_q33 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q33 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q33 > 5)), 1) #
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q33 > 5)), 1) #
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q33 > 5)), 1) #
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q33 > 5)), 1) #
+
+# Taxe finance baisse cot soc (double dividende)
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q34 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q34 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q34 > 5)), 1) #
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q34 > 5)), 1) #
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q34 > 5)), 1) #
+
+# Taxe finance baisse TVA
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q35 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q35 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q35 > 5)), 1) #
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q35 > 5)), 1) #
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q35 > 5)), 1) #
+
+# Taxe finance baisse déficit public
+prop.table(table(data_all$s1_s_q17b_clean, (data_all$s2_e_q36 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17d_clean, (data_all$s2_e_q36 > 5)), 1) # 
+prop.table(table(data_all$s1_s_q17e_clean, (data_all$s2_e_q36 > 5)), 1) #
+prop.table(table(data_all$s1_e_q4, (data_all$s2_e_q36 > 5)), 1) #
+prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q36 > 5)), 1) #
+
+
+
+table(data_all$s1_s_q17d_clean)
+
+
+
+##### Gagnants et perdants taxe carbone #####
+prop.table(table(data_all$s2_e_q40_flag)) # Réponses souvent incohérentes, à traiter avec prudence. La matrice est effectivement peu claire
+prop.table(table(data_all$s2_e_q40_1))
+prop.table(table(data_all$s2_e_q40_2)) # 62% pensent que les pauvres sont gagnants
+prop.table(table(data_all$s2_e_q40_3)) # 58% pensent que les classes moyennes sont perdantes
+prop.table(table(data_all$s2_e_q40_4)) # 50% pensent que les riches sont gagnants/perdants
+prop.table(table(data_all$s2_e_q40_5)) # 71% pensent que tous les Français sont gagnants ???!!!!
+prop.table(table(data_all$s2_e_q40_6)) # 50% pensent que les ruraux et péri-urbains sont gagnants/perdants
+prop.table(table(data_all$s2_e_q40_7))
+prop.table(table(data_all$s2_e_q40_8))
+
 
 
 ##### Perception de l'effort demandé par les politiques climatiques par rapport à la moyenne #####
