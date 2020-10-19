@@ -1,0 +1,24 @@
+1. je me dédis auprès de Bilendi et je dis de continuer le sondage finalement (le feedback n'étant pas si important)
+2. on recommence le sondage tel quel
+3. on recommence le sondage en améliorant notre feedback (par ex en changeant la formulation, en changeant l'info qu'on donne (continu/ternaire au lieu de binaire (pb d'hétérogénéité dans intensité du traitement?)), en améliorant le modèle (meilleure régression, meilleur indicateur i.e. tax gain au lieu de net gain)) en vue d'un follow-up paper
+4. on remplace le feedback par autre chose (au départ on avait prévu de mettre les questions T&D uniquement dans la 1ere vague semble-t-il : https://docs.google.com/document/d/10oHdxpHG2fy0hA2IAlActCLoeSBw7MBXzxAf9MoAQ4Y/edit# )
+
+1,2,3. résultat EELV
+2,3. la certitude_gagnant augmente significativement de 7 p.p. après feedback (mais notre feedback est pas terrible à cause du bug => mais le bug ne semble pas gêner bcp)
+4. Ça pourrait être:
+> dividende 0/110/220 aléatoirement
+- TT&D version MSH
+> La proposition de FR
+> Une question demandant pourquoi ils ont pas confiance dans la réception du dividende
+> dividende plus élevé à la campagne
+- vidéos vs. autre type de traitement
+
+soit on vise la comparabilité avec la version originale, soit on vise l'amélioriation du modèle
+
+Thomas : pas de préférence; privilégier lien avec la CCC; faire un papier plus solide que ça pour T&D; peut avoir un peu de sous
+
+Que faire pour gros papier ?
+- recyclage préféré par élicitation ? Voir à quel point original
+- confiance (MSH) https://www.overleaf.com/project/5ec2b9ebf8126300016d8c13
+- plus de pays
+- approche plus nornative, par exmple en ayant un modele de fiscalite optimale et le calibrer via une enquete: ssayer de trouver en quoi les biais de croyances qu 'on identifie affectent la fiscalite carbone optimale

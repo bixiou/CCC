@@ -8,12 +8,12 @@ package <- function(p) {
   library(p, character.only = TRUE)
 } # loads packages with automatical install if needed
 
+package("memisc")
 package('tidyverse')
 package("xtable")
 package("rms")
 package('pwr')
 package("foreign")
-package("memisc")
 package("DT")
 package("pastecs")
 package("lsr")
@@ -1031,3 +1031,5 @@ print.Crosstab <- function(x,dec.places=x$dec.places,subtotals=x$subtotals,...) 
 }
 
 inflate_for_miss <- function(v) return(c(v[1:(length(v)-1)]/(1-v[length(v)]), v[length(v)]))
+
+close <- function(x, y, prec = 0.0001) return(all(abs(x - y) < prec))

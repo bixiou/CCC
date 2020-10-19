@@ -6,6 +6,7 @@ summary(lm(efforts_relatifs ~ variante_efforts_vous, data=e, weights = e$weight)
 
 
 ##### Taxe carbone ~ sondage #####
+# cf. Bursztyn et al. 2020
 decrit(e$pour_taxe_carbone, miss=T)
 decrit(e$pour_taxe_carbone, which = e$variante_taxe_carbone=='pour', miss=T)
 decrit(e$pour_taxe_carbone, which = e$variante_taxe_carbone=='contre', miss=T)
@@ -36,6 +37,22 @@ summary(lm(confiance_dividende!='Non' ~ label_taxe * origine_taxe, data=e, weigh
 ##### Incertitude #####
 decrit(e$certitude_gagnant)
 CrossTable(e$certitude_gagnant, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
+cert <- e1[,which(names(e1) %in% c("certitude_gagnant_feedback", "simule_gagnant", "bug_touche", "feedback_confirme", "feedback_infirme"))]
+cert$feedback <- T
+e1$feedback <- F
+names(cert)[1] <- "certitude_gagnant"
+cert <- rbind(cert, e1[,which(names(e1) %in% c("certitude_gagnant", "simule_gagnant", "bug_touche", "feedback", "feedback_confirme", "feedback_infirme"))])
+summary(lm(certitude_gagnant ~ feedback * bug_touche * simule_gagnant, data = cert))
+summary(lm(certitude_gagnant ~ feedback * bug_touche, data = cert))
+summary(lm(certitude_gagnant ~ feedback + simule_gagnant, data = cert))
+summary(lm(certitude_gagnant ~ feedback * feedback_confirme, data = cert))
+summary(lm(certitude_gagnant ~ feedback * feedback_infirme, data = cert))
+summary(lm(certitude_gagnant ~ feedback, data = cert))
+e1$certitude_augmente <- e1$certitude_gagnant_feedback - e1$certitude_gagnant
+summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1, subset = bug_touche==F))
+summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1)) # la variable omise est les non affectés
+# la certitude augmente chez les non affectés et quand on confirme, elle baisse légèrement quand on infirme
+summary(lm(certitude_augmente ~ bug_touche, data = e1)) # la variable omise est les non affectés
 
 
 ##### Taxe carbone: Motivated reasoning ~ confiance_dividende ####
@@ -87,6 +104,7 @@ lines((1:length(e$biais_moins))/length(e$biais_moins), sort(e$biais_moins), type
 decrit(e$biais_plus)
 decrit(e$biais_moins)
 decrit(e$gain)
+decrit(e$gain_min)
 decrit(e$gain < 0)
 decrit(e$gain_min < 0)
 decrit(e$gagnant_categorie) # gain_min does a better job than gain overall, truth is somewhere in between (cf. below)
@@ -145,7 +163,7 @@ summary(lm(tax_approval ~ (certitude_gagnant < 1) * gagnant_categorie, data=e, s
 
 
 ##### Mécanismes : confiance #####
-decrit(e$confiance_gouvernement)
+decrit(e$confiance_gouvernement, miss=T)
 CrossTable((e$confiance_gouvernement >= 0), e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # la confiance augmente la proba de se penser Non affecté plutôt que Perdant
 summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * (confiance_dividende < 0), data = e, weights = e$weight)) # dividende 0.33*** / gouv: 0.13**
 summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e, weights = e$weight)) # confiance_gouv pas significatif / dividende -0.27*** et -0.45***
@@ -854,3 +872,39 @@ decrit(e$nb_avis_CCC) # mean 2.5, median 2
 # TODO: variable importance_preferee
 
 # TODO: working paper avec principaux résultats + mesure dissimilarité robuste au nombre de catégories
+
+
+##### 2è vague #####
+decrit(e$duree/60)
+decrit(e$region)
+decrit(e$random)
+decrit(e$dividende)
+decrit(e$origine_taxe)
+decrit(e$conso)
+decrit(e$conso_embedded) # better than conso
+# round(e$conso[which(round(e$conso)!=n(e$conso_embedded))])
+# n(e$conso_embedded[which(round(e$conso)!=n(e$conso_embedded))])
+decrit(e$km)
+decrit(n(e$km_embedded))
+decrit(e$surface)
+summary(lm(taxe_approbation!="Non" ~ dividende * origine_taxe, data=e))
+summary(lm(taxe_feedback_approbation!='Non' ~ variante_taxe_alternative, data=e))
+decrit(e$taxe_approbation, miss=T)
+decrit(e$taxe_feedback_approbation, miss=T)
+decrit(e$soutien_parti)
+decrit(e$pour_28h)
+decrit(e$referendum_ecocide)
+decrit(e$referendum_environnement_constitution)
+decrit(e$referendum_environnement_priorite_constit)
+decrit(e$avis_estimation)
+decrit(e$gain_net_choix)
+decrit(n(e$gain_net_gain))
+decrit(n(e$gain_net_perte))
+decrit(e$gain_subjectif)
+summary(lm(gain_subjectif==0 ~ dividende, data = e))
+decrit(e$hausse_depenses)
+decrit(e$uc)
+decrit(e$hausse_depenses/e$uc)
+decrit(e$gagnant_feedback_categorie)
+decrit(e$certitude_gagnant)
+decrit(e$certitude_gagnant_feedback)
