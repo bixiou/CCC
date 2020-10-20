@@ -454,3 +454,137 @@ prop.table(table(data_all$s1_e_q35, (data_all$s1_e_q49_volonte)<3), 2) # Rien de
 prop.table(table(data_all$s1_e_q48)) # Une écrasante majorité pense qu'il faut que la France prenne de l'avance (89% oui, 2% non, 8% NSP)
 dotchart(as.matrix(table(data_all$s1_e_q48))[, 1], main = "La France doit-elle prendre de l'avance dans la lutte face au CC  ?", 
          pch = 19)
+
+
+
+
+##### Corrélation politiques environnementales #####
+table(data_all$s1_e_q47)
+data_all$limitation_110_num <- (
+  - 2*(data_all$s1_e_q36 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q36 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q36 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q36 == "Tres souhaitable")
+  )
+data_all$taxe_aerien_num <- (
+  - 2*(data_all$s1_e_q37 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q37 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q37 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q37 == "Tres souhaitable")
+)
+data_all$obligation_renovation_thermique_num <- (
+  - 2*(data_all$s1_e_q38 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q38 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q38 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q38 == "Tres souhaitable")
+)
+data_all$compteur_intelligent_num <- (
+  - 2*(data_all$s1_e_q39 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q39 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q39 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q39 == "Tres souhaitable")
+)
+data_all$prix_produits_transport_polluant_num <- (
+  - 2*(data_all$s1_e_q40_clean == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q40_clean == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q40_clean == "Assez souhaitable")
+  + 2*(data_all$s1_e_q40_clean == "Tres souhaitable")
+)
+data_all$taxe_carbone_num <- (
+  - 2*(data_all$s1_e_q41_clean == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q41_clean == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q41_clean == "Assez souhaitable")
+  + 2*(data_all$s1_e_q41_clean == "Tres souhaitable")
+)
+data_all$dev_energies_renouvelables_cheres_num <- (
+  - 2*(data_all$s1_e_q42 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q42 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q42 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q42 == "Tres souhaitable")
+)
+data_all$densifier_villes_num <- (
+  - 2*(data_all$s1_e_q43 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q43 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q43 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q43 == "Tres souhaitable")
+)
+data_all$taxe_vehicules_GES_num <- (
+  - 2*(data_all$s1_e_q44 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q44 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q44 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q44 == "Tres souhaitable")
+)
+data_all$infrastructures_vehicules_propres_num <- (
+  - 2*(data_all$s1_e_q45_clean == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q45_clean == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q45_clean == "Assez souhaitable")
+  + 2*(data_all$s1_e_q45_clean == "Tres souhaitable")
+)
+data_all$menus_ecolos_num <- (
+  - 2*(data_all$s1_e_q46 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q46 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q46 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q46 == "Tres souhaitable")
+)
+data_all$gaspillage_alimentaire_num <- (
+  - 2*(data_all$s1_e_q47 == "Pas du tout souhaitable")
+  - 1*(data_all$s1_e_q47 == "Pas vraiment souhaitable")
+  + 1*(data_all$s1_e_q47 == "Assez souhaitable")
+  + 2*(data_all$s1_e_q47 == "Tres souhaitable")
+)
+
+data_cor <- data_all[,c("limitation_110_num", "taxe_aerien_num", "obligation_renovation_thermique_num",
+                        "compteur_intelligent_num", "prix_produits_transport_polluant_num", "taxe_carbone_num",
+                        "dev_energies_renouvelables_cheres_num", "densifier_villes_num", "taxe_vehicules_GES_num",
+                        "infrastructures_vehicules_propres_num", "menus_ecolos_num", "gaspillage_alimentaire_num")]
+#names(data_cor) <- c("Limitation 110km/h", "Taxe transport aérien", "Obligation rénovation thermique",
+#                     "Compteurs intelligents", "Augmenter prix produits polluants", "Taxe carbone",
+#                     "Développer énergies renouvelables", "Densifier villes", "Taxer véhicules GES",
+#                     "Infrastructures véhicules propres", "Menus écolos", "Réduire gaspillage alimentaire")
+names(data_cor) <- c("110", "taxe_avion", "renov",
+                     "compteurs", "prix_prods", "tax_carbon",
+                     "renewables", "dense_cities", "tax_veh",
+                     "infrastructures", "green_menu", "wastes")
+corr <- cor(data_cor, use="complete.obs")
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
+corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+
+
+
+
+##### Corrélation recyclage taxe carbone #####
+data_cor <- data_all[,c("s2_e_q31", "s2_e_q32", "s2_e_q33", "s2_e_q34", "s2_e_q35", "s2_e_q36", "s2_e_q37", "s2_e_q38", "s2_e_q39")]
+names(data_cor) <- c("transfert modestes", "transfert tous", "transfert contraints", "baisse cotsoc",
+                     "baisse TVA", "baisse déficit", "rénovation therm", "énergies renouvelables", "transports propres")
+corr <- cor(data_cor, use="complete.obs")
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
+corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+
