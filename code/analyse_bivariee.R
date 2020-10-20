@@ -588,3 +588,242 @@ cor.mtest <- function(mat, ...) {
 p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
 corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
 
+
+
+
+
+##### Corrélation gestes environnementaux #####
+data_all$trier_dechets_num <- (
+  + 2*(data_all$s1_e_q22 == "Le fait deja")
+  + 1*(data_all$s1_e_q22 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q22 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q22 == "Ne peut pas le faire")
+)
+data_all$eteindre_appareils_num <- (
+  + 2*(data_all$s1_e_q23 == "Le fait deja")
+  + 1*(data_all$s1_e_q23 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q23 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q23 == "Ne peut pas le faire")
+)
+data_all$transports_communs_num <- (
+  + 2*(data_all$s1_e_q24 == "Le fait deja")
+  + 1*(data_all$s1_e_q24 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q24 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q24 == "Ne peut pas le faire")
+)
+data_all$baisse_temperature_num <- (
+  + 2*(data_all$s1_e_q25_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q25_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q25_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q25_clean == "Ne peut pas le faire")
+)
+data_all$legumes_saison_num <- (
+  + 2*(data_all$s1_e_q26 == "Le fait deja")
+  + 1*(data_all$s1_e_q26 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q26 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q26 == "Ne peut pas le faire")
+)
+data_all$limiter_viande_num <- (
+  + 2*(data_all$s1_e_q27_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q27_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q27_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q27_clean == "Ne peut pas le faire")
+)
+data_all$velo_marche_num <- (
+  + 2*(data_all$s1_e_q28 == "Le fait deja")
+  + 1*(data_all$s1_e_q28 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q28 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q28 == "Ne peut pas le faire")
+)
+data_all$covoiturage_num <- (
+  + 2*(data_all$s1_e_q29 == "Le fait deja")
+  + 1*(data_all$s1_e_q29 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q29 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q29 == "Ne peut pas le faire")
+)
+data_all$limiter_emballages_num <- (
+  + 2*(data_all$s1_e_q30_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q30_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q30_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q30_clean == "Ne peut pas le faire")
+)
+data_all$produits_ecolos_num <- (
+  + 2*(data_all$s1_e_q31_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q31_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q31_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q31_clean == "Ne peut pas le faire")
+)
+data_all$consommer_moins_num <- (
+  + 2*(data_all$s1_e_q32_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q32_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q32_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q32_clean == "Ne peut pas le faire")
+)
+data_all$couper_chauffage_num <- (
+  + 2*(data_all$s1_e_q33_clean == "Le fait deja")
+  + 1*(data_all$s1_e_q33_clean == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q33_clean == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q33_clean == "Ne peut pas le faire")
+)
+data_all$arreter_avion_num <- (
+  + 2*(data_all$s1_e_q34 == "Le fait deja")
+  + 1*(data_all$s1_e_q34 == "Pourrait le faire facilement")
+  - 1*(data_all$s1_e_q34 == "Pourrait le faire mais difficilement")
+  - 2*(data_all$s1_e_q34 == "Ne peut pas le faire")
+)
+
+
+data_cor <- data_all[,c("trier_dechets_num", "eteindre_appareils_num", "transports_communs_num", "baisse_temperature_num",
+                        "legumes_saison_num", "limiter_viande_num", "velo_marche_num", "covoiturage_num", "limiter_emballages_num",
+                        "produits_ecolos_num", "consommer_moins_num", "couper_chauffage_num", "arreter_avion_num")]
+names(data_cor) <- c("Trier déchets", "Eteindre appareils veille", "Transports en commun", "Baisser température hiver",
+                     "Légumes de saison", "Limiter viande", "Vélo et/ou marche", "Covoiturage", "Limiter emballages",
+                     "Produits écolos", "Consommer moins", "Couper chauffage", "Arrêter avion")
+corr <- cor(data_cor, use="complete.obs")
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
+corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+
+
+
+
+##### Corrélation confiance-optimisme-valeurs #####
+table(data_all$s1_s_q17f_clean)
+data_all$confiance_interpersonnelle_num <- (
+  + 1*(data_all$s1_e_q4 == "On peut faire confiance a la plupart des gens")
+  - 1*(data_all$s1_e_q4 == "On n est jamais assez prudent quand on a affaire aux autres")
+)
+data_all$confiance_capacite_citoyens_num <- (
+  + 2*(data_all$s1_e_q7 == "Tout a fait confiance")
+  + 1*(data_all$s1_e_q7 == "Plutot confiance")
+  - 1*(data_all$s1_e_q7 == "Plutot pas confiance")
+  - 2*(data_all$s1_e_q7 == "Pas du tout confiance")
+)
+data_all$satisfaction_vie_num <- data_all$s1_e_q8
+data_all$redistribution_num <- data_all$s1_e_q10 # 10 = plus de redistribution
+data_all$lien_efforts_pauvrete_num <- (
+  + 1*(data_all$s1_e_q12_clean == "pas de chance")
+  + 0*(data_all$s1_e_q12_clean == "NR")
+  - 1*(data_all$s1_e_q12_clean == "pas fait deffort")
+)
+data_all$importance_environnement_num <- data_all$s1_e_q13
+data_all$importance_action_sociale_num <- data_all$s1_e_q14
+data_all$importance_niveau_vie_num <- data_all$s1_e_q15
+data_all$confiance_anecdotes_num <- (
+  + 2*(data_all$s1_s_q17a_clean == "totalement")
+  + 1*(data_all$s1_s_q17a_clean == "plutot")
+  - 1*(data_all$s1_s_q17a_clean == "plutot pas")
+  - 2*(data_all$s1_s_q17a_clean == "pas du tout")
+)
+data_all$confiance_medias_num <- (
+  + 2*(data_all$s1_s_q17b_clean == "totalement")
+  + 1*(data_all$s1_s_q17b_clean == "plutot")
+  - 1*(data_all$s1_s_q17b_clean == "plutot pas")
+  - 2*(data_all$s1_s_q17b_clean == "pas du tout")
+)
+data_all$confiance_reseaux_sociaux_num <- (
+  + 2*(data_all$s1_s_q17c_clean == "totalement")
+  + 1*(data_all$s1_s_q17c_clean == "plutot")
+  - 1*(data_all$s1_s_q17c_clean == "plutot pas")
+  - 2*(data_all$s1_s_q17c_clean == "pas du tout")
+)
+data_all$confiance_gouvernement_num <- (
+  + 2*(data_all$s1_s_q17d_clean == "Totalement")
+  + 1*(data_all$s1_s_q17d_clean == "Plutot")
+  - 1*(data_all$s1_s_q17d_clean == "Plutot pas")
+  - 2*(data_all$s1_s_q17d_clean == "Pas du tout")
+)
+data_all$confiance_dossier_CCC_num <- (
+  + 2*(data_all$s1_s_q17e_clean == "totalement")
+  + 1*(data_all$s1_s_q17e_clean == "plutot")
+  - 1*(data_all$s1_s_q17e_clean == "plutot pas")
+  - 2*(data_all$s1_s_q17e_clean == "pas du tout")
+)
+data_all$confiance_experts_num <- (
+  + 2*(data_all$s1_s_q17f_clean == "totalement")
+  + 1*(data_all$s1_s_q17f_clean == "plutot")
+  - 1*(data_all$s1_s_q17f_clean == "plutot pas")
+  - 2*(data_all$s1_s_q17f_clean == "pas du tout")
+)
+data_all$mieux_informe_num <- data_all$s2_e_q11
+data_all$anticipation_situation_eco_num <- data_all$s2_e_q12
+data_all$plus_defforts_CP_num <- (
+  + 2*(data_all$s2_e_q41 == "Non beaucoup moins")
+  + 1*(data_all$s2_e_q41 == "Non un peu moins")
+  + 0*(data_all$s2_e_q41 == "Autant")
+  + 0*(data_all$s2_e_q41 == "NR")
+  - 1*(data_all$s2_e_q41 == "Oui un peu plus")
+  - 2*(data_all$s2_e_q41 == "Oui beaucoup plus")
+)
+data_all$plus_impacte_CC_num <- (
+  + 2*(data_all$s2_e_q42_clean == "Non beaucoup moins")
+  + 1*(data_all$s2_e_q42_clean == "Non un peu moins")
+  + 0*(data_all$s2_e_q42_clean == "Autant")
+  + 0*(data_all$s2_e_q42_clean == "NR")
+  - 1*(data_all$s2_e_q42_clean == "Oui un peu plus")
+  - 2*(data_all$s2_e_q42_clean == "Oui beaucoup plus")
+)
+
+data_cor <- data_all[,c("confiance_interpersonnelle_num", "confiance_capacite_citoyens_num", "satisfaction_vie_num",
+                        "confiance_anecdotes_num", "confiance_medias_num", "confiance_reseaux_sociaux_num", "confiance_gouvernement_num",
+                        "confiance_dossier_CCC_num", "confiance_experts_num", "anticipation_situation_eco_num",
+                        "plus_defforts_CP_num", "plus_impacte_CC_num")]
+names(data_cor) <- c("Conf. aux autres", "Conf. capacité citoyens", "Satisfaction vie",
+                     "Conf. anecdotes", "Conf. médias", "Conf. réseaux soc.", "Conf. gouvernement",
+                     "Conf. dossier CCC", "Conf. experts", "Anticipation situ. éco.",
+                     "Efforts perso CP", "Impacts perso CC")
+corr <- cor(data_cor, use="complete.obs")
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
+corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+
+
+data_cor <- data_all[,c("confiance_interpersonnelle_num", "redistribution_num", "lien_efforts_pauvrete_num",
+                        "importance_environnement_num", "importance_action_sociale_num", "importance_niveau_vie_num",
+                        "mieux_informe_num")]
+names(data_cor) <- c("Conf. aux autres", "Redistribution", "Lien efforts-pauvreté",
+                     "Importance environnement", "Importance action sociale", "Importance niveau vie",
+                     "Mieux informé")
+corr <- cor(data_cor, use="complete.obs")
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
+corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
