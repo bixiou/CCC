@@ -961,7 +961,7 @@ convert_e <- function(e) {
 
 weighting_e <- function(data, printWeights = T) { # cf. google sheet
   d <- data
-  d$region[is.na(d$region)] <- 'autre'
+  d$region[is.na(d$region)] <- 'autre' # TODO: isn't applied because d not returned
   d$taille_agglo <- as.numeric(d$taille_agglo)
   # d$csp <- factor(d$csp)
   # d$region <- factor(d$region)
@@ -1207,7 +1207,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[156]]) <- "CCC_devoile_obligation_renovation_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
   label(e[[157]]) <- "CCC_devoile_taxe_viande_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge -Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
   label(e[[158]]) <- "CCC_devoile_limitation_110_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
-  label(e[[159]]) <- "gain_net_choix" #TODO #"confiance_dividende: ~ [Si question_confiance > 0] Avez-vous confiance dans le fait que l'État vous versera effectivement 110€ par an (220€ pour un couple) si une telle réforme est mise en place ? (Oui/À moitié/Non)"
+  label(e[[159]]) <- "gain_net_choix" #TODO: description + gain_net_NSP à partir de 150 réponses / 20/10 3h50 / bug jusqu'à 168 - 7h38: il était impossible de sélectionner NSP #"confiance_dividende: ~ [Si question_confiance > 0] Avez-vous confiance dans le fait que l'État vous versera effectivement 110€ par an (220€ pour un couple) si une telle réforme est mise en place ? (Oui/À moitié/Non)"
   label(e[[160]]) <- "gain_net_gain" #"hausse_depenses_subjective: ~ À combien estimez-vous alors la hausse des dépenses de combustibles de votre ménage ? (aucune hausse : au contraire, mon ménage réduirait ses dépenses de combustibles/aucune hausse, aucune baisse/entre 1 et 30/30 et 70/70 et 120/120 et 190/à plus de 190 € par an /UC)"
   label(e[[161]]) <- "gain_net_perte" #"gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
   label(e[[162]]) <- "certitude_gagnant: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
@@ -1279,7 +1279,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[228]]) <- "depute_votants: représentent ceux qui ont voté pour eux - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
   label(e[[229]]) <- "depute_circo: représentent leur circonscription - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
   label(e[[230]]) <- "depute_pays: représentent l'ensemble du pays - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
-  label(e[[231]]) <- "depute__parti: représentent leurs partis - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
+  label(e[[231]]) <- "depute_parti: représentent leurs partis - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
   label(e[[232]]) <- "depute_jugement: suivent leur propre jugement - Et en réalité ? D'après vous, la plupart des députés... (0 à 10)"
   label(e[[233]]) <- "contre_parti: voter contre mon parti - À la prochaine élection législative, est-il envisageable pour vous de voter contre un candidat de votre parti préféré parce que vous ne lui faites pas confiance en tant que personne. (0 à 10)"
   label(e[[234]]) <- "hausse_chauffage: Hausse des dépenses de chauffage simulées pour le ménage, suite à la taxe (élasticité de 0.15 au lieu de 0.2)"
@@ -1291,7 +1291,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[240]]) <- "variante_efforts_vous: Indicatrice (aléatoire 0/1) que efforts_relatifs est 'vous relativement aux autres' (au contraire, si variante_efforts_vous==0, efforts_relatifs est posée: Est-ce que la majorité est prête à plus d'efforts que vous)"
   label(e[[241]]) <- "origine_taxe: Variante à l'amorce pour la taxe carbone avec dividendes. (inconnue: Imaginez ... / CCC: Imaginez que la CCC propose ... / gouvernement: Imaginez que le gouvernement propsoe ... / EELV: Imaginez que lors de la prochaine campagne présidentielle, le parti Europe-Écologie-les Verts propose)"
   label(e[[242]]) <- "dividende: Variante à la valeur du dividende de la taxe carbone avec dividende. (0/110/170)"
-    
+  # label(e[[243]]) <- "gain_net_NSP:"
     
   for (i in 1:length(e)) names(e)[i] <- sub(':.*', '', label(e[[i]]))
   return(e)
@@ -1522,7 +1522,7 @@ prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finishe
     e <- read_csv("../donnees/externe2_pilote.csv")[,c(1:126,136:139,141:164,168:171,173:193,140,194:198,213:233,127:135,165:167,172,199:212)] #[-c(1:2),]
     e <- relabel_and_rename2_pilote(e)   
   } else {
-    e <- read_csv("../donnees/externe2.csv")[,c(1:126,136:139,141:164,168:171,177:179,180,181,187:202,140,203:207,222:233,127:135,165:167,172:176,182:186,208:221,234:242)] #[-c(1:2),]
+    e <- read_csv("../donnees/externe2.csv")[,c(1:126,136:139,141:164,168:171,177:179,180,181,187:202,140,203:207,222:233,127:135,165:167,172:176,182:186,208:221,234:242)] #[,c(1:126,136:139,141:164,168:171,177:179,181:182,188:203,140,204:208,223:234,127:135,165:167,172:176,183:187,209:222,235:243,180)] 
     # e <- e[,c(1:158,163:165,166:167,173:176,186:233,159:162,168:172,177:185)]
     e <- relabel_and_rename2(e)  
   }
@@ -1538,7 +1538,7 @@ prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finishe
     e <- e[e$fini=="True",] 
     e <- convert_e(e) 
     
-    # e$weight <- weighting_e(e) # TODO: put back in
+    e$weight <- weighting_e(e) # TODO: put back in
     
     e$gauche_droite_na <- as.numeric(e$gauche_droite)
     e$gauche_droite_na[e$indeterminate == T] <- wtd.mean(e$gauche_droite, weights = e$weight)
@@ -1559,8 +1559,12 @@ prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finishe
 
 # e2_pilote <- prepare_e2(pilote = T)
 e2 <- prepare_e2()
-e1 <- e
+# e1 <- e
 e <- e2
+
+e2$vague <- 2
+e1$vague <- 1
+eb <- rbind.fill(e1, e2)
 
 export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 

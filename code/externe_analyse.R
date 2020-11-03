@@ -1,3 +1,38 @@
+##### Socio-démos #####
+decrit(e2$diplome4, weight = F)
+decrit(e1$diplome4, weight = F) # similar, though less CAP and more Bac in e2
+decrit(e2$diplome4) # TODO: pb weights CAP/BEP vs. Bac pour e1 => pb pour tous les graphiques
+decrit(e1$diplome4)
+decrit(e2$age)
+decrit(e1$age)
+decrit(e2$age, weight = F)
+decrit(e1$age, weight = F) # TODO: pb weights e1
+decrit(e1$csp)
+decrit(e2$csp)
+decrit(e1$csp, weight = F)
+decrit(e2$csp, weight = F)
+decrit(e1$sexe)
+decrit(e2$sexe)
+decrit(e1$sexe, weight = F) # TODO: pb weights e1
+decrit(e2$sexe, weight = F)
+decrit(e1$region, miss=T)
+decrit(e2$region, miss=T)
+decrit(e1$region, weight = F, miss=T) 
+decrit(e2$region, weight = F, miss=T)
+sum(is.na(e2$region))
+sum(is.na(e1$region))
+decrit(e1$code_postal[is.na(e1$region)])
+decrit(e2$code_postal[is.na(e2$region)])
+decrit(e1$region_verif, weight = F, miss=T) # only one missing
+decrit(e2$region_verif, weight = F, miss=T) # region_verif good
+sum(e1$region_verif != e1$region, na.rm=T) # TODO: pb: 255 
+sum(e2$region_verif != e2$region, na.rm=T) # 0 => utiliser region_verif instead
+decrit(e1$taille_agglo)
+decrit(e2$taille_agglo)
+decrit(e1$taille_agglo, weight = F)
+decrit(e2$taille_agglo, weight = F)
+
+
 ###### Efforts relatifs #####
 decrit(e$efforts_relatifs)
 decrit(e$efforts_relatifs, which = e$variante_efforts_vous==1)
@@ -906,5 +941,9 @@ decrit(e$hausse_depenses)
 decrit(e$uc)
 decrit(e$hausse_depenses/e$uc)
 decrit(e$gagnant_feedback_categorie)
-decrit(e$certitude_gagnant)
+decrit(e$certitude_gagnant, numbers=T)
 decrit(e$certitude_gagnant_feedback)
+summary(lm(certitude_gagnant <= 0 ~ gain_net_choix + dividende, data=e))
+summary(lm(certitude_gagnant < 0 ~ gain_net_choix + dividende, data=e))
+summary(lm(gain_subjectif == 0 ~ dividende, data=e))
+decrit(e$gain_subjectif == 0)
