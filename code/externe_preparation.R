@@ -155,7 +155,7 @@ relabel_and_rename <- function(e) {
   label(e[[15]]) <- "long:"
   label(e[[16]]) <- "distr:"
   label(e[[17]]) <- "lang:"
-  label(e[[18]]) <- "code_postal: Code Postal - Q93" # TODO: missing for 2 observations in e2
+  label(e[[18]]) <- "code_postal: Code Postal - Q93" 
   label(e[[19]]) <- "sexe: Sexe (Masculin/Féminin) - Q96"
   label(e[[20]]) <- "age: Tranche d'âge (18-24/25-34/35-49/50-64/65+) - Q184"
   label(e[[21]]) <- "statut_emploi: Statut d'emploi (Chômage/CDD/CDI/fonctionnaire/étudiant-e/retraité-e/précaire/autre actif/autre inactif) - Q35"
@@ -228,7 +228,7 @@ relabel_and_rename <- function(e) {
   label(e[[88]]) <- "soutenu_limitation_110: L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Politiques soutenues par une majorité de Français ? (obligation_renovation/normes_isolation/bonus_malus/limitation_110) - Q63"
   label(e[[89]]) <- "pour_taxe_carbone_contre: ~ Sachant qu'une majorité est contre - Favorable à une augmentation de la taxe carbone (Oui/Non/NSP) - Q64" # https://www.ademe.fr/sites/default/files/assets/documents/rapport-representations-sociales-changement-climatique-20-vague.pdf 
   label(e[[90]]) <- "pour_taxe_carbone_pour: ~ Sachant qu'une majorité est pour - Favorable à une augmentation de la taxe carbone (Oui/Non/NSP) - Q92" # https://www.ademe.fr/sites/default/files/assets/documents/rapport-analyse-representations-sociales-changement-climatique-19-vague-2018.pdf
-  label(e[[91]]) <- "pour_taxe_carbone_neutre: ~ Sans information - Favorable à une augmentation de la taxe carbone (Oui/Non/NSP) - Q92" # TODO: check mapping
+  label(e[[91]]) <- "pour_taxe_carbone_neutre: ~ Sans information - Favorable à une augmentation de la taxe carbone (Oui/Non/NSP) - Q92" 
   label(e[[92]]) <- "confiance_gens: D’une manière générale, diriez-vous que… ? (On peut faire confiance à la plupart des gens/On n’est jamais assez prudent quand on a affaire aux autres) - Q65"
   label(e[[93]]) <- "qualite_enfant_independance: l'indépendance - Quelles sont les qualités les plus importantes chez les enfants ? (indépendance; tolérance; générosité; travail; épargne; obéissance; responsabilité; détermination; expression; imagination; foi)"
   label(e[[94]]) <- "qualite_enfant_tolerance: la tolérance et le respect des autres - Quelles sont les qualités les plus importantes chez les enfants ? (indépendance; tolérance; générosité; travail; épargne; obéissance; responsabilité; détermination; expression; imagination; foi)"
@@ -349,7 +349,7 @@ relabel_and_rename <- function(e) {
   return(e)
 }
 
-convert_e <- function(e) {
+convert_e <- function(e, vague) {
   # lab <- label(e$csp)
   # e$csp <- factor(e$csp, levels=c(levels(e$csp), "Cadres", "Indépendants", "Ouvriers", 'Inactifs', "Professions intermédiaires", "Retraités", "Employés", "Agriculteurs"))
   # e$csp <- as.character(e$csp)
@@ -376,10 +376,10 @@ convert_e <- function(e) {
     e[[i]][e[[i]] == "Ne se prononce pas"] <- "NSP"
   }
 
-  # e$mauvaise_qualite <- 0 # 99% if we exclude those from revenu, 92% otherwise # TODO! (concentration)
-  # e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] <- 1 + e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] # 164
-  # e$mauvaise_qualite[n(e$revenu) > 10000] <- 1 + e$mauvaise_qualite[n(e$revenu) > 10000] # 58
-  # e$mauvaise_qualite[n(e$rev_tot) > 10000] <- 1 + e$mauvaise_qualite[n(e$rev_tot) > 10000] # 55
+  e$mauvaise_qualite <- 0 # e1: 99% if we exclude those from revenu, 92% otherwise # TODO! (concentration)
+  e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] <- 1 + e$mauvaise_qualite[n(e$revenu) > n(e$rev_tot)] # e1: 50 (was written 164?); e2: 60
+  e$mauvaise_qualite[n(e$revenu) > 10000] <- 1 + e$mauvaise_qualite[n(e$revenu) > 10000] # e1: 58
+  e$mauvaise_qualite[n(e$rev_tot) > 10000] <- 1 + e$mauvaise_qualite[n(e$rev_tot) > 10000] # e1: 55
   e$revenu <- clean_number(e$revenu, high_numbers='divide') # TODO: traiter les revenu = 0
   e$rev_tot <- clean_number(e$rev_tot, high_numbers='divide') # TODO: check ça
   # e$revenu[e$revenu > 10000] <- wtd.mean(e$revenu[e$revenu < 10000], weights = e$weight[e$revenu < 10000], na.rm=T)
@@ -388,7 +388,7 @@ convert_e <- function(e) {
     "revenu", "rev_tot", "taille_menage", "nb_adultes", "nb_14_et_plus", "duree", "km_0", "km_1", "km_2", "conso_1", "conso_2", "surface",
     "obstacles_lobbies", "obstacles_manque_volonte", "obstacles_manque_cooperation", "obstacles_inegalites", "obstacles_incertitudes",
     "obstacles_demographie", "obstacles_technologies", "obstacles_rien", "part_anthropique", "redistribution", "importance_environnement", 
-    "importance_associatif", "importance_confort", "duree_info_CCC", "duree_concentration", "question_confiance", "variante_efforts_vous", # "simule_gagnant", # TODO: simule_gagnant
+    "importance_associatif", "importance_confort", "duree_info_CCC", "duree_concentration", "question_confiance", "variante_efforts_vous", # "simule_gagnant", # TODO!: create simule_gagnant, simule_gain, perte, gain_net, etc. (don't know if we should add simule_gagnant to this list, it wasn't in the list in May)
     "hausse_chauffage", "hausse_depenses", "hausse_diesel", "hausse_essence", "nb_vehicules"
   ), names(e))) {
     lab <- label(e[[i]])
@@ -408,7 +408,7 @@ convert_e <- function(e) {
   # e$mauvaise_qualite[e$surface >= 1000] <- 1 + e$mauvaise_qualite[e$surface >= 1000] # 4
   # label(e$mauvaise_qualite) <- "mauvaise_qualite: Indicatrice d'une réponse aberrante à revenu, taille_menage, nb_14_et_plus, km ou surface."
 
-  for (j in intersect(c("taxe_approbation", "taxe_feedback_approbation", "pour_sortition"
+  for (j in intersect(c("taxe_approbation", "taxe_feedback_approbation", "taxe_alternative_approbation", "pour_sortition"
               ), names(e))) {
     e[j][[1]] <- as.item(as.character(e[j][[1]]),
                 labels = structure(c("","Non","NSP","Oui"), names = c("NA","Non","NSP","Oui")),
@@ -457,7 +457,7 @@ convert_e <- function(e) {
   variables_CCC_avis <<- paste('CCC', c("inutile", "prometteuse_climat", "espoir_institutions", "vouee_echec", "operation_comm", "initiative_sincere", 
                                         "pour_se_defausser", "entendre_francais", "controlee_govt", "representative", "autre_choix"), sep='_')
   
-  for (k in c(55:60)) {
+  for (k in c(55:60)) { # pour_
     temp <-  3 * (e[k][[1]]=="Très souhaitable") + grepl("Assez", e[k][[1]]) - grepl("Pas vraiment", e[k][[1]]) - 3 * (e[k][[1]]=="Pas du tout souhaitable")
     e[k][[1]] <- as.item(temp, labels = structure(c(-3,-1,1,3),
                           names = c("Pas du tout","Pas vraiment","Assez","Très")),
@@ -465,7 +465,7 @@ convert_e <- function(e) {
                         annotation=Label(e[k][[1]]))
   }
 
-  for (k in c(141:148)) {
+  for (k in c(141:148)) { # pour_
     temp <-  2 * (e[k][[1]]=="Oui, tout à fait") + (e[k][[1]]=="Oui, plutôt") - (e[k][[1]]=="Non, pas vraiment") - 2 * (e[k][[1]]=="Non, pas du tout")
     e[k][[1]] <- as.item(temp, labels = structure(c(-2:2),
                           names = c("Pas du tout","Pas vraiment","Indifférent/NSP","Plutôt","Tout à fait")),
@@ -473,18 +473,23 @@ convert_e <- function(e) {
                         annotation=Label(e[k][[1]]))
   }
   
-  for (k in c(127:130)) {
+  if (vague==1) num_CCC_devoile <- c(127:130)
+  else num_CCC_devoile <- c(127:130, 180)
+  for (k in num_CCC_devoile) { # CCC_devoile_
+    j <- ifelse(k==180, 210, k+28)
     temp1 <- -3*(e[k][[1]]=='Non, je suis sûr·e que non') - (e[k][[1]]=='Non, ça ne me dit rien') + (e[k][[1]]=='Oui, il me semble') + 3*(e[k][[1]]=="Oui, j'en suis sûr·e")
-    temp2 <- -3*(e[k+28][[1]]=='Non, je suis sûr·e que non') - (e[k+28][[1]]=='Non, ça ne me dit rien') + (e[k+28][[1]]=='Oui, il me semble') + 3*(e[k+28][[1]]=="Oui, j'en suis sûr·e")
+    temp2 <- -3*(e[j][[1]]=='Non, je suis sûr·e que non') - (e[j][[1]]=='Non, ça ne me dit rien') + (e[j][[1]]=='Oui, il me semble') + 3*(e[j][[1]]=="Oui, j'en suis sûr·e")
     temp[e$info_CCC==1] <- -3*(e[k][[1]][e$info_CCC==1]=='Non, je suis sûr·e que non') - (e[k][[1]][e$info_CCC==1]=='Non, ça ne me dit rien') + (e[k][[1]][e$info_CCC==1]=='Oui, il me semble') + 3*(e[k][[1]][e$info_CCC==1]=="Oui, j'en suis sûr·e")
-    temp[e$info_CCC==0] <- -3*(e[k+28][[1]][e$info_CCC==0]=='Non, je suis sûr·e que non') - (e[k+28][[1]][e$info_CCC==0]=='Non, ça ne me dit rien') + (e[k+28][[1]][e$info_CCC==0]=='Oui, il me semble') + 3*(e[k+28][[1]][e$info_CCC==0]=="Oui, j'en suis sûr·e")
+    temp[e$info_CCC==0] <- -3*(e[j][[1]][e$info_CCC==0]=='Non, je suis sûr·e que non') - (e[j][[1]][e$info_CCC==0]=='Non, ça ne me dit rien') + (e[j][[1]][e$info_CCC==0]=='Oui, il me semble') + 3*(e[j][[1]][e$info_CCC==0]=="Oui, j'en suis sûr·e")
     e[k][[1]] <- as.item(temp1, labels=structure(c(-3, -1, 1, 3), names = c('Non, sûr', 'Non, me dit rien', 'Oui, me semble', 'Oui, sûr')), annotation=Label(e[k][[1]]))
-    e[k+28][[1]] <- as.item(temp2, labels=structure(c(-3, -1, 1, 3), names = c('Non, sûr', 'Non, me dit rien', 'Oui, me semble', 'Oui, sûr')), annotation=Label(e[k+28][[1]]))
+    e[j][[1]] <- as.item(temp2, labels=structure(c(-3, -1, 1, 3), names = c('Non, sûr', 'Non, me dit rien', 'Oui, me semble', 'Oui, sûr')), annotation=Label(e[j][[1]]))
     e[[sub('_info_CCC', '', names(e)[k])]] <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Non, sûr', 'Non, me dit rien', 'Oui, me semble', 'Oui, sûr')), 
                              annotation=sub('\\(info_CCC==1\\)', '~ info_CCC', sub('_info_CCC', '', Label(e[k][[1]]))))
   }
   
-  for (k in c(149:154)) {
+  if (vague==1) num_referendum <- c(149:154)
+  else num_referendum <- c(149:154, 207:209)
+  for (k in num_referendum) { # referendum_
     temp <-  0.1 * (e[k][[1]]=="NSP") + (e[k][[1]]=="Oui") - (e[k][[1]]=="Non")
     e[k][[1]] <- as.item(temp, labels = structure(c(0.1,-1:1), names = c("NSP","Non","Blanc","Oui")), missing.values=0.1, annotation=Label(e[k][[1]]))
   }
@@ -531,13 +536,18 @@ convert_e <- function(e) {
 
   temp <- -2*(e$certitude_gagnant=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant=='Je suis sûr·e de ma réponse')
   e$certitude_gagnant <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant))
-  temp <- -2*(e$certitude_gagnant_feedback=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant_feedback=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant_feedback=='Je suis sûr·e de ma réponse')
-  e$certitude_gagnant_feedback <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant_feedback))
 
+  if (vague==1) {
+    temp <- -2*(e$certitude_gagnant_feedback=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant_feedback=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant_feedback=='Je suis sûr·e de ma réponse')
+    e$certitude_gagnant_feedback <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant_feedback))
+  } else {
+    temp <- -2*(e$certitude_gagnant_alternative=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant_alternative=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant_alternative=='Je suis sûr·e de ma réponse')
+    e$certitude_gagnant_alternative <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant_alternative))
+  }
   temp <- -2*grepl("Jamais", e$confiance_gouvernement) - grepl("Parfois", e$confiance_gouvernement) + grepl("La plupart", e$confiance_gouvernement) + 2*grepl("Toujours", e$confiance_gouvernement) + 0.1*grepl("NSP", e$confiance_gouvernement)
   e$confiance_gouvernement <- as.item(temp, labels=structure(c(-2:2,0.1), names = c('Jamais', 'Parfois', 'Moitié du temps', 'Plupart du temps', 'Toujours', 'NSP')), missing.values=0.1, annotation=Label(e$confiance_gouvernement))
   
-  if ("confiance_dividende" %in% names(e)) {
+  if (vague==1) {
     temp <- 1*(e$confiance_dividende=='Oui') - 1*(e$confiance_dividende=='Non')
     e$confiance_dividende <- as.item(temp, labels=structure(c(-1:1), names=c('Non', 'À moitié', 'Oui')), annotation=Label(e$confiance_dividende)) }
 
@@ -551,7 +561,7 @@ convert_e <- function(e) {
   temp <- -1*grepl('Non', e$France_CC) + grepl('Oui', e$France_CC)
   e$France_CC <- as.item(temp, labels = structure(-1:1, names = c('Non', ' NSP ', 'Oui')), annotation=Label(e$France_CC)) # missing.values = 0, 
 
-  if ("avant_modifs" %in% names(e)) {
+  if (vague==1) {
     e$question_confiance <- e$question_confiance > 0
     e$avant_modifs <- e$avant_modifs != 2
     e$duree_info_CCC[e$avant_modifs==T] <- NA # /!\ comment these two lines to see the duration avant_modifs, when info CCC & concentration were on the same page
@@ -606,10 +616,12 @@ convert_e <- function(e) {
   e$gilets_jaunes[e$gilets_jaunes_dedans==T] <- 2
   e$gilets_jaunes <- as.item(e$gilets_jaunes, missing.values=-0.1, labels = structure(c(-0.1,-1:2), names=c('NSP', "s'oppose", 'comprend', 'soutient', 'en est')),
                              annotation="gilets_jaunes: Que pensez-vous des gilets jaunes ? -1: s'oppose / 0: comprend sans soutenir ni s'opposer / 1: soutient / 2: fait partie des gilets jaunes (gilets_jaunes_compris/oppose/soutien/dedans/NSP)" )
-  e$Gilets_jaunes <- as.factor(as.character(e$gilets_jaunes))
+  e$Gilets_jaunes <- as.character(e$gilets_jaunes)
+  e$Gilets_jaunes[e$gilets_jaunes=="NSP"] <- "NSP"
+  e$Gilets_jaunes <- as.factor(e$Gilets_jaunes)
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'soutient')
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'comprend')
-  # e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'NSP') # TODO: put back in
+  e$Gilets_jaunes <- relevel(e$Gilets_jaunes, 'NSP')
   e$Gilets_jaunes <- relevel(e$Gilets_jaunes, "s'oppose")
   label(e$Gilets_jaunes) <- "Gilets_jaunes: Que pensez-vous des gilets jaunes ? -1: s'oppose / 0: comprend sans soutenir ni s'opposer / 1: soutient / 2: fait partie des gilets jaunes (gilets_jaunes_compris/oppose/soutien/dedans/NSP)"
 
@@ -652,7 +664,8 @@ convert_e <- function(e) {
   region_dep <- rep("", 95)
   for (i in 1:95) region_dep[i] <- region_code(i)
   e$region_verif <- "autre"
-  e$region_verif[as.numeric(substr(e$code_postal, 1, 2)) %in% 1:95] <- region_dep[as.numeric(substr(e$code_postal, 1, 2))]
+  e$region_verif[as.numeric(substr(e$code_postal, 1, 2)) %in% 1:95] <- region_dep[as.numeric(substr(e$code_postal, 1, 2))][as.numeric(substr(e$code_postal, 1, 2)) %in% 1:95]
+  e$region[is.na(e$region)] <- 'autre'
   e$nb_vehicules_verif <- (e$nb_vehicules_texte=='Un') + 2*(e$nb_vehicules_texte=='Deux ou plus')
 
   e$km[!is.na(e$km_0)] <- e$km_0[!is.na(e$km_0)]
@@ -660,16 +673,18 @@ convert_e <- function(e) {
   e$km[!is.na(e$km_2)] <- e$km_2[!is.na(e$km_2)]
   label(e$km) <- "km: Nombre de kilomètres parcourus lors des 12 derniers mois en voiture ou moto (par le répondant pour nb_vehicules=0, par les véhicules sinon)"
  
-  e$conso[!is.na(e$conso_1)] <- e$conso_1[!is.na(e$conso_1)]
-  e$conso[!is.na(e$conso_2)] <- e$conso_2[!is.na(e$conso_2)]
-  e$conso[is.na(e$conso)] <- (6.39 + 7.31) / 2 # TODO R round(0.5)=0 (JS = 1) and the code here does not exploit the fact that we may know whether it's diesel or essence: conso_embedded is better
+  if (vague==1) {
+    e$conso[!is.na(e$conso_1)] <- e$conso_1[!is.na(e$conso_1)]
+    e$conso[!is.na(e$conso_2)] <- e$conso_2[!is.na(e$conso_2)]
+    e$conso[is.na(e$conso)] <- (6.39 + 7.31) / 2 # R round(0.5)=0 (JS = 1) and the code here does not exploit the fact that we may know whether it's diesel or essence: conso_embedded is better, but exists only for e2
+  } else e$conso <- n(e$conso_embedded) 
   label(e$conso) <- "conso:  Consommation moyenne du véhicule (en litres aux 100 km)"
-
+  
   # e$mauvaise_qualite[e$conso > 90] <- 1 + e$mauvaise_qualite[e$conso > 90] # 28
   e$km_original <- e$km
   e$conso_original <- e$conso
   e$surface_original <- e$surface
-  e$km <- pmin(e$km, 200000) # TODO e$km[877] <- 1130 [586] <- 2250
+  e$km <- pmin(e$km, 200000) # TODO ?? e$km[877] <- 1130 [586] <- 2250
   e$conso <- pmin(e$conso, 30) # e$conso[851] <- 6.1
   e$surface <- pmin(e$surface, 650) # 
   e$conso_1 <- pmin(e$conso_1, 30) # 
@@ -685,13 +700,14 @@ convert_e <- function(e) {
   e$tax_acceptance <- e$taxe_approbation!='Non'
   label(e$tax_approval) <- "tax_approval: Approbation initiale de la hausse de la taxe carbone compensée: taxe_approbation=='Oui'"
   label(e$tax_acceptance) <- "tax_acceptance: Acceptation initiale de la hausse de la taxe carbone compensée: taxe_approbation!='Non'"
-  e$tax_feedback_approval <- e$taxe_feedback_approbation=='Oui'
-  e$tax_feedback_acceptance <- e$taxe_feedback_approbation!='Non'
-  label(e$tax_feedback_approval) <- "tax_feedback_approval: Approbation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation=='Oui'"
-  label(e$tax_feedback_acceptance) <- "tax_feedback_acceptance: Acceptation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation!='Non'"
 
-  # TODO: simule_gagnant faux
-  if ("simule_gagnant" %in% names(e)) {
+  # TODO!: simule_gagnant faux (?), vague 2, gagnant_alternative_categorie/tax_alternative_acceptance
+  if (vague==1) {
+    e$tax_feedback_approval <- e$taxe_feedback_approbation=='Oui'
+    e$tax_feedback_acceptance <- e$taxe_feedback_approbation!='Non'
+    label(e$tax_feedback_approval) <- "tax_feedback_approval: Approbation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation=='Oui'"
+    label(e$tax_feedback_acceptance) <- "tax_feedback_acceptance: Acceptation après le feedback de la hausse de la taxe carbone compensée: taxe_feedback_approbation!='Non'"
+
     e$update_correct <- ((e$simule_gagnant==1 & e$gagnant_feedback_categorie=='Gagnant' & e$gagnant_categorie!='Gagnant')
                          + (e$simule_gagnant==0 & e$gagnant_feedback_categorie=='Perdant' & e$gagnant_categorie!='Perdant')
                          - (e$simule_gagnant==1 & e$gagnant_feedback_categorie=='Perdant' & e$gagnant_categorie!='Perdant')
@@ -704,21 +720,24 @@ convert_e <- function(e) {
     label(e$update_correct_large) <- "update_correct_large: Différence entre faire un update dans la bonne direction quand le feedback y conduit et faire un update dans la mauvaise direction"
 
 
-  e$feedback_confirme <- (e$gagnant_categorie=='Gagnant' & e$simule_gagnant==1) | (e$gagnant_categorie=='Perdant' & e$simule_gagnant==0)
-  e$feedback_infirme <- (e$gagnant_categorie=='Perdant' & e$simule_gagnant==1) | (e$gagnant_categorie=='Gagnant' & e$simule_gagnant==0)
-  e$feedback_confirme_large <- e$feedback_confirme | (e$gagnant_categorie!='Perdant' & e$simule_gagnant==1) | (e$gagnant_categorie!='Gagnant' & e$simule_gagnant==0)
-  e$feedback_infirme_large <- e$feedback_infirme | (e$gagnant_categorie!='Perdant' & e$simule_gagnant==0) | (e$gagnant_categorie!='Gagnant' & e$simule_gagnant==1)
-  label(e$feedback_confirme) <- "feedback_confirme: Indicatrice de se penser et être simulé gagnant/perdant (gagnant_categorie, simule_gagnant)"
-  label(e$feedback_infirme) <- "feedback_infirme: Indicatrice de se penser gagnant et être simulé perdant, ou l'inverse (gagnant_categorie, simule_gagnant)"
-  label(e$feedback_confirme_large) <- "feedback_confirme_large: Indicatrice de se penser non perdant et être simulé gagnant, ou de se penser non gagnant et être simulé perdant (gagnant_categorie, simule_gagnant)"
-  label(e$feedback_infirme_large) <- "feedback_infirme_large: Indicatrice de se penser non gagnant et être simulé gagnant, ou de se penser non perdant et être simulé perdant (gagnant_categorie, simule_gagnant)"
-   
-  e$winning_category <- as.factor(e$gagnant_categorie)
-  e$winning_feedback_category <- as.factor(e$gagnant_feedback_categorie)
-  levels(e$winning_category) <- c('Winner', 'Unaffected', 'Loser')
-  levels(e$winning_feedback_category) <- c('Winner', 'Unaffected', 'Loser')
-  label(e$winning_category) <- "Winning category before feedback"
-  label(e$winning_feedback_category) <- "Winning category after feedback"
+    e$feedback_confirme <- (e$gagnant_categorie=='Gagnant' & e$simule_gagnant==1) | (e$gagnant_categorie=='Perdant' & e$simule_gagnant==0)
+    e$feedback_infirme <- (e$gagnant_categorie=='Perdant' & e$simule_gagnant==1) | (e$gagnant_categorie=='Gagnant' & e$simule_gagnant==0)
+    e$feedback_confirme_large <- e$feedback_confirme | (e$gagnant_categorie!='Perdant' & e$simule_gagnant==1) | (e$gagnant_categorie!='Gagnant' & e$simule_gagnant==0)
+    e$feedback_infirme_large <- e$feedback_infirme | (e$gagnant_categorie!='Perdant' & e$simule_gagnant==0) | (e$gagnant_categorie!='Gagnant' & e$simule_gagnant==1)
+    label(e$feedback_confirme) <- "feedback_confirme: Indicatrice de se penser et être simulé gagnant/perdant (gagnant_categorie, simule_gagnant)"
+    label(e$feedback_infirme) <- "feedback_infirme: Indicatrice de se penser gagnant et être simulé perdant, ou l'inverse (gagnant_categorie, simule_gagnant)"
+    label(e$feedback_confirme_large) <- "feedback_confirme_large: Indicatrice de se penser non perdant et être simulé gagnant, ou de se penser non gagnant et être simulé perdant (gagnant_categorie, simule_gagnant)"
+    label(e$feedback_infirme_large) <- "feedback_infirme_large: Indicatrice de se penser non gagnant et être simulé gagnant, ou de se penser non perdant et être simulé perdant (gagnant_categorie, simule_gagnant)"
+     
+    e$winning_category <- as.factor(e$gagnant_categorie)
+    e$winning_feedback_category <- as.factor(e$gagnant_feedback_categorie)
+    levels(e$winning_category) <- c('Winner', 'Unaffected', 'Loser')
+    levels(e$winning_feedback_category) <- c('Winner', 'Unaffected', 'Loser')
+    label(e$winning_category) <- "Winning category before feedback"
+    label(e$winning_feedback_category) <- "Winning category after feedback"
+  } else {
+    e$variante_alternative <- ifelse(e$dividende != 170 & e$random != 0, "urba", "détaxe")
+    label(e$variante_alternative) <- "variante_alternative: Variante affiché pour taxe avec dividende alternative: urba/détaxe. urba: Dividende différencié en fonction du lieu d'habitation (88-133e centre-ville - rural). détaxe: 1tCO2 gratuite/pers (50e remboursable e.g. en station-service), le reste reversé en dividende."
   }
 #   e$gaz <- grepl('gaz', e$chauffage, ignore.case = T)
 #   e$fioul <- grepl('fioul', e$chauffage, ignore.case = T)
@@ -738,7 +757,7 @@ convert_e <- function(e) {
 	e$hausse_essence_verif_na[e$nb_vehicules == 0] <- (0.5*(7.31/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 0] # share_diesel * conso * km * price * (1-elasticite) * price_increase
 	e$hausse_essence_verif_na[e$nb_vehicules == 1] <- ((e$fuel_1!='Diesel') * (7.31/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 1]
   e$hausse_essence_verif_na[e$nb_vehicules == 2] <- (((e$fuel_2_1!='Diesel')*2/3 + (e$fuel_2_2!='Diesel')/3) * (7.31/100) * e$km * 1.45 * (1 - 0.4) * 0.076128)[e$nb_vehicules == 2]
-  # TODO: bug: conso_2=NA pour conso_2_choix=NSP & fuel_2_1=Diesel, créant le même bug simule_gagnant=1 et hausse_depenses=NA decrit(e1$fuel_2_1[e1$bug==F & is.na(e1$hausse_depenses)]) decrit(e1$conso_2_choix[e1$bug==F & is.na(e1$hausse_depenses)])
+  # bug: conso_2=NA pour conso_2_choix=NSP & fuel_2_1=Diesel, créant le même bug simule_gagnant=1 et hausse_depenses=NA decrit(e1$fuel_2_1[e1$bug==F & is.na(e1$hausse_depenses)]) decrit(e1$conso_2_choix[e1$bug==F & is.na(e1$hausse_depenses)]) (bug de nouveau dans le pilote 2)
   # c'était dû à une coquille (conso_2_1 était écrit au lieu de conso2_1). ça concerne 17 obs. parmi les 190 premières, i.e. pour date_enregistree <= "2020-10-09 03:06:24"
   e$bug <- e$date_enregistree < "2020-04-28 05:55:00" # 1:792: T / 793:1003: F
   e$bug_touche <- e$fuel_2_1=='Diesel' & e$bug
@@ -762,8 +781,10 @@ convert_e <- function(e) {
   e$revdisp <- round((e$rev_tot -  irpp(e$rev_tot, e$nb_adultes, e$taille_menage)))
   e$uc <- uc(e$taille_menage, e$nb_14_et_plus)
   e$niveau_vie <- e$revdisp / e$uc
-
-  if ("hausse_depenses_subjective" %in% names(e)) {
+  
+  e$fioul <- n(e$fioul)
+  e$gaz <- n(e$gaz)
+  if (vague==1) {
     e$perte <- 1 + round(as.numeric(gsub("\\D*", "", sub("\\set.*", "", sub("\\D*", "", e$hausse_depenses_subjective))))/45)
     e$perte[grepl('au contraire', e$hausse_depenses_subjective)] <- -1
     e$perte[grepl('aucune baisse', e$hausse_depenses_subjective)] <- 0
@@ -777,39 +798,38 @@ convert_e <- function(e) {
     e$perte_max <-   0*(e$perte==-1) + 30*(e$perte==1) + 70*(e$perte==2) + 120*(e$perte==3) + 190*(e$perte==4) + 2000*(e$perte==5)
     temp <- 224.25*(e$perte==5) + 147.91*(e$perte==4) + 92.83*(e$perte==3) + 48.28*(e$perte==2) + 13.72*(e$perte==1) - 1.66*(e$perte==-1) # TODO?: recalculer, surtout perte==5 (qui correspond à [190;280] au lieu de >190) et perte==-1 (ne sait pas d'où il sort). Pour info 405.55*(perte==6)
     e$perte <- as.item(temp, labels = structure(c(224.25, 147.91, 92.83, 48.28, 13.72, 0, -1.66), names = c(">190", "120-190", "70-120", "30-70", "0-30", "0", "<0")), annotation=Label(e$perte))
+    
+    e$simule_gain_menage <- 16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses # NA pour les répondants chez qui le fuel_2_1=='Diesel' créait un bug (et qui avait tout le temps simule_gagnant==1) (élasticité de 0.15 sur le gaz)
+    e$simule_gain_repondant <- 16.1 + 110 - e$hausse_depenses
+    label(e$simule_gain_repondant) <- "simule_gain_repondant: Gain net annuel simulé pour le répondant (sans tenir compte du potentiel versement reçu par les autres adultes du ménage) suite à une hausse de taxe carbone compensée: 116.1 - hausse_depenses"
+    e$simule_gain_verif <- (16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_verif) / e$uc # élasticité de 0.15 sur le gaz
+    label(e$simule_gain_verif) <- "simule_gain_verif: Gain net annuel simulé par UC suite à une hausse de taxe carbone compensée (avec le bon calcul)"
+    
+    # TODO: refaire pour vague==2
+    # e$hausse_carburants <- e$hausse_diesel + e$hausse_essence
+    # e$hausse_chauffage_interaction_inelastique <- 152.6786*e$fioul + e$surface * (1.6765*e$gaz + 1.1116*e$fioul) # TODO
+    # e$depense_chauffage <- ((1*(e$fioul) * (152.6786 + 1.1116*e$surface)) / 0.148079 + 1.6765*e$gaz*e$surface / 0.133456)
+    # e$hausse_depenses_interaction <- e$hausse_carburants + e$hausse_chauffage_interaction_inelastique * (1 - 0.2)
+    # e$hausse_depenses_interaction_inelastique <- e$hausse_carburants/(1 - 0.4) + e$hausse_chauffage_interaction_inelastique
+    # e$simule_gain_interaction <- (9.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction) / e$uc # élasticité de 0.2 pour le gaz
+    # e$simule_gagnant_interaction <- 1*(e$simule_gain_interaction > 0)
+    # e$simule_gain_inelastique <- (pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction_inelastique) / e$uc # élasticité nulle. Inclure + 22.4 rendrait le taux d'erreur uniforme suivant les deux catégories, on ne le fait pas pour être volontairement conservateur
+    # label(e$hausse_chauffage_interaction_inelastique) <- "hausse_chauffage_interaction_inelastique: Hausse des dépenses de chauffage simulées pour le ménage avec des termes d'interaction entre surface et gaz/fioul plutôt que sans, suite à la taxe (élasticité nulle)"
+    # label(e$depense_chauffage) <- "depense_chauffage: Dépense de chauffage annuelle estimée du ménage, avant la réforme"
+    # label(e$simule_gain_interaction) <- "simule_gain_interaction: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone compensée: 9.1 + pmin(2, nb_adultes) * 110 - hausse_chauffage_interaction_inelastique * 0.8 - hausse_carburants"
+    # label(e$simule_gagnant_interaction) <- "simule_gagnant_interaction: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations avec des termes d'interaction surface*fioul/gaz: 1*(simule_gain_interaction > 0)"
+    # label(e$simule_gain_inelastique) <- "simule_gain_inelastique: Gain net par UC annuel simulé (avec interaction) avec une élasticité nulle, pour le ménage du répondant suite à une hausse de taxe carbone compensée:  nb_adultes * 110 - hausse_chauffage_interaction_inelastique - hausse_carburants / 0.6"
+    # # label(e$simule_gain_elast_perso) <- "simule_gain_elast_perso: Gain net par UC annuel simulé (avec interaction) avec l'élasticité renseignée par le répondant, pour le ménage du répondant suite à une hausse de taxe carbone compensée: pmin(2, nb_adultes) * 110 - hausse_partielle_inelastique * (1 - Elasticite_partielle_perso) - hausse_autre_partielle"
+    # label(e$hausse_depenses_interaction) <- "hausse_depenses_interaction: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
+    # label(e$hausse_depenses_interaction_inelastique) <- "hausse_depenses_interaction_inelastique: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité nulle)"
+  } else {
+    e$dividende <- n(e$dividende)
+    e$simule_gain_menage <- e$nb_adultes * e$dividende - e$hausse_depenses 
   }
-  e$simule_gain_menage <- 16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses # NA pour les répondants chez qui le fuel_2_1=='Diesel' créait un bug (et qui avait tout le temps simule_gagnant==1) (élasticité de 0.15 sur le gaz)
   e$simule_gain <- e$simule_gain_menage / e$uc
-  e$simule_gain_repondant <- 16.1 + 110 - e$hausse_depenses
-  label(e$simule_gain_menage) <- "simule_gain_menage: Gain net annuel simulé pour le ménage du répondant suite à une hausse de taxe carbone compensée: 16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses"
-  label(e$simule_gain) <- "simule_gain: Gain net annuel simulé par UC pour le ménage du répondant suite à une hausse de taxe carbone compensée: (16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses)/UC"
-  label(e$simule_gain_repondant) <- "simule_gain_repondant: Gain net annuel simulé pour le répondant (sans tenir compte du potentiel versement reçu par les autres adultes du ménage) suite à une hausse de taxe carbone compensée: 116.1 - hausse_depenses"
+  label(e$simule_gain_menage) <- "simule_gain_menage: Gain net annuel simulé pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende. Vague 1: 16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses. Vague 2: nb_adultes * dividende - hausse_depenses"
+  label(e$simule_gain) <- "simule_gain: Gain net annuel simulé par UC pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende: simule_gain_menage/UC"
   
-  # e$simule_gain_verif <- (16.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_verif) / e$uc # élasticité de 0.15 sur le gaz
-  # label(e$simule_gain_verif) <- "simule_gain_verif: Gain net annuel simulé par UC suite à une hausse de taxe carbone compensée (avec le bon calcul)"
-
-  # e$hausse_chauffage_interaction_inelastique <- 152.6786*e$fioul + e$surface * (1.6765*e$gaz + 1.1116*e$fioul) # TODO
-  # e$depense_chauffage <- ((1*(e$fioul) * (152.6786 + 1.1116*e$surface)) / 0.148079 + 1.6765*e$gaz*e$surface / 0.133456)
-  # e$hausse_depenses_interaction <- e$hausse_carburants + e$hausse_chauffage_interaction_inelastique * (1 - 0.2)
-  # e$hausse_depenses_interaction_inelastique <- e$hausse_carburants/(1 - 0.4) + e$hausse_chauffage_interaction_inelastique
-  # e$simule_gain_interaction <- (9.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction) / e$uc # élasticité de 0.2 pour le gaz
-  # e$simule_gagnant_interaction <- 1*(e$simule_gain_interaction > 0)
-  # e$simule_gain_inelastique <- (pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction_inelastique) / e$uc # élasticité nulle. Inclure + 22.4 rendrait le taux d'erreur uniforme suivant les deux catégories, on ne le fait pas pour être volontairement conservateur
-  # e$simule_gain_cible_interaction <- (e$versement_cible - e$hausse_depenses_interaction) / e$uc
-  # e$simule_gain_cible_interaction_inelastique <- (e$versement_cible - e$hausse_depenses_interaction_inelastique) / e$uc
-  # e$simule_gain_elast_perso[e$variante_partielle=='c'] <- (pmin(2, e$nb_adultes[e$variante_partielle=='c']) * 110 - (e$hausse_chauffage_interaction_inelastique[e$variante_partielle=='c'] * (1 + e$Elasticite_chauffage_perso[e$variante_partielle=='c']) + e$hausse_carburants[e$variante_partielle=='c'])) / e$uc[e$variante_partielle=='c']
-  # e$simule_gain_elast_perso[e$variante_partielle=='f'] <- (pmin(2, e$nb_adultes[e$variante_partielle=='f']) * 110 - (e$hausse_carburants[e$variante_partielle=='f'] * (1 + e$Elasticite_fuel_perso[e$variante_partielle=='f']) / (1 - 0.4) + e$hausse_chauffage_interaction_inelastique[e$variante_partielle=='f'] * (1 - 0.2))) / e$uc[e$variante_partielle=='f']
-  # label(e$hausse_chauffage_interaction_inelastique) <- "hausse_chauffage_interaction_inelastique: Hausse des dépenses de chauffage simulées pour le ménage avec des termes d'interaction entre surface et gaz/fioul plutôt que sans, suite à la taxe (élasticité nulle)"
-  # label(e$depense_chauffage) <- "depense_chauffage: Dépense de chauffage annuelle estimée du ménage, avant la réforme"
-  # label(e$simule_gain_interaction) <- "simule_gain_interaction: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone compensée: 9.1 + pmin(2, nb_adultes) * 110 - hausse_chauffage_interaction_inelastique * 0.8 - hausse_carburants"
-  # label(e$simule_gagnant_interaction) <- "simule_gagnant_interaction: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations avec des termes d'interaction surface*fioul/gaz: 1*(simule_gain_interaction > 0)"
-  # label(e$simule_gain_inelastique) <- "simule_gain_inelastique: Gain net par UC annuel simulé (avec interaction) avec une élasticité nulle, pour le ménage du répondant suite à une hausse de taxe carbone compensée:  nb_adultes * 110 - hausse_chauffage_interaction_inelastique - hausse_carburants / 0.6"
-  # label(e$simule_gain_elast_perso) <- "simule_gain_elast_perso: Gain net par UC annuel simulé (avec interaction) avec l'élasticité renseignée par le répondant, pour le ménage du répondant suite à une hausse de taxe carbone compensée: pmin(2, nb_adultes) * 110 - hausse_partielle_inelastique * (1 - Elasticite_partielle_perso) - hausse_autre_partielle"
-  # label(e$hausse_depenses_interaction) <- "hausse_depenses_interaction: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
-  # label(e$hausse_depenses_interaction_inelastique) <- "hausse_depenses_interaction_inelastique: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité nulle)"
-  # label(e$simule_gain_cible_interaction) <- "simule_gain_cible_interaction: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone avec compensation ciblée: versement_cible - hausse_depenses_interaction) / uc"
-  # label(e$simule_gain_cible_interaction_inelastique) <- "simule_gain_cible_interaction_inelastique: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone avec compensation ciblée: versement_cible - hausse_depenses_interaction_inelastique) / uc"
-
   e$Revenu <- e$revenu/1e3 # TODO: labels
   e$Revenu_conjoint <- e$revenu_conjoint/1e3
   e$percentile_revenu <- 100*percentiles_revenu(e$revenu*12)
@@ -818,11 +838,9 @@ convert_e <- function(e) {
   e$Revenu2 <- e$revenu^2/1e6
   e$Revenu_conjoint2 <- e$revenu_conjoint^2/1e6
   e$Simule_gain2 <- e$simule_gain^2/1e6
-  # e$biais_sur <- abs(e$simule_gain - e$gain) > 110
-  # label(e$biais_sur) <- "biais_sur: Certitude à 99% que le gain subjectif du répondant est biaisé à la baisse: abs(simule_gain - gain) > 110"
-   # TODO: EELV instead of CCC
-  if ('inconnue' %in% levels(as.factor(e$origine_taxe))) e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'inconnue')
-  if ("label_taxe" %in% names(e)) e$label_taxe <- relevel(as.factor(e$label_taxe), 'taxe')
+  
+  if (vague==1) e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'inconnue')
+  if (vague==1) e$label_taxe <- relevel(as.factor(e$label_taxe), 'taxe')
   e$variante_taxe_carbone <- relevel(as.factor(e$variante_taxe_carbone), 'neutre')
   label(e$variante_taxe_carbone) <- "variante_taxe_carbone: Variante aléatoire pour pour_taxe_carbone: neutre/pour/contre: no info / Selon un sondage de 2018/2019, une majorité de Français est pour/contre une augmentation de la taxe carbone"
   
@@ -830,7 +848,7 @@ convert_e <- function(e) {
   label(e$hausse_depenses_par_uc) <- "hausse_depenses_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (utilise la variable buggué hausse_depenses) (élasticité de 0.4/0.2 pour carburants/chauffage)"
   e$hausse_depenses_verif_par_uc <- e$hausse_depenses_verif/e$uc # TODO: hausse_depenses_interaction_par_uc
   label(e$hausse_depenses_verif_par_uc) <- "hausse_depenses_verif_par_uc: Hausse des dépenses énergétiques par UC suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
-  if ("perte" %in% names(e)) {
+  if (vague==1) { # TODO!
     e$biais <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte)
     e$biais_plus <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte_min)
     e$biais_moins <- e$hausse_depenses_verif_par_uc - as.numeric(e$perte_max)
@@ -841,6 +859,8 @@ convert_e <- function(e) {
     label(e$gain) <- "gain: (110/uc)*min(2, nb_adultes)*(confiance_dividende == Oui + 0.5*confiance_dividende == À moitié) - perte Gain net par UC subjectif du ménage suite à une taxe carbone avec dividende, en tenant compte que le répondant peut croire que son ménage ne recevra pas, ou à moitié, le dividende."
     e$gain_min <- (110/e$uc)*pmin(2, e$nb_adultes)*(e$confiance_dividende==1) - e$perte_max
     label(e$gain_min) <- "gain: (110/uc)*min(2, nb_adultes)*(confiance_dividende == Oui) - perte_max Gain net par UC subjectif du ménage suite à une taxe carbone avec dividende, où le dividende est ajouté seulement si le répondant y croit"
+    e$biais_sur <- abs(e$simule_gain - e$gain) > 110
+    label(e$biais_sur) <- "biais_sur: Certitude à 99% que le gain subjectif du répondant est biaisé à la baisse: abs(simule_gain - gain) > 110"
   }
   # e$nb_politiques_env <- 0
   # variables_politiques_environnementales <- c("taxe_kerosene", "taxe_viande", "normes_isolation", "normes_vehicules", "controle_technique", "interdiction_polluants",
@@ -885,16 +905,22 @@ convert_e <- function(e) {
   label(e$nb_correct_soutenu) <- "nb_correct_soutenu: Nombre de réponses correctes à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
   
   variables_devoile <<- paste("CCC_devoile", c("obligation_renovation", "limitation_110", "fonds_mondial", "taxe_viande"), sep='_')
+  if (vague==2) {
+    variables_devoile <- c(variables_devoile, "CCC_devoile_28_heures")
+    e$correct_devoile_28_heures <- e$CCC_devoile_28_heures < 0
+    label(e$correct_devoile_28_heures) <- "correct_devoile_28_heures: CCC_devoile_28_heures < 0 - [Si pas Aucun à sait_CCC_devoilee] La réduction du temps de travail légal à 28 heures par semaine - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
+  }
   e$correct_devoile_obligation_renovation <- e$CCC_devoile_obligation_renovation > 0 # https://www.lemonde.fr/climat/article/2020/04/11/climat-les-50-propositions-de-la-convention-citoyenne-pour-porter-l-espoir-d-un-nouveau-modele-de-societe_6036293_1652612.html
   e$correct_devoile_limitation_110 <- e$CCC_devoile_limitation_110 < 0
   e$correct_devoile_fonds_mondial <- e$CCC_devoile_fonds_mondial < 0
   e$correct_devoile_taxe_viande <- e$CCC_devoile_taxe_viande < 0
   e$nb_correct_devoile <- e$correct_devoile_obligation_renovation + e$correct_devoile_limitation_110 + e$correct_devoile_fonds_mondial + e$correct_devoile_taxe_viande
+  if (vague==2) e$nb_correct_devoile <- e$nb_correct_devoile + e$correct_devoile_28_heures
   label(e$correct_devoile_obligation_renovation) <- "correct_devoile_obligation_renovation: CCC_devoile_obligation_renovation > 0 - [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
   label(e$correct_devoile_limitation_110) <- "correct_devoile_limitation_110: CCC_devoile_limitation_110 < 0 - [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
   label(e$correct_devoile_fonds_mondial) <- "correct_devoile_fonds_mondial: CCC_devoile_fonds_mondial < 0 - [Si pas Aucun à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
   label(e$correct_devoile_taxe_viande) <- "correct_devoile_taxe_viande: CCC_devoile_taxe_viande < 0 - [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge - Réponse correcte à si cette mesure de la CCC a été dévoilée ~ info_CCC"
-  label(e$nb_correct_devoile) <- "nb_correct_devoile: Nombre de réponses correctes à si cette mesure de la CCC a été dévoilée (obligation_renovation=T/limitation_110=F/taxe_viande=F/fonds_mondial=F)"
+  label(e$nb_correct_devoile) <- "nb_correct_devoile: Nombre de réponses correctes à si cette mesure de la CCC a été dévoilée (obligation_renovation=T/limitation_110=F/taxe_viande=F/fonds_mondial=F/[vague 2]28h=F)"
   
   obstacles <<- c("lobbies", "manque_volonte", "manque_cooperation", "inegalites", "incertitudes", "demographie", "technologies", "rien")
   variables_obstacles <<- paste("obstacles", obstacles, sep="_")
@@ -902,7 +928,7 @@ convert_e <- function(e) {
     for (v in obstacles) e[[paste("obstacle", i, sep="_")]][e[[paste("obstacles", v, sep="_")]]==i] <- v
     label(e[[paste("obstacle", i, sep="_")]]) <- paste("obstacle_", i, ": Obstacle à la lutte contre le CC classé en position ", i, " (1: le plus - 7: le moins important) (", paste(obstacles, collapse = "/"), ")", sep="") }
 
-  # e$Connaissance_CCC <- NA # TODO: put back in
+  # e$Connaissance_CCC <- NA # TODO!: put back in
   # e$connaissance_CCC_bon_francais <- e$connaissance_CCC_sortition <- e$connaissance_CCC_mesures <- e$connaissance_CCC_temporalite <- e$connaissance_CCC_internet <- e$connaissance_CCC == "FALSE"
   # e$connaissance_CCC_150 <- e$connaissance_CCC == "FALSE"
   # e$Connaissance_CCC[c(1,3,10,13,17,19,29,30,34,45,49,51,54,57,64,68,74,77,78,86,93,97,103,121,129,136,139,151,153,155,156,159,162,163,164,174,179,181,182,183,184,187,191,194,196,197,201)] <- "aucune" #
@@ -944,12 +970,12 @@ convert_e <- function(e) {
   # label(e$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
   # label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
   
-  if ("random" %in% names(e)) e$variante_taxe_alternative <- ifelse(n(e$dividende) != 170 & n(e$random) != 0, "détaxe", "urba")
-  if ("gain_net_choix" %in% names(e)) {
+  if (vague==2) {
     e$gain_subjectif_original <- 0
     e$gain_subjectif_original[!is.na(e$gain_net_gain)] <- n(e$gain_net_gain[!is.na(e$gain_net_gain)])
     e$gain_subjectif_original[!is.na(e$gain_net_perte)] <- - n(e$gain_net_perte[!is.na(e$gain_net_perte)] )
     e$gain_subjectif <- e$gain_subjectif_original / e$uc
+    label(e$gain_subjectif) <- "gain_subjectif: Gain net subjectif par UC pour la taxe avec dividende (variation en partie expliquée par trois valeurs de dividendes aléatoires: 0/110/170)."
   }
   
   e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)] # 39:49,
@@ -960,8 +986,7 @@ convert_e <- function(e) {
 # export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 
 weighting_e <- function(data, printWeights = T) { # cf. google sheet
-  d <- data
-  d$region[is.na(d$region)] <- 'autre' # TODO: isn't applied because d not returned
+  d <- data 
   d$taille_agglo <- as.numeric(d$taille_agglo)
   # d$csp <- factor(d$csp)
   # d$region <- factor(d$region)
@@ -1012,7 +1037,7 @@ prepare_e <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished
   # if (exclude_quotas_full) { e <- e[e$Q_TerminateFlag=="",]  } # remove those with a problem for the taille d'agglo
   if (only_finished) { # TODO: le faire marcher même pour les autres
     e <- e[e$fini=="True",] 
-    e <- convert_e(e) 
+    e <- convert_e(e, vague=1) 
    
     e$weight <- weighting_e(e)
   
@@ -1175,11 +1200,11 @@ relabel_and_rename2 <- function(e) {
   label(e[[124]]) <- "CCC_representative: Une assemblée représentative de la population - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
   label(e[[125]]) <- "CCC_autre_choix: Autre - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
   label(e[[126]]) <- "CCC_autre: Autre (champ libre) - Pensez-vous que la Convention Citoyenne pour le Climat est … (inutile/prometteuse_climat/espoir_institutions/vouee_echec/operation_comm/initiative_sincere/pour_se_defausser_entendre_francais/controlee_govt/representative)"
-  label(e[[127]]) <- "CCC_devoile_fonds_mondial_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(e[[128]]) <- "CCC_devoile_obligation_renovation_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(e[[129]]) <- "CCC_devoile_taxe_viande_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une taxe sur la viande rouge - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(e[[130]]) <- "CCC_devoile_limitation_110_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(e[[131]]) <- "first_click:" # TODO: formulation changed above
+  label(e[[127]]) <- "CCC_devoile_fonds_mondial_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==1)"
+  label(e[[128]]) <- "CCC_devoile_obligation_renovation_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==1)"
+  label(e[[129]]) <- "CCC_devoile_taxe_viande_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une taxe sur la viande rouge - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==1)"
+  label(e[[130]]) <- "CCC_devoile_limitation_110_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==1)"
+  label(e[[131]]) <- "first_click:"
   label(e[[132]]) <- "last_click:"
   label(e[[133]]) <- "duree_info_CCC: Temps passé sur la page affichant l'information sur la CCC (info_CCC==1)"
   label(e[[134]]) <- "click_count:"
@@ -1203,18 +1228,18 @@ relabel_and_rename2 <- function(e) {
   label(e[[152]]) <- "referendum_interdiction_publicite: ~ L'interdiction de la publicité pour les produits les plus polluants - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[153]]) <- "referendum_cheque_bio: ~ La mise en place de chèque alimentaires pour les plus démunis à utiliser dans les AMAP ou le bio - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[154]]) <- "referendum_obligation_renovation: ~ L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
-  label(e[[155]]) <- "CCC_devoile_fonds_mondial_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
-  label(e[[156]]) <- "CCC_devoile_obligation_renovation_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
-  label(e[[157]]) <- "CCC_devoile_taxe_viande_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge -Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
-  label(e[[158]]) <- "CCC_devoile_limitation_110_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
-  label(e[[159]]) <- "gain_net_choix" #TODO: description + gain_net_NSP à partir de 150 réponses / 20/10 3h50 / bug jusqu'à 168 - 7h38: il était impossible de sélectionner NSP #"confiance_dividende: ~ [Si question_confiance > 0] Avez-vous confiance dans le fait que l'État vous versera effectivement 110€ par an (220€ pour un couple) si une telle réforme est mise en place ? (Oui/À moitié/Non)"
-  label(e[[160]]) <- "gain_net_gain" #"hausse_depenses_subjective: ~ À combien estimez-vous alors la hausse des dépenses de combustibles de votre ménage ? (aucune hausse : au contraire, mon ménage réduirait ses dépenses de combustibles/aucune hausse, aucune baisse/entre 1 et 30/30 et 70/70 et 120/120 et 190/à plus de 190 € par an /UC)"
-  label(e[[161]]) <- "gain_net_perte" #"gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
+  label(e[[155]]) <- "CCC_devoile_fonds_mondial_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une contribution à un fonds mondial pour le climat - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==0)"
+  label(e[[156]]) <- "CCC_devoile_obligation_renovation_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==0)"
+  label(e[[157]]) <- "CCC_devoile_taxe_viande_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] Une taxe sur la viande rouge - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==0)"
+  label(e[[158]]) <- "CCC_devoile_limitation_110_no_info_CCC: ~ [Si pas Aucun à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que la CCC a proposé cette mesure [e1: dévoilé] (info_CCC==0)"
+  label(e[[159]]) <- "gain_net_choix: Choix - Gain ou perte ou non affecté ou NSP  pour le gain net face à la taxe avec dividende (cf. gain_net_choix, taxe_approbation)." # description + gain_net_NSP à partir de 150 réponses / 20/10 3h50 / bug jusqu'à 168 - 7h38: il était impossible de sélectionner NSP #"confiance_dividende: ~ [Si question_confiance > 0] Avez-vous confiance dans le fait que l'État vous versera effectivement 110€ par an (220€ pour un couple) si une telle réforme est mise en place ? (Oui/À moitié/Non)"
+  label(e[[160]]) <- "gain_net_gain: Montant du gain du ménage pour le gain net face à la taxe avec dividende (cf. gain_net_choix, taxe_approbation)." #"hausse_depenses_subjective: ~ À combien estimez-vous alors la hausse des dépenses de combustibles de votre ménage ? (aucune hausse : au contraire, mon ménage réduirait ses dépenses de combustibles/aucune hausse, aucune baisse/entre 1 et 30/30 et 70/70 et 120/120 et 190/à plus de 190 € par an /UC)"
+  label(e[[161]]) <- "gain_net_perte: Montant de la perte du ménage pour le gain net face à la taxe avec dividende (cf. gain_net_choix, taxe_approbation)." #"gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
   label(e[[162]]) <- "certitude_gagnant: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
   label(e[[163]]) <- "taxe_approbation: ~ taxe_approbation: Approbation d'une hausse de la taxe carbone compensée (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence) (Oui/Non/NSP) ~ origine_taxe (gouvernement/CCC/inconnue) / label_taxe (CCE/taxe)"
-  label(e[[164]]) <- "gagnant_feedback_categorie: ~ info si le ménage est gagnant/perdant - Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
-  label(e[[165]]) <- "certitude_gagnant_feedback: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
-  label(e[[166]]) <- "taxe_feedback_approbation: ~ info si le ménage est gagnant/perdant - Approbation d'une hausse de la taxe carbone compensée (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence) (Oui/Non/NSP)" # TODO: modify
+  label(e[[164]]) <- "gagnant_alternative_categorie: ~ info si le ménage est gagnant/perdant - Ménage Gagnant/Non affecté/Perdant par taxe avec dividende alternative, i.e. variante urba (dividende de 88€ en centre-ville à 133€ rural) ou détaxe (1t/an non taxé)"
+  label(e[[165]]) <- "certitude_gagnant_alternative: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse) pour taxe avec dividende alternative, i.e. variante urba (dividende de 88€ en centre-ville à 133€ rural) ou détaxe (1t/an non taxé)"
+  label(e[[166]]) <- "taxe_alternative_approbation: ~ info si le ménage est gagnant/perdant - Approbation d'une taxe avec dividende alternative, i.e. variante urba (dividende de 88€ en centre-ville à 133€ rural) ou détaxe (1t/an non taxé) (Oui/Non/NSP)" 
   label(e[[167]]) <- "interet_politique: Le répondant est intéressé par la politique (Presque pas/Un peu/Beaucoup)"
   label(e[[168]]) <- "confiance_gouvernement: En général, faites-vous confiance au gouvernement pour prendre de bonnes décisions ? (Toujours/La plupart/La moitié du temps/Parfois/Jamais/NSP)"
   label(e[[169]]) <- "extr_gauche: Le répondant se considère comme étant d'extrême gauche"
@@ -1228,7 +1253,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[177]]) <- "patriote: Le répondant se considère comme étant patriote"
   label(e[[178]]) <- "apolitique: Le répondant se considère comme étant apolitique"
   label(e[[179]]) <- "ecologiste: Le répondant se considère comme étant écologiste"
-  label(e[[180]]) <- "CCC_devoile_28_heures: ~ [Si pas Non à sait_CCC_devoilee] La réduction du temps de travail légal à 28 heures par semaine - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==?)" # TODO: déterminer si info_CCC = 0 ou 1
+  label(e[[180]]) <- "CCC_devoile_28_heures_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] La réduction du temps de travail légal à 28 heures par semaine - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)" 
   label(e[[181]]) <- "gilets_jaunes_dedans: Le répondant déclare faire partie des gilets jaunes"
   label(e[[182]]) <- "gilets_jaunes_soutien: Le répondant soutient les gilets jaunes"
   label(e[[183]]) <- "gilets_jaunes_compris: Le répondant comprend les gilets jaunes"
@@ -1244,7 +1269,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[193]]) <- "gaz: Indicatrice que chauffage = 'Gaz de ville' ou 'Butane, propane, gaz en citerne'"
   label(e[[194]]) <- "fioul: Indicatrice que chauffage = 'Fioul, mazout, pétrole'"
   label(e[[195]]) <- "nb_vehicules: Nombre de véhicules motorisés dont dispose le ménage"
-  label(e[[196]]) <- "hausse_depenses: Hausse des taxes énergétiques simulées pour le ménage, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)" # TODO: modify
+  label(e[[196]]) <- "hausse_depenses: Hausse des taxes énergétiques simulées pour le ménage, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage, gain fiscal utilisé, nb adultes non plafonné, seulement interaction pour chauffage)" # gain fiscal utilisé pck c'est dans l'intervalle gain net - gain inélastique, et ça somme à 0. heating_increase = 1.4999036*gas*surface + 2.6820197* fuel*surface - 0.0050740*fuel*surface^2
   label(e[[197]]) <- "conso_embedded:  Consommation moyenne du véhicule (en litres aux 100 km)" #"simule_gagnant: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations"
   label(e[[198]]) <- "CCC_representative: Pensez-vous que les citoyens membres de la Convention Citoyenne pour le Climat sont représentatifs de l'ensemble des Français ? (Oui/Non/NSP)" #"hausse_chauffage: Hausse des dépenses de chauffage simulées pour le ménage, suite à la taxe (élasticité de 0.15 au lieu de 0.2)"
   label(e[[199]]) <- "CCC_non_representative_gauche" #
@@ -1258,7 +1283,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[207]]) <- "referendum_ecocide: ~ La reconnaissance du crime d'«écocide» - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[208]]) <- "referendum_environnement_priorite_constit: ~ L'inscription dans la Constitution que la préservation de l'environnement passe avant tout - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[209]]) <- "referendum_environnement_constitution: ~ L'inscription dans la Constitution de la préservation de la biodiversité, de l'environnement et de la lutte contre le dérèglement climatique - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
-  label(e[[210]]) <- "CCC_devoile_28_heures: ~ [Si pas Non à sait_CCC_devoilee] La réduction du temps de travail légal à 28 heures par semaine - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==?)" # TODO: déterminer si info_CCC = 0 ou 1
+  label(e[[210]]) <- "CCC_devoile_28_heures_no_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] La réduction du temps de travail légal à 28 heures par semaine - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==0)"
   label(e[[211]]) <- "Q98_First Click"
   label(e[[212]]) <- "Q98_Last Click"
   label(e[[213]]) <- "duree_taxe: Temps passé (en secondes) sur le bloc de taxe_approbation et gain_net (avec variante 110/170/0 + EELV/gouv)"
@@ -1266,7 +1291,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[215]]) <- "avis_estimation: Que pensez-vous de notre estimation de [hausse taxe]€ par an pour l'augmentation de taxes payées lors des achats de combustibles de votre ménage ? (Trop élevé/Correct/Trop bas/NSP)"
   label(e[[216]]) <- "Q99_First Click"
   label(e[[217]]) <- "Q99_Last Click"
-  label(e[[218]]) <- "duree_taxe_alternative: Temps passé (en secondes) sur le bloc proposant une variante à la taxe avec dividende (soit urba (si dividende != 170 & random != 0) soit detaxe sinon)" # TODO: indicatrice de la variante
+  label(e[[218]]) <- "duree_taxe_alternative: Temps passé (en secondes) sur le bloc proposant une variante à la taxe avec dividende (soit urba (si dividende != 170 & random != 0) soit detaxe sinon)" 
   label(e[[219]]) <- "Q99_Click Count"
   label(e[[220]]) <- "pour_28h: Êtes-vous favorable à la réduction du temps de travail légal à 28 heures par semaine ?"
   label(e[[221]]) <- "parti: Sans penser seulement aux élections, veuillez indiquer de quel parti politique vous vos sentez le plus proche ou du moins le moins éloigné ?"
@@ -1436,7 +1461,7 @@ relabel_and_rename2_pilote <- function(e) {
   label(e[[128]]) <- "CCC_devoile_obligation_renovation_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
   label(e[[129]]) <- "CCC_devoile_taxe_viande_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] Une taxe sur la viande rouge - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
   label(e[[130]]) <- "CCC_devoile_limitation_110_info_CCC: ~ [Si pas Non à sait_CCC_devoilee] L'abaissement de la limitation de vitesse sur les autoroutes à 110 km/h - Le répondant pense que cette mesure de la CCC a été dévoilée (info_CCC==1)"
-  label(e[[131]]) <- "first_click:" # TODO: formulation changed above
+  label(e[[131]]) <- "first_click:" # TODO: formulation changed above (pilote osef)
   label(e[[132]]) <- "last_click:"
   label(e[[133]]) <- "duree_info_CCC: Temps passé sur la page affichant l'information sur la CCC (info_CCC==1)"
   label(e[[134]]) <- "click_count:"
@@ -1536,9 +1561,9 @@ prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finishe
   # if (exclude_quotas_full) { e <- e[e$Q_TerminateFlag=="",]  } # remove those with a problem for the taille d'agglo
   if (only_finished) { # TODO: le faire marcher même pour les autres
     e <- e[e$fini=="True",] 
-    e <- convert_e(e) 
+    e <- convert_e(e, vague=2) 
     
-    e$weight <- weighting_e(e) # TODO: put back in
+    e$weight <- weighting_e(e)
     
     e$gauche_droite_na <- as.numeric(e$gauche_droite)
     e$gauche_droite_na[e$indeterminate == T] <- wtd.mean(e$gauche_droite, weights = e$weight)
@@ -1565,8 +1590,11 @@ e <- e2
 e2$vague <- 2
 e1$vague <- 1
 eb <- rbind.fill(e1, e2)
+for (i in names(eb)) { 
+  if (i %in% names(e1)) label(eb[[i]]) <- label(e1[[i]])
+  if (i %in% names(e2)) label(eb[[i]]) <- label(e2[[i]]) }
 
-export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
+# export_stats_desc(e, paste(getwd(), 'externe_stats_desc.csv', sep='/'))
 
 b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
 c <- readRDS("../donnees/CCC.Rda") # données CCC 

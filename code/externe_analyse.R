@@ -1,19 +1,19 @@
 ##### Socio-démos #####
 decrit(e2$diplome4, weight = F)
 decrit(e1$diplome4, weight = F) # similar, though less CAP and more Bac in e2
-decrit(e2$diplome4) # TODO: pb weights CAP/BEP vs. Bac pour e1 => pb pour tous les graphiques
-decrit(e1$diplome4)
-decrit(e2$age)
-decrit(e1$age)
+decrit("diplome4", data=e2) 
+decrit("diplome4", data=e1)
+decrit("age", data=e2)
+decrit("age", data=e1)
 decrit(e2$age, weight = F)
-decrit(e1$age, weight = F) # TODO: pb weights e1
-decrit(e1$csp)
-decrit(e2$csp)
+decrit("age", weight = F, data=e1) 
+decrit("csp", data=e1)
+decrit("csp", data=e2)
 decrit(e1$csp, weight = F)
 decrit(e2$csp, weight = F)
-decrit(e1$sexe)
-decrit(e2$sexe)
-decrit(e1$sexe, weight = F) # TODO: pb weights e1
+decrit("sexe", data=e1)
+decrit("sexe", data=e2)
+decrit(e1$sexe, weight = F) 
 decrit(e2$sexe, weight = F)
 decrit(e1$region, miss=T)
 decrit(e2$region, miss=T)
@@ -23,10 +23,10 @@ sum(is.na(e2$region))
 sum(is.na(e1$region))
 decrit(e1$code_postal[is.na(e1$region)])
 decrit(e2$code_postal[is.na(e2$region)])
-decrit(e1$region_verif, weight = F, miss=T) # only one missing
+decrit(e1$region_verif, weight = F, miss=T) 
 decrit(e2$region_verif, weight = F, miss=T) # region_verif good
-sum(e1$region_verif != e1$region, na.rm=T) # TODO: pb: 255 
-sum(e2$region_verif != e2$region, na.rm=T) # 0 => utiliser region_verif instead
+sum(e1$region_verif != e1$region, na.rm=T)
+sum(e2$region_verif != e2$region, na.rm=T) 
 decrit(e1$taille_agglo)
 decrit(e2$taille_agglo)
 decrit(e1$taille_agglo, weight = F)
@@ -58,6 +58,14 @@ summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe, data=e, weights 
 summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe * question_confiance, data=e, weights = e$weight)) # no effect
 summary(lm(gagnant_categorie=='Perdant' ~ question_confiance, data=e, weights = e$weight))
 summary(lm(gagnant_categorie=='Perdant' ~ label_taxe * origine_taxe * question_confiance, data=e, weights = e$weight))
+decrit(e$taxe_feedback_approbation[e$origine_taxe=="EELV"], miss = T)
+decrit(e$taxe_feedback_approbation[e$origine_taxe=="gouvernement"], miss = T)
+summary(lm(taxe_approbation!='Non' ~ origine_taxe * dividende, data=e, weights = e$weight))
+decrit(e$taxe_feedback_approbation[e$dividende==170], miss = T)
+decrit(e$taxe_feedback_approbation[e$dividende==170 & e$origine_taxe=='gouvernement'], miss = T)
+decrit(e$taxe_feedback_approbation, which = (e$dividende==170 & e$origine_taxe=='gouvernement'), miss = T, weight = T)
+decrit(e$taxe_feedback_approbation[e$dividende==110], miss = T)
+decrit(e$taxe_feedback_approbation[e$dividende==0], miss = T)
 
 
 ##### Confiance dividende ~ label_taxe * origine_taxe #####
@@ -681,7 +689,7 @@ save_plotly(cause_pauvrete) # CREDOC janvier 2019 toplot /!\ 50% de non réponse
 #  70: "Le  Réchauffement climatique est un problème majeur  aussi parce qu' il provoque  beaucoup de  discussions   et de dissensions  dans les familles.  Par exemple  certains  végans voudraient nous imposer  
 #       leur régime alimentaire  comme une religion.  lls   brandissent  le spectre d un cataclysme éminent si nous ne changeons pas totalement notre mode  de vie. et c 'est très angoissant.."
 #   1: "je souhaite de vivre bien"
-# critiques questionnaire: trop long, questions pas assez précises ou réponses manquant de nuances, la police devrait être noire plutôt que grise, et plus petite TODO2wave
+# critiques questionnaire: trop long, questions pas assez précises ou réponses manquant de nuances, la police devrait être noire plutôt que grise, et plus petite
 
 
 ##### Comparaison avec sondage Adrien Thomas #####
@@ -877,6 +885,8 @@ decrit(c$problemes_invisibilises_1e) # Très: 18% (12%) / Assez souvent: 33% (45
 
 # TODO: socio-démos CCC CoGouv
 # TODO: indice méfiance/confiance CCC (variables_CCC_avis)
+
+
 ##### Avis CCC #####
 decrit(e$connait_CCC)
 e$avis_CCC <- (e$CCC_prometteuse_climat + e$CCC_espoir_institutions + e$CCC_initiative_sincere + e$CCC_entendre_francais + e$CCC_representative
@@ -947,3 +957,8 @@ summary(lm(certitude_gagnant <= 0 ~ gain_net_choix + dividende, data=e))
 summary(lm(certitude_gagnant < 0 ~ gain_net_choix + dividende, data=e))
 summary(lm(gain_subjectif == 0 ~ dividende, data=e))
 decrit(e$gain_subjectif == 0)
+
+
+##### détaxe urba #####
+decrit(e2$taxe_feedback_approbation[e2$variante_taxe_alternative=="détaxe"], miss = T)
+decrit(e2$taxe_feedback_approbation[e2$variante_taxe_alternative=="urba"], miss = T)
