@@ -602,7 +602,7 @@ convert_e <- function(e, vague) {
   e$Gauche_droite[is.na(e$Gauche_droite)] <- "Indeterminate"
   e$indeterminate <- e$Gauche_droite == "Indeterminate"
   e$gauche_droite_nsp <- as.character(e$gauche_droite)
-  e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'NSP'
+  e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'Indéterminé'
   # e$gauche_droite_nsp <- as.factor(e$gauche_droite_nsp)
   
   temp <- Label(e$interet_politique)

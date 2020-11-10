@@ -21,6 +21,7 @@ package("ggplot2")
 package("stringr")
 package("survey")
 Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "/home/adrien/anaconda3/bin", sep = .Platform$path.sep))
+Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "C:/Users/afabre/Anaconda3/pkgs/plotly-orca-1.3.1-1/orca_app", sep = .Platform$path.sep)) # to correct bug orca, add folder of orca.exe
 package("plotly")
 package('gdata')
 package("Hmisc")
@@ -456,7 +457,7 @@ yes_no5 <- c("Not at all", "Not really", "Indifferent/PNR", "Rather yes", "Yes, 
 # evol5 <- c("Baisser fortement", "Baisser légèrement", "Maintenir au niveau", "Augmenter légèrement", "Augmenter fortement")
 # evolve5 <- c("Strongly decrease", "Slightly decrease", "Maintain", "Slightly increase", "Strongly increase")
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
-                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e, miss=T, weights = T, fr=T, rev=T, grouped = F) {
+                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = F) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   if (missing(data) & !missing(vars)) {
@@ -611,7 +612,12 @@ save_plotly <- function(plot, filename = deparse(substitute(plot)), folder = '..
     saveWidget(politiques_1, 'temp.html')
     webshot('temp.html', file, delay = 0.1, vwidth = width, vheight = height)  
     file.remove('temp.html')}
-  else orca(plot, file = file, width = width, height = height)
+  else orca(plot, file = file, width = width, height = height) # bug with encoding in Windows
+  # else {
+  #   server <- orca_serve() # doesn't work within a function because requires admin rights
+  #   server$export(plot, file = file, width = width, height = height)
+  #   server$close()
+  # }
   if (trim) image_write(image_trim(image_read(file)), file)
 }
 
