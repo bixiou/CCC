@@ -360,7 +360,7 @@ oui_non <- function(vars, file, labels = vars, data = s, display_value = T, sort
   # api_create(bars, filename=file, sharing="public")
   return(bars) # bugs most often than not
 }
-data5 <- function(vars, data=e, miss=T, weights=T, rev=FALSE) {
+data5 <- function(vars, data=e1, miss=T, weights=T, rev=FALSE) {
   matrice <- c()
   colors <-  c(rainbow(4, end=4/15), "forestgreen") # c("red", "orange", "yellow", "green", "darkgreen") # rainbow(5, end=1/3)
   for (var in vars) {
@@ -382,7 +382,7 @@ data5 <- function(vars, data=e, miss=T, weights=T, rev=FALSE) {
   else return(matrice)
   # return(as.data.frame(matrice))
 }
-data1 <- function(vars, data=e, weights=T) {
+data1 <- function(vars, data=e1, weights=T) {
   res <- c()
   for (var in vars) {
     if (weights) { res <- c(res, sum(data[['weight']][which(data[[var]]==TRUE)])/sum(data[['weight']][which(data[[var]]==TRUE | data[[var]]==FALSE)])) }
@@ -390,7 +390,7 @@ data1 <- function(vars, data=e, weights=T) {
   }
   return( matrix(res, ncol=length(vars)) )
 }
-dataN <- function(var, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
+dataN <- function(var, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
   if (is.null(data[['weight']])) weights <- F # TODO? warning
   mat <- c()
   if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]])))) v <- as.factor(data[[var]])
@@ -416,16 +416,52 @@ dataN <- function(var, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE
   else if ((return %in% c("levels", "legend")) & (!(miss))) return(levels)
   else return(matrix(mat, ncol=1))
 }
-dataKN <- function(vars, data=e, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
+dataKN <- function(vars, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
   if (is.logical(data[[vars[1]]])) return(data1(vars, data, weights))
   else {
     res <- c()
     for (var in vars) res <- c(res, dataN(var, data, miss, weights, return, fr, rev))
     return(matrix(res, ncol=length(vars))) }
 }
-dataN2 <- function(var, df = list(c, e), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
+dataN2 <- function(var, df = list(c, e1), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
   if (return %in% c("levels", "legend")) return(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev, return = return))
   else return(cbind(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev), dataN(var, df[[2]], miss = miss, weights = weights, fr = fr, rev = rev))) }
+data12 <- function(vars, df = list(e1, e2), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
+  if (length(vars)==1) return(dataN2(var=vars, df=df, miss=miss, weights=weights, fr=fr, rev=rev, return=return))
+  else {
+    init <- T 
+    for (var in vars) {
+      if (init) {
+        data <- dataN2(var=var, df=list(df[[2]], df[[1]]), miss=miss, weights=weights, fr=fr, rev=rev, return=return)
+        init <- F
+      } else {
+        data <- cbind(data, dataN2(var=var, df=list(df[[2]], df[[1]]), miss=miss, weights=weights, fr=fr, rev=rev, return=return))
+      }
+    }
+    return(data)
+  } }
+barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, miss=T, weights = T, fr=T, rev=T, color=c(), rev_color = FALSE, hover=legend, sort=TRUE, thin=T) {
+  if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
+  if (!missing(miss)) nsp <- miss
+  data1 <- dataKN(vars, data=df[[1]], miss=miss, weights = weights, return = "", fr=fr, rev=rev)
+  if (missing(legend) & missing(hover)) { 
+    if (is.logical(df[[1]][[vars[1]]])) hover <- legend <- labels # data1(var = vars[1], data=df, weights = weights)
+    else hover <- legend <- dataN(var = vars[1], data=df[[1]], miss=miss, weights = weights, return = "legend", fr=fr, rev_legend = rev) } 
+  agree <- order_agree(data = data1, miss = miss)
+  return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
+                labels=labels12(labels[agree]), legend=legend, 
+                miss=miss, weights = weights, fr=fr, rev=rev, color=c(), rev_color = rev_color, hover=hover, sort=F, thin=thin))
+}
+
+labels12 <- function(labels, en=F) {
+  new_labels <- c()
+  lab2 <- ifelse(en, "Wave 2 (W2)", "Vague 2 (V2)")
+  lab1 <- ifelse(en, "(W1)", "(V1)")
+  for (l in labels) {
+    new_labels <- c(new_labels, lab2, paste(l, lab1))
+    lab2 <- paste("", lab2) }
+  return(new_labels)
+}
 color5 <- c(rainbow(4, end=4/15)[1:3], "#00FF00", "#228B22") # the last two are: green, forestgreen
 color <- function(v, grey=FALSE, grey_replaces_last = T, rev_color = FALSE, theme='RdBu') {
   if (is.matrix(v)) n <- nrow(v)
@@ -456,6 +492,16 @@ yes_no5 <- c("Not at all", "Not really", "Indifferent/PNR", "Rather yes", "Yes, 
 # agree5 <- c("Strongly disagree", "Disagree", "Indifferent", "Agree", "Strongly agree")
 # evol5 <- c("Baisser fortement", "Baisser légèrement", "Maintenir au niveau", "Augmenter légèrement", "Augmenter fortement")
 # evolve5 <- c("Strongly decrease", "Slightly decrease", "Maintain", "Slightly increase", "Strongly increase")
+order_agree <- function(data, miss, rev = T, n = ncol(data)) {
+  agree <- c()
+  if (!missing(miss)) {
+    if (miss) for (i in 1:n) agree <- c(agree, sum(data[floor(nrow(data)/2+1):max(1,(nrow(data)-1)),i]))
+    else for (i in 1:n) agree <- c(agree, sum(data[ifelse(nrow(data)==1,1,ceiling(nrow(data)/2+1)):nrow(data),i]))
+  } else {
+    if (nrow(data)==5 | nrow(data)==6) { for (i in 1:n) { agree <- c(agree, data[4, i] + data[5, i]) } }
+    else if (nrow(data)==7) { for (i in 1:n) { agree <- c(agree, data[6, i] + data[7, i]) } }
+    else { for (i in 1:n) { agree <- c(agree, data[1, i]) } } }
+return(order(agree, decreasing = rev)) }
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
                    display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = F) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
@@ -487,19 +533,12 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
   if (!showLegend) { margin_t <- max(0, margin_t - 70) }
   if (ncol(data)==1) legendY = 1.5 + 0.3*thin
   if (sort) {
-    agree <- c()
-    if (!missing(miss)) {
-      if (miss) for (i in 1:length(labels)) agree <- c(agree, sum(data[floor(nrow(data)/2+1):max(1,(nrow(data)-1)),i]))
-      else for (i in 1:length(labels)) agree <- c(agree, sum(data[ifelse(nrow(data)==1,1,ceiling(nrow(data)/2+1)):nrow(data),i]))
-    } else {
-      if (nrow(data)==5 | nrow(data)==6) { for (i in 1:length(labels)) { agree <- c(agree, data[4, i] + data[5, i]) } }
-      else if (nrow(data)==7) { for (i in 1:length(labels)) { agree <- c(agree, data[6, i] + data[7, i]) } }
-      else { for (i in 1:length(labels)) { agree <- c(agree, data[1, i]) } } }
-    labels <- labels[order(agree, decreasing = rev)]
-    data <- matrix(data[, order(agree, decreasing = rev)], nrow=nrow(data))
+    order <- order_agree(data = data, miss = miss, rev = rev, n = length(labels))
+    labels <- labels[order]
+    data <- matrix(data[, order], nrow=nrow(data))
   }
   if (nrow(data)==1 & sort) {  
-    hover <- hover[order(agree)]
+    hover <- hover[order]
     value <- c()
     for (i in 1:length(hover)) { 
       hover[i] <- paste(hover[i], "<br>Choisi dans ", round(100*data[1, i]), "% des réponses", sep="")
