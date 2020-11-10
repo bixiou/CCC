@@ -1,4 +1,5 @@
 ##### Socio-démos #####
+length(intersect(e1$ip, e2$ip)) # seules deux personnes sont les mêmes que dans la vague 1 !
 decrit(e2$diplome4, weight = F)
 decrit(e1$diplome4, weight = F) # similar, though less CAP and more Bac in e2
 decrit("diplome4", data=e2) 
@@ -703,7 +704,7 @@ save_plotly(pour_sortition_v2)
 save_plotly(connait_CCC_v2)
 
 (Connaissance_CCC_v2 <- barres(vars = "Connaissance_CCC", df=e2, miss = F, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
-save_plotly(Connaissance_CCC_v2)
+save_plotly(Connaissance_CCC_v2) # TODO
 
 (sait_CCC_devoilee_v2 <- barres(vars = "sait_CCC_devoilee", df=e2, miss = F, labels="Des mesures proposées par la Convention \nCitoyenne pour le Climat ont déjà été dévoilées"))
 save_plotly(sait_CCC_devoilee_v2)
@@ -714,7 +715,7 @@ save_plotly(gilets_jaunes_v2)
 (gauche_droite_v2 <- barres(vars = "gauche_droite", df=e2, miss = F, labels="Comment vous définiriez-vous ?", rev=F, rev_color = T))
 save_plotly(gauche_droite_v2) 
 (gauche_droite_nsp_v2 <- barres(vars = "gauche_droite_nsp", df=e2, miss = T, labels="Comment vous définiriez-vous ?", rev=F, rev_color = T))
-save_plotly(gauche_droite_nsp_v2) 
+save_plotly(gauche_droite_nsp_v2) # TODO: ordre
 
 (confiance_gouvernement_v2 <- barres(vars = "confiance_gouvernement", df=e2, miss = T, labels="En général, faites-vous confiance au gouvernement\n pour prendre de bonnes décisions ?"))
 save_plotly(confiance_gouvernement_v2) 
@@ -722,7 +723,7 @@ save_plotly(confiance_gouvernement_v2)
 (interet_politique_v2 <- barres(vars = "interet_politique", df=e2, miss = F, labels="À quel point êtes-vous intéressé·e par la politique ?"))
 save_plotly(interet_politique_v2) 
 
-(gagnant_categorie_v2 <- barres(vars = "gagnant_categorie", df=e2, miss = F, labels="Suite à une taxe carbone avec dividende, vous seriez ...", rev=F))
+(gagnant_categorie_v2 <- barres(vars = "gagnant_categorie", df=e2, miss = T, labels="Suite à une taxe carbone avec dividende, vous seriez ...", rev=T))
 save_plotly(gagnant_categorie_v2) 
 
 (certitude_gagnant_v2 <- barres(vars = "certitude_gagnant", df=e2, miss = F, labels="Degré de certitude à la cagéorie gagnant/perdant"))
@@ -730,9 +731,6 @@ save_plotly(certitude_gagnant_v2)
 
 (taxe_approbation_v2 <- barres(vars = "taxe_approbation", df=e2, thin=F, miss = T, labels="Approbation d'une taxe avec dividende\n", rev = F))
 save_plotly(taxe_approbation_v2) 
-
-(confiance_dividende_v2 <- barres(vars = "confiance_dividende", df=e2, miss = F, labels="Confiance dans le fait que l'État versera le dividende"))
-save_plotly(confiance_dividende_v2) 
 
 (trop_impots_v2 <- barres(vars = "trop_impots", df=e2, miss = T, labels="Paie-t-on trop d'impôt en France ?"))
 save_plotly(trop_impots_v2) 
@@ -826,9 +824,6 @@ save_plotly(France_CC2_v2)
 # (France_CC_both_en <- barres(data=dataN2("France_CC", miss=F, rev = T), miss = F, sort = F, labels = c('CCC', 'Population (PSE)'), legend=c("Yes", "NR", "No")))
 # save_plotly(France_CC_both_en)
 
-(effets_CC_AT_v2 <- barres(vars = "effets_CC_AT", df=e2, rev = F, miss = T, labels="Effets du changement climatique, \nsi rien n'est fait pour le limiter ?"))
-save_plotly(effets_CC_AT_v2) 
-
 (echelle_politique_CC2_v2 <- barres(vars = "echelle_politique_CC", df=e2, thin = F, rev = F, miss = F, labels="Le changement climatique exige\n d'être pris en charge par des politiques ..."))
 save_plotly(echelle_politique_CC2_v2) 
 
@@ -863,7 +858,9 @@ save_plotly(importance_v2)
 save_plotly(responsable_CC_v2) 
 
 (CCC_avis_v2 <- barres(vars = variables_CCC_avis, df=e2, rev = F, miss = F, showLegend=F, labels=labels_CCC_avis_long))
-save_plotly(CCC_avis_v2) 
+save_plotly(CCC_avis_v2)
+
+decrit(e$representativite_CCC) # TODO: image representative
 
 (qualite_enfant2_v2 <- barres(vars = variables_qualite_enfant, df=e2, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
 save_plotly(qualite_enfant2_v2) 
@@ -885,8 +882,8 @@ data_anthropique_v2 <- (rbind(length(which(e2$part_anthropique <= 45)), length(w
 save_plotly(part_anthropique_v2)
 
 data_taxe_carbone_v2 <- cbind(dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='neutre',]))
-(pour_taxe_carbone2_v2 <- barres(data = data_taxe_carbone_v2, df=e2, rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est pour", "Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est contre", "Favorable à une augmentation de la taxe carbone\nVariante: sans information"), legend=c('Oui', 'Non', 'NSP')))
-save_plotly(pour_taxe_carbone2_v2) # TODO: margin errors
+(pour_taxe_carbone2_v2 <- barres(data = data_taxe_carbone_v2, df=e2, rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est pour", "Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est contre", "Favorable à une augmentation de la taxe carbone\nVariante: sans information"), legend=c('Oui ', 'Non ', 'NSP')))
+save_plotly(pour_taxe_carbone2_v2) # TODO: margin errors, manque Oui/Non
 
 (pour_taxe_carbone_neutre_v2 <- barres(vars = "pour_taxe_carbone", df = e2[e2$variante_taxe_carbone=='neutre',], rev = F, thin = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sans information")))
 save_plotly(pour_taxe_carbone_neutre_v2)

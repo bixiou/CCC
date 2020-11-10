@@ -444,7 +444,7 @@ convert_e <- function(e, vague) {
   for (j in names(e)) {
     if ((grepl('gilets_jaunes_|ecologiste|conservateur|liberal|patriote|humaniste|apolitique|locataire|proprio_|heberge_|solution_CC_|responsable_|centre$|droite|gauche', j)
         | grepl('soutenu_|qualite_enfant_|^CCC_', j))
-        & !(j %in% c('CCC_autre')) & !grepl('CCC_devoile_', j)) {
+        & !(grepl('autre$', j)) & !grepl('CCC_devoile_', j)) {
       temp <- label(e[[j]])
       e[[j]] <- e[[j]]!="" # e[[j]][e[[j]]!=""] <- TRUE
       e[[j]][is.na(e[[j]])] <- FALSE
@@ -976,6 +976,10 @@ convert_e <- function(e, vague) {
     e$gain_subjectif_original[!is.na(e$gain_net_perte)] <- - n(e$gain_net_perte[!is.na(e$gain_net_perte)] )
     e$gain_subjectif <- e$gain_subjectif_original / e$uc
     label(e$gain_subjectif) <- "gain_subjectif: Gain net subjectif par UC pour la taxe avec dividende (variation en partie expliquée par trois valeurs de dividendes aléatoires: 0/110/170)."
+    
+    e$gagnant_categorie <- 1*grepl("gagne", e$gain_net_choix) - 0.1*grepl("NSP", e$gain_net_choix) - 1*grepl("perd", e$gain_net_choix)
+    label(e$gagnant_categorie) <- "gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant/NSP par taxe avec dividende"
+    e$gagnant_categorie <- as.item(n(e$gagnant_categorie), labels = structure(c(-1:1,-0.1), names=c('Perdant', 'Non affecté', 'Gagnant', 'NSP')), missing.values = -0.1, annotation=Label(e$gagnant_categorie))
   }
   
   e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)] # 39:49,
@@ -1271,7 +1275,7 @@ relabel_and_rename2 <- function(e) {
   label(e[[195]]) <- "nb_vehicules: Nombre de véhicules motorisés dont dispose le ménage"
   label(e[[196]]) <- "hausse_depenses: Hausse des taxes énergétiques simulées pour le ménage, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage, gain fiscal utilisé, nb adultes non plafonné, seulement interaction pour chauffage)" # gain fiscal utilisé pck c'est dans l'intervalle gain net - gain inélastique, et ça somme à 0. heating_increase = 1.4999036*gas*surface + 2.6820197* fuel*surface - 0.0050740*fuel*surface^2
   label(e[[197]]) <- "conso_embedded:  Consommation moyenne du véhicule (en litres aux 100 km)" #"simule_gagnant: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations"
-  label(e[[198]]) <- "CCC_representative: Pensez-vous que les citoyens membres de la Convention Citoyenne pour le Climat sont représentatifs de l'ensemble des Français ? (Oui/Non/NSP)" #"hausse_chauffage: Hausse des dépenses de chauffage simulées pour le ménage, suite à la taxe (élasticité de 0.15 au lieu de 0.2)"
+  label(e[[198]]) <- "representativite_CCC: Pensez-vous que les citoyens membres de la Convention Citoyenne pour le Climat sont représentatifs de l'ensemble des Français ? (Oui/Non/NSP)" #"hausse_chauffage: Hausse des dépenses de chauffage simulées pour le ménage, suite à la taxe (élasticité de 0.15 au lieu de 0.2)"
   label(e[[199]]) <- "CCC_non_representative_gauche" #
   label(e[[200]]) <- "CCC_non_representative_droite" #
   label(e[[201]]) <- "CCC_non_representative_ecolo" #
@@ -1598,7 +1602,7 @@ for (i in names(eb)) {
 
 b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
 c <- readRDS("../donnees/CCC.Rda") # données CCC 
- 
+ # TODO: extraire emails
 ccc <- read.dta13("../donnees/all_benedicte.dta")
 ccc$appartenance_france <- grepl("France", ccc$s2_e_q10)
 ccc$appartenance_monde <- grepl("monde", ccc$s2_e_q10)
