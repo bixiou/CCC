@@ -104,7 +104,7 @@ decrit <- function(variable, miss = FALSE, weights = NULL, numbers = FALSE, data
   if (!missing(which)) variable <- variable[which] 
   if (weight) { 
     # if (length(variable) > 1) warning("Field 'variable' is a vector instead of a character, weight will not be used.")
-    weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else { 
+    if (missing(weights)) weights <- data[["weight"]]  #  if (missing(data)) warning("Field 'data' is missing, weight will not be used.") else { 
     if (!missing(which)) weights <- weights[which]
     if (length(weights)!=length(variable)) {
       warning("Lengths of weight and variable differ, non-weighted results are provided")
@@ -393,13 +393,14 @@ data1 <- function(vars, data=e1, weights=T) {
 dataN <- function(var, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
   if (is.null(data[['weight']])) weights <- F # TODO? warning
   mat <- c()
-  if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]])))) v <- as.factor(data[[var]])
+  if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]]))) | is.logical(data[[var]])) v <- as.factor(data[[var]]) # before: no is.logical
   else v <- data[[var]]
-  if (is.null(annotation(v))) levels <- levels(v)
+  if (setequal(levels(v), c(T, F))) levels <- c(T) # before: not this line
+  else if (is.null(annotation(v))) levels <- levels(v)
   else levels <- labels(v)@.Data
   levels <- levels[!(levels %in% c("NSP", "PNR", "Non concerné·e"))]
   if (rev_legend) levels <- rev(levels) # new (05/20)
-  for (val in levels) { # before: no %in% nowherer below
+  for (val in levels) { # before: no %in% nowhere below
     if (weights) mat <- c(mat, sum(data[['weight']][which(v==val)])/sum(data[['weight']][!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))]))
     else mat <- c(mat, length(which(v==val))/length(which(!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))))) }
   if (rev) mat <- rev(mat)
@@ -426,8 +427,11 @@ dataKN <- function(vars, data=e1, miss=T, weights = T, return = "", fr=T, rev=FA
 dataN2 <- function(var, df = list(c, e1), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
   if (return %in% c("levels", "legend")) return(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev, return = return))
   else return(cbind(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev), dataN(var, df[[2]], miss = miss, weights = weights, fr = fr, rev = rev))) }
+dataN3 <- function(var, df = list(e2, e1, c), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
+  if (return %in% c("levels", "legend")) return(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev, return = return))
+  else return(cbind(dataN(var, df[[1]], miss = miss, weights = weights, fr = fr, rev = rev), dataN(var, df[[2]], miss = miss, weights = weights, fr = fr, rev = rev), dataN(var, df[[3]], miss = miss, weights = weights, fr = fr, rev = rev))) }
 data12 <- function(vars, df = list(e1, e2), miss=T, weights = T, fr=T, rev=FALSE, return = "") {
-  if (length(vars)==1) return(dataN2(var=vars, df=df, miss=miss, weights=weights, fr=fr, rev=rev, return=return))
+  if (length(vars)==1) return(dataN2(var=vars, df=list(df[[2]], df[[1]]), miss=miss, weights=weights, fr=fr, rev=rev, return=return))
   else {
     init <- T 
     for (var in vars) {
@@ -440,17 +444,21 @@ data12 <- function(vars, df = list(e1, e2), miss=T, weights = T, fr=T, rev=FALSE
     }
     return(data)
   } }
-barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, miss=T, weights = T, fr=T, rev=T, color=c(), rev_color = FALSE, hover=legend, sort=TRUE, thin=T) {
+barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, miss=T, weights = T, fr=T, rev=T, color=c(), rev_color = FALSE, hover=legend, sort=TRUE, thin=T, return="", showLegend=T) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   data1 <- dataKN(vars, data=df[[1]], miss=miss, weights = weights, return = "", fr=fr, rev=rev)
   if (missing(legend) & missing(hover)) { 
-    if (is.logical(df[[1]][[vars[1]]])) hover <- legend <- labels # data1(var = vars[1], data=df, weights = weights)
+    if (is.logical(df[[1]][[vars[1]]])) hover <- legend <- labels # data1(var = vars[1], data=df, weights = weights) # before: uncommented and "else" next line
     else hover <- legend <- dataN(var = vars[1], data=df[[1]], miss=miss, weights = weights, return = "legend", fr=fr, rev_legend = rev) } 
   agree <- order_agree(data = data1, miss = miss)
-  return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
+  if (is.logical(df[[1]][[vars[1]]])) agree <- rev(agree)
+  if (return=="data") return(data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""))
+  else if (return=="labels") return(labels12(labels[agree]))
+  else if (return=="legend") return(legend)
+  else return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
                 labels=labels12(labels[agree]), legend=legend, 
-                miss=miss, weights = weights, fr=fr, rev=rev, color=c(), rev_color = rev_color, hover=hover, sort=F, thin=thin))
+                miss=miss, weights = weights, fr=fr, rev=rev, color=c(), rev_color = rev_color, hover=hover, sort=F, thin=thin, showLegend=showLegend))
 }
 
 labels12 <- function(labels, en=F) {
@@ -537,7 +545,8 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
     labels <- labels[order]
     data <- matrix(data[, order], nrow=nrow(data))
   }
-  if (nrow(data)==1 & sort) {  
+  if (nrow(data)==1 & (sort | !showLegend)) {  # new: add !showLegend to manage responsable_CC i.e. comparisons of a multiple answer question
+    if (!sort) order <- 1:length(labels)
     hover <- hover[order]
     value <- c()
     for (i in 1:length(hover)) { 

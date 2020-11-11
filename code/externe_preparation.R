@@ -602,8 +602,9 @@ convert_e <- function(e, vague) {
   e$Gauche_droite[is.na(e$Gauche_droite)] <- "Indeterminate"
   e$indeterminate <- e$Gauche_droite == "Indeterminate"
   e$gauche_droite_nsp <- as.character(e$gauche_droite)
-  e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'Indéterminé'
-  # e$gauche_droite_nsp <- as.factor(e$gauche_droite_nsp)
+  e$gauche_droite_nsp[e$Gauche_droite=='Indeterminate'] <- 'NSP'
+  e$gauche_droite_nsp <- as.factor(e$gauche_droite_nsp)
+  e$gauche_droite_nsp <- relevel(relevel(e$gauche_droite_nsp, "Gauche"), "Extrême gauche")
   
   temp <- Label(e$interet_politique)
   e$interet_politique <- 1*(e$interet_politique=='Un peu') + 2*(e$interet_politique=='Beaucoup')
@@ -626,7 +627,7 @@ convert_e <- function(e, vague) {
   label(e$Gilets_jaunes) <- "Gilets_jaunes: Que pensez-vous des gilets jaunes ? -1: s'oppose / 0: comprend sans soutenir ni s'opposer / 1: soutient / 2: fait partie des gilets jaunes (gilets_jaunes_compris/oppose/soutien/dedans/NSP)"
 
   e$echelle_politique_CC <- -2*(e$echelle_politique_CC=='à toutes les échelles') -1*(e$echelle_politique_CC=='mondiales') + (e$echelle_politique_CC=='nationales') + 2*(e$echelle_politique_CC=='locales')
-  e$echelle_politique_CC <- as.item(e$echelle_politique_CC, labels = structure(c(-2:2), names=c('à toutes les échelles', "mondiales", 'européennes', 'nationales', 'locales')), annotation=Label(e$echelle_politique_CC) )
+  e$echelle_politique_CC <- as.item(e$echelle_politique_CC, labels = structure(c(-2:2), names=c('à toutes les échelles', "mondiale", 'européenne', 'nationale', 'locale')), annotation=Label(e$echelle_politique_CC) )
   # e$echelle_politique_CC <- relevel(as.factor(e$echelle_politique_CC), 'nationales')
   # e$echelle_politique_CC <- relevel(e$echelle_politique_CC, 'européennes')
   # e$echelle_politique_CC <- relevel(e$echelle_politique_CC, 'mondiales')
@@ -978,9 +979,14 @@ convert_e <- function(e, vague) {
     label(e$gain_subjectif) <- "gain_subjectif: Gain net subjectif par UC pour la taxe avec dividende (variation en partie expliquée par trois valeurs de dividendes aléatoires: 0/110/170)."
     
     e$gagnant_categorie <- 1*grepl("gagne", e$gain_net_choix) - 0.1*grepl("NSP", e$gain_net_choix) - 1*grepl("perd", e$gain_net_choix)
-    label(e$gagnant_categorie) <- "gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant/NSP par taxe avec dividende"
-    e$gagnant_categorie <- as.item(n(e$gagnant_categorie), labels = structure(c(-1:1,-0.1), names=c('Perdant', 'Non affecté', 'Gagnant', 'NSP')), missing.values = -0.1, annotation=Label(e$gagnant_categorie))
+  } else {
+    e$gagnant_categorie <- 1*(e$gagnant_categorie=="Gagnant") - 0.1*(e$gagnant_categorie=="NSP") - 1*(e$gagnant_categorie=="Perdant")
   }
+  label(e$gagnant_categorie) <- "gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant/NSP par taxe avec dividende"
+  e$gagnant_categorie <- as.item(n(e$gagnant_categorie), labels = structure(c(1:-1,-0.1), names=c('Gagnant', 'Non affecté', 'Perdant', 'NSP')), missing.values = -0.1, annotation=Label(e$gagnant_categorie))
+  
+  e$Gagnant_categorie <- as.character(e$gagnant_categorie)
+  e$Gagnant_categorie[e$Gagnant_categorie=="NSP"] <- "NSP "
   
   e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)] # 39:49,
   return(e)
