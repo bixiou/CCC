@@ -929,47 +929,78 @@ convert_e <- function(e, vague) {
     for (v in obstacles) e[[paste("obstacle", i, sep="_")]][e[[paste("obstacles", v, sep="_")]]==i] <- v
     label(e[[paste("obstacle", i, sep="_")]]) <- paste("obstacle_", i, ": Obstacle à la lutte contre le CC classé en position ", i, " (1: le plus - 7: le moins important) (", paste(obstacles, collapse = "/"), ")", sep="") }
 
-  # e$Connaissance_CCC <- NA # TODO!: put back in
-  # e$connaissance_CCC_bon_francais <- e$connaissance_CCC_sortition <- e$connaissance_CCC_mesures <- e$connaissance_CCC_temporalite <- e$connaissance_CCC_internet <- e$connaissance_CCC == "FALSE"
-  # e$connaissance_CCC_150 <- e$connaissance_CCC == "FALSE"
-  # e$Connaissance_CCC[c(1,3,10,13,17,19,29,30,34,45,49,51,54,57,64,68,74,77,78,86,93,97,103,121,129,136,139,151,153,155,156,159,162,163,164,174,179,181,182,183,184,187,191,194,196,197,201)] <- "aucune" #
-  # e$Connaissance_CCC[c(208,210,217,218,223,232,236,242,250,255,259,260,266,268,271,272,278,282,285,289,291,297,298,301,310,312,313,324,327,328,349,352,355,357,361,372)] <- "aucune" #
-  # e$Connaissance_CCC[c(383,385,389,390,394,402,410,411,415,416,417,419,421,422,424,425,429,431,442,444,446,450,451,457,458,461,463,465,466,468,469,472,476,485,487,488,492)] <- "aucune" # ex: "nsp" 19, 402, # doublons 450-451, 421-422, 468-469, 515-516?
-  # e$Connaissance_CCC[c(496,502,515,516,520,526,532,533,534,535,537,540,541,546,548,550,551,552,553,555,557,560,561,562,564,567,568,572,578,582,584,586,587,588,589,597,598,602,603,604)] <- "aucune" # ex: 598
-  # e$Connaissance_CCC[c(610,619,621,622,625,626,629,630,631,634,636,638,639,650,654,656,657,659,660,665,666,667,669,674,677,678,681,686,688,690,694,698,699,702,707,709,712,713,720,721,725,727)] <- "aucune" # ex: 598
-  # e$Connaissance_CCC[c(731,733,738,747,748,752,753,757,760,762,763,765,766,768,771,772,775,781,782,783,785,787,790,793,798,823,826,830,844,845,846,847,848,859,860,862,865,868,872,873)] <- "aucune" # ex: 598
-  # e$Connaissance_CCC[c(876,891,883,887,893,897,899,908,909,911,913,915,916,917,926,930,939,940,943,944,946,955,956,957,960,962,965,966,967,973,977,978,986,992,995,998,1000,1001,1002,1003)] <- "aucune" # ex: 598, 915
-  # e$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504,590,592,632,743,866,871,929,951,952,993)] <- "faux" # ex: 239, 326
-  # e$Connaissance_CCC[c(6,22,25,66,72,80,90,100,107,110,111,152,166,170,177,188,214,227,238,276,281,316,319,320,323,339,360,387,393,396,399,408,432,452,454,474,498,503)] <- "hors sujet" # ex: 25, 71, 90, 107 # 25-110-432 doublon ?
-  # e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895,921,927,928,936,945,953,959,964,984,999)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 1001-1003 doublon ? TODO
-  # e$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
-  # e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902,912,934,954)] <- "trop vague" # ex: 374, 457, 490
-  # e$Connaissance_CCC[c(8,15,18,20,26,27,28,43,65,75,84,85,89,101,123,132,135,140,142,144,145,147,165,168,172,176,207,220,222,240,247,275,288,303,308,341,347,348,351,356,364,377,473,493)] <- "approximatif" # ex: 607
-  # e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877,906,914,920,937,938,972,982,987,988)] <- "approximatif"
-  # e$Connaissance_CCC[c(7,24,62,67,71,84,91,106,117,127,130,131,134,150,154,158,173,175,186,202,209,226,246,247,253,262,284,302,307,334,337,380,386,391,400,407,418,420,428,440,448,449,470,481)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
-  # e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898,910,923,935,941,950,991)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
-  # e$connaissance_CCC_bon_francais[c(6,15,18,20,24,27,62,84,85,91,130,134,140,145,154,158,165,170,175,193,202,207,220,226,242,247,248,253,262,288,347,348,351,356,360,364,377,380,386,387,391)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
-  # e$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562,581,598,609,611,613,665,691,700,728,729,732,741,752)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
-  # e$connaissance_CCC_bon_francais[c(770,776,779,796,797,875,877,895,898,935,937,988,991,993)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
-  # e$connaissance_CCC_sortition[c(7,62,67,71,91,106,127,130,131,134,150,154,158,165,173,175,186,202,207,209,239,246,247,253,262,284,302,308,334,348,380,407,420,428,440,448,449,470,481)] <- "sortition"
-  # e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898,906,910,914,923,929,941,972,991)] <- "sortition"
-  # e$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566,607,609,611,613,646,670,689)] <- "mesures"
-  # e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898,920,938,941,950,982,991,993)] <- "mesures"
-  # e$connaissance_CCC_internet[c(44,70,239,279,512,606,701)] <- "internet"
-  # e$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
-  # e$connaissance_CCC_150[which(c(grepl('150', e$connaissance_CCC)),470)] <- "150"
-  # variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
-  # for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
-  # temp <- -2*(e$Connaissance_CCC=="hors sujet") -1*(e$Connaissance_CCC=="faux") + 1*(e$Connaissance_CCC=="trop vague") + 2*(e$Connaissance_CCC=="approximatif") + 3*(e$Connaissance_CCC=="bonne")
-  # temp[e$connaissance_CCC_internet==T] <- 2
-  # e$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")),
-  #                               annotation="Connaissance_CCC: connaissance_CCC recodé en hors sujet/faux/aucune/approximatif/bonne (incl. internet) - Décrivez ce que vous savez de la Convention Citoyenne pour le Climat. (champ libre)")
-  # label(e$connaissance_CCC_bon_francais) <- "connaissance_CCC_bon_francais: Indicatrice que la réponse à connaissance_CCC est constituée d'une phrase grammaticalement correcte et sans faute d'orthographe (à l'exception des phrases très courtes type 'Je ne sais pas')"
-  # label(e$connaissance_CCC_sortition) <- "connaissance_CCC_sortition: Indicatrice que la réponse à connaissance_CCC mentionne le tirage au sort, ou du moins le caractère 'lambda' ou hétérogène des citoyens de la CCC"
-  # label(e$connaissance_CCC_mesures) <- "connaissance_CCC_mesures: Indicatrice que la réponse à connaissance_CCC mentionne le fait que la CCC rend des propositions de mesures"
-  # label(e$connaissance_CCC_temporalite) <- "connaissance_CCC_temporalite: Indicatrice que la réponse à connaissance_CCC mentionne un élément de la temporalité de la CCC (date de début ou de fin, ou fréquence de ses réunions)"
-  # label(e$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
-  # label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
+  e$Connaissance_CCC <- NA 
+  e$connaissance_CCC_bon_francais <- e$connaissance_CCC_sortition <- e$connaissance_CCC_mesures <- e$connaissance_CCC_temporalite <- e$connaissance_CCC_internet <- e$connaissance_CCC == "FALSE"
+  e$connaissance_CCC_150 <- e$connaissance_CCC == "FALSE"
+  if (vague==1) {
+    e$Connaissance_CCC[c(1,3,10,13,17,19,29,30,34,45,49,51,54,57,64,68,74,77,78,86,93,97,103,121,129,136,139,151,153,155,156,159,162,163,164,174,179,181,182,183,184,187,191,194,196,197,201)] <- "aucune" #
+    e$Connaissance_CCC[c(208,210,217,218,223,232,236,242,250,255,259,260,266,268,271,272,278,282,285,289,291,297,298,301,310,312,313,324,327,328,349,352,355,357,361,372)] <- "aucune" #
+    e$Connaissance_CCC[c(383,385,389,390,394,402,410,411,415,416,417,419,421,422,424,425,429,431,442,444,446,450,451,457,458,461,463,465,466,468,469,472,476,485,487,488,492)] <- "aucune" # ex: "nsp" 19, 402, # doublons 450-451, 421-422, 468-469, 515-516?
+    e$Connaissance_CCC[c(496,502,515,516,520,526,532,533,534,535,537,540,541,546,548,550,551,552,553,555,557,560,561,562,564,567,568,572,578,582,584,586,587,588,589,597,598,602,603,604)] <- "aucune" # ex: 598
+    e$Connaissance_CCC[c(610,619,621,622,625,626,629,630,631,634,636,638,639,650,654,656,657,659,660,665,666,667,669,674,677,678,681,686,688,690,694,698,699,702,707,709,712,713,720,721,725,727)] <- "aucune" # ex: 598
+    e$Connaissance_CCC[c(731,733,738,747,748,752,753,757,760,762,763,765,766,768,771,772,775,781,782,783,785,787,790,793,798,823,826,830,844,845,846,847,848,859,860,862,865,868,872,873)] <- "aucune" # ex: 598
+    e$Connaissance_CCC[c(876,891,883,887,893,897,899,908,909,911,913,915,916,917,926,930,939,940,943,944,946,955,956,957,960,962,965,966,967,973,977,978,986,992,995,998,1000,1001,1002,1003)] <- "aucune" # ex: 598, 915
+    e$Connaissance_CCC[c(73,118,143,239,248,270,280,283,326,381,388,471,489,491,504,590,592,632,743,866,871,929,951,952,993)] <- "faux" # ex: 239, 326
+    e$Connaissance_CCC[c(6,22,25,66,72,80,90,100,107,110,111,152,166,170,177,188,214,227,238,276,281,316,319,320,323,339,360,387,393,396,399,408,432,452,454,474,498,503)] <- "hors sujet" # ex: 25, 71, 90, 107 # 25-110-432 doublon ?
+    e$Connaissance_CCC[c(510,570,573,575,591,664,682,715,716,736,737,739,741,744,767,795,839,840,842,849,854,861,892,895,921,927,928,936,945,953,959,964,984,999)] <- "hors sujet" # ex: 25, 71, 90, 107, 570, 767, 839, 840, 861 # 25-110-432 570-573 1001-1003 doublon ? TODO
+    e$Connaissance_CCC[c(9,31,33,35,37,38,55,59,81,101,120,193,202,233,235,237,249,252,273,293,294,311,358,359,363,367,374,414,434,455,457,460,479,482,484,490,508,519,522,524,538)] <- "trop vague" # ex: 374, 457, 490 [490 = 2.0?]
+    e$Connaissance_CCC[c(581,614,623,624,628,642,643,645,655,663,671,687,703,704,705,724,746,754,773,780,792,818,886,888,900,901,902,912,934,954)] <- "trop vague" # ex: 374, 457, 490
+    e$Connaissance_CCC[c(8,15,18,20,26,27,28,43,65,75,84,85,89,101,123,132,135,140,142,144,145,147,165,168,172,176,207,220,222,240,247,275,288,303,308,341,347,348,351,356,364,377,473,493)] <- "approximatif" # ex: 607
+    e$Connaissance_CCC[c(401,404,423,427,505,506,507,530,531,618,670,672,693,695,696,728,729,732,740,751,758,776,786,796,800,802,831,832,857,875,877,906,914,920,937,938,972,982,987,988)] <- "approximatif"
+    e$Connaissance_CCC[c(7,24,62,67,71,84,91,106,117,127,130,131,134,150,154,158,173,175,186,202,209,226,246,247,253,262,284,302,307,334,337,380,386,391,400,407,418,420,428,440,448,449,470,481)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+    e$Connaissance_CCC[c(494,501,514,542,547,558,563,566,607,609,611,613,646,665,684,689,691,700,718,722,770,779,797,811,815,863,898,910,923,935,941,950,991)] <- "bonne" # ex: 24, 117, 334 ; contient généralement mesures, sortition, 150 ou date
+    e$connaissance_CCC_bon_francais[c(6,15,18,20,24,27,62,84,85,91,130,134,140,145,154,158,165,170,175,193,202,207,220,226,242,247,248,253,262,288,347,348,351,356,360,364,377,380,386,387,391)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+    e$connaissance_CCC_bon_francais[c(399,404,418,419,423,425,434,448,449,454,457,460,470,471,473,481,488,493,501,507,508,522,542,562,581,598,609,611,613,665,691,700,728,729,732,741,752)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+    e$connaissance_CCC_bon_francais[c(770,776,779,796,797,875,877,895,898,935,937,988,991,993)] <- "bon français" # ex: ; pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+    e$connaissance_CCC_sortition[c(7,62,67,71,91,106,127,130,131,134,150,154,158,165,173,175,186,202,207,209,239,246,247,253,262,284,302,308,334,348,380,407,420,428,440,448,449,470,481)] <- "sortition"
+    e$connaissance_CCC_sortition[c(494,501,514,530,542,547,558,566,607,609,611,613,646,672,684,689,691,693,700,722,751,779,797,811,815,831,832,857,863,898,906,910,914,923,929,941,972,991)] <- "sortition"
+    e$connaissance_CCC_mesures[c(7,62,67,71,130,135,142,154,175,186,202,226,246,262,302,307,337,356,386,400,404,407,428,448,449,481,494,505,531,558,563,566,607,609,611,613,646,670,689)] <- "mesures"
+    e$connaissance_CCC_mesures[c(700,718,722,770,779,786,802,811,815,819,863,898,920,938,941,950,982,991,993)] <- "mesures"
+    e$connaissance_CCC_internet[c(44,70,239,279,512,606,701)] <- "internet"
+    e$connaissance_CCC_temporalite[c(84,117,131,150,172,235,249,293,302,427,501)] <- "temporalité"
+    e$connaissance_CCC_150[which(c(grepl('150', e$connaissance_CCC)),470)] <- "150"
+  } else {
+    e$connaissance_CCC_opinion <- e$connaissance_CCC_choix <- e$connaissance_CCC_posterite <- e$connaissance_CCC == "FALSE"
+    e$Connaissance_CCC[c(2,1001,8,14,15,16,17,19,23,24,28,41,44,58,59,64,67,69,76,83,84,90,94,96,98,100,104,105,106,107,112,130,132,133,134,143,145,150,156,157,158,163,164,167,168,171,173,186,428,187)] <- "aucune"
+    e$Connaissance_CCC[c(191,193,199,206,208,210,214,227,242,248,249,251,255,264,272,274,280,294,309,312,314,316,320,321,323,324,329,331,333,338,340,341,347,349,355,357,364,367,374,376,379,386,387,391,393,394,395,397)] <- "aucune"
+    e$Connaissance_CCC[c(6,25,26,27,30,35,36,42,49,73,85,87,116,122,123,127,135,147,152,159,166,172,175,180,189,196,203,204,205,222,256,266,277,283,285,291,304,311,319,330,334,337,343,365,369,377)] <- "trop vague" # Réponse aurait pu être déduit simplement à partir du nom "CCC". Impossible de savoir ce que le répondant sait réellement, ou bien le répondant sait des choses à moitié, commet des erreurs.
+    e$Connaissance_CCC[c(1002,4,7,12,21,22,32,37,39,40,45,46,47,51,52,56,66,75,78,79,88,103,113,115,117,118,121,138,140,141,148,151,153,154,165,182,195,204,218,226,228,232,243,246,252,254,258,259,260,262)] <- "approximatif" # Contient un voire quelques éléments (mesures, sortition) mais mal formulés ou peu clair, ou avec une imprécision. Laisse penser que le répondant connaît mais ne dit pas tout ce qu'il sait. ex; 32
+    e$Connaissance_CCC[c(275,284,290,293,300,303,306,322,325,326,327,344,346,356,359,363,367,390,396,403,405,406,407,410,416,421,422,431,433,435,440,447,455,453,458,459,463,464,469,480,481,487,490,497)] <- "approximatif" 
+    e$Connaissance_CCC[c(9,18,29,33,34,50,55,57,60,61,65,70,77,109,119,129,136,139,142,145,155,162,178,185,190,197,200,202,209,213,215,217,221,225,229,233,235,237,253,257,265,271,281,288,296,298,302,305)] <- "bonne" # Contient généralement plusieurs éléments (mesures, sortition, 150 ou date) bien articulés permettant de s'assurer que le répondant connaît la CCC. ex: 155
+    e$connaissance_CCC_mesures[c(1002,4,9,18,21,22,26,29,32,33,34,35,36,40,49,52,55,57,61,70,73,75,77,78,79,82,103,109,115,117,129,136,139,145,148,153,155,182,185,190,197,200,205,209,213,215,217,219)] <- "mesures" # mentionne que des propositions doivent être formulées / ont été formulées # TODO: check les 10 premières voir s'il y a des mesures spécifiques
+    e$connaissance_CCC_mesures[c(222,228,233,235,236,237,243,246,252,253,254,257,258,260,275,281,288,290,291,293,296,298,302,303,305,317,322,325,326,344,346,350,353,356,358,359,363,366,367,370,371)] <- "mesures"
+    e$connaissance_CCC_sortition[c(18,32,34,50,55,56,57,60,61,65,70,77,118,121,138,139,142,145,155,162,178,197,200,225,229,233,235,236,237,253,257,259,265,281,288,296,300,302,305,306,317,350,353,356,366)] <- "sortition"
+    e$connaissance_CCC_bon_francais[c(1002,7,9,12,26,27,29,33,45,50,52,55,60,65,66,70,78,82,88,109,119,121,123,124,129,140,141,142,144,145,148,151,152,155,162,167,169,194,196,202,221,236,238,246,253,254,256)] <- "bon français" # pas de faute d'orthographe, grammaire correcte, phrase élaborée (i.e. pas juste "je ne sais pas")
+    e$Connaissance_CCC[c(1003,1,5,31,48,114,124,144,198,238,241,278,279,297,328,351,352,354,466,471,493)] <- "hors sujet" 
+    e$Connaissance_CCC[c(38,108,169,188,194,220,271,292,318,348,408,443)] <- "faux"
+    e$Connaissance_CCC[c(397,399,402,413,415,423,436,437,441,442,444,445,451,452,457,460,472,474,476,479,484,488,489,498)] <- "aucune"
+    e$Connaissance_CCC[c(380,384,392,398,411,420,425,428,446,450,468,470,475,477,483,491)] <- "trop vague" 
+    e$Connaissance_CCC[c()] <- "approximatif" 
+    e$Connaissance_CCC[c(317,350,353,358,366,370,371,373,375,378,385,389,400,401,409,417,424,430,438,448,453,462,465,478,485,492,495)] <- "bonne"
+    e$connaissance_CCC_bon_francais[c(257,259,266,277,281,283,284,288,296,302,304,317,334,346,353,356,358,363,365,366,367,370,378,385,390,396,398,405,408,410,417,430,435,443,446,464,465,481)] <- "bon français"
+    e$connaissance_CCC_sortition[c(371,377,378,385,389,400,401,403,407,409,417,424,438,448,455,465,478,485,492)] <- "sortition"
+    e$connaissance_CCC_mesures[c(375,373,378,385,389,398,400,401,406,409,416,417,421,424,428,430,433,435,438,448,458,463,465,469,470,477,478,480,483,487,490,492,495,497)] <- "mesures"
+    e$connaissance_CCC_choix[c(213,215,217,440,447,481)] <- "mesures spécifiques" # (mentionne des mesures spécifiques proposées par la CCC)
+    e$connaissance_CCC_internet[c(453,462)] <- "internet"
+    e$connaissance_CCC_temporalite[c(29,34,47,82,139,265,431,438,453)] <- "temporalité" # Évoque la durée ou les dates de la CCC
+    e$connaissance_CCC_150[which(c(grepl('150', e$connaissance_CCC)),34)] <- "150" # not 75, 127, 139, 182, 190, 233, 359, 458, 487
+    e$connaissance_CCC_opinion[c(1,5,38,39,42,45,52,66,70,75,108,122,135,138,140,142,151,162,188,195,215,241,243,259,271,279,285,352,359,384,390,428,468,475,477,485)] <- "opinion" # Exprime une opinion à propos de la CCC. ex: 1 "les vrais problemes non pas été traités". ex: 38, 42, 108
+    e$connaissance_CCC_posterite[c(9,39,40,55,77,82,129,154,165,237,253,298,366,396,400,492)] <- "postérité" # Évoque la postérité réservée aux mesures proposées.
+  } # TODO: corrélation bon_français et Connaissance / âge / sexe / CSP, mesures et postérité, Connaissance écolo, etc., distribution du nombre de trucs cochés parmi 150/mesures/sortition
+  # Intéressant pour Laslier: 138 "Des citoyens tirés au sort qui ne représentent qu'eux-mêmes alors que nous avons des élu.e.s pour cela...", 285
+  # TODO: doublon 400-401? 403-407?
+  variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
+  for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
+  temp <- -2*(e$Connaissance_CCC=="hors sujet") -1*(e$Connaissance_CCC=="faux") + 1*(e$Connaissance_CCC=="trop vague") + 2*(e$Connaissance_CCC=="approximatif") + 3*(e$Connaissance_CCC=="bonne")
+  temp[e$connaissance_CCC_internet==T] <- 2
+  e$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")),
+                                annotation="Connaissance_CCC: connaissance_CCC recodé en hors sujet/faux/aucune/approximatif/bonne (incl. internet) - Décrivez ce que vous savez de la Convention Citoyenne pour le Climat. (champ libre)")
+  label(e$connaissance_CCC_bon_francais) <- "connaissance_CCC_bon_francais: Indicatrice que la réponse à connaissance_CCC est constituée d'une phrase grammaticalement correcte et sans faute d'orthographe (à l'exception des phrases très courtes type 'Je ne sais pas')"
+  label(e$connaissance_CCC_sortition) <- "connaissance_CCC_sortition: Indicatrice que la réponse à connaissance_CCC mentionne le tirage au sort, ou du moins le caractère 'lambda' ou hétérogène des citoyens de la CCC"
+  label(e$connaissance_CCC_mesures) <- "connaissance_CCC_mesures: Indicatrice que la réponse à connaissance_CCC mentionne le fait que la CCC rend des propositions de mesures"
+  label(e$connaissance_CCC_temporalite) <- "connaissance_CCC_temporalite: Indicatrice que la réponse à connaissance_CCC mentionne un élément de la temporalité de la CCC (date de début ou de fin, ou fréquence de ses réunions)"
+  label(e$connaissance_CCC_internet) <- "connaissance_CCC_internet: Indicatrice que la réponse à connaissance_CCC a été copiée à partir des résultats d'une requête internet"
+  label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
   
   if (vague==2) {
     e$gain_subjectif_original <- 0
@@ -1282,14 +1313,14 @@ relabel_and_rename2 <- function(e) {
   label(e[[196]]) <- "hausse_depenses: Hausse des taxes énergétiques simulées pour le ménage, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage, gain fiscal utilisé, nb adultes non plafonné, seulement interaction pour chauffage)" # gain fiscal utilisé pck c'est dans l'intervalle gain net - gain inélastique, et ça somme à 0. heating_increase = 1.4999036*gas*surface + 2.6820197* fuel*surface - 0.0050740*fuel*surface^2
   label(e[[197]]) <- "conso_embedded:  Consommation moyenne du véhicule (en litres aux 100 km)" #"simule_gagnant: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations"
   label(e[[198]]) <- "representativite_CCC: Pensez-vous que les citoyens membres de la Convention Citoyenne pour le Climat sont représentatifs de l'ensemble des Français ? (Oui/Non/NSP)" #"hausse_chauffage: Hausse des dépenses de chauffage simulées pour le ménage, suite à la taxe (élasticité de 0.15 au lieu de 0.2)"
-  label(e[[199]]) <- "CCC_non_representative_gauche" #
-  label(e[[200]]) <- "CCC_non_representative_droite" #
-  label(e[[201]]) <- "CCC_non_representative_ecolo" #
-  label(e[[202]]) <- "CCC_non_representative_anti_ecolo" #"info_CCC: Indicatrice (aléatoire 0/1) que l'information sur la CCC a été affichée: La Convention Citoyenne pour le Climat est une assemblée indépendante de 150 citoyens tirés au sort qui a pour mandat de faire des propositions permettant de réduire les émissions de gaz à effet de serre françaises dans un esprit de justice sociale. Elle se réunit régulièrement depuis septembre 2019 et va bientôt rendre compte de ses propositions."
-  label(e[[203]]) <- "CCC_non_representative_pro_gouv" #"question_confiance: Indicatrice que la question confiance_dividende a été affichée" # Variable aléatoire 0/1/2/3
-  label(e[[204]]) <- "CCC_non_representative_anti_gouv" #
-  label(e[[205]]) <- "CCC_non_representative_autre_choix" #
-  label(e[[206]]) <- "CCC_non_representative_autre" #"label_taxe: Variante à la description de la taxe carbone avec dividendes. (taxe: ... une augmentation de la taxe carbone ... / CCE: une augmentation de la contribution climat-énergie)"
+  label(e[[199]]) <- "CCC_non_representative_gauche: [Si Non à representativite_CCC] Ils sont plus à gauche politiquement - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #
+  label(e[[200]]) <- "CCC_non_representative_droite: [Si Non à representativite_CCC] Ils sont plus à droite politiquement - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #
+  label(e[[201]]) <- "CCC_non_representative_ecolo: [Si Non à representativite_CCC] Ils sont plus écologistes - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #
+  label(e[[202]]) <- "CCC_non_representative_anti_ecolo: [Si Non à representativite_CCC] Ils sont moins écologistes - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #"info_CCC: Indicatrice (aléatoire 0/1) que l'information sur la CCC a été affichée: La Convention Citoyenne pour le Climat est une assemblée indépendante de 150 citoyens tirés au sort qui a pour mandat de faire des propositions permettant de réduire les émissions de gaz à effet de serre françaises dans un esprit de justice sociale. Elle se réunit régulièrement depuis septembre 2019 et va bientôt rendre compte de ses propositions."
+  label(e[[203]]) <- "CCC_non_representative_pro_gouv: [Si Non à representativite_CCC] Ils sont plus pro-gouvernement - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #"question_confiance: Indicatrice que la question confiance_dividende a été affichée" # Variable aléatoire 0/1/2/3
+  label(e[[204]]) <- "CCC_non_representative_anti_gouv: [Si Non à representativite_CCC] Ils sont moins pro-gouvernement - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #
+  label(e[[205]]) <- "CCC_non_representative_autre_choix: [Si Non à representativite_CCC] Autre (choix) - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #
+  label(e[[206]]) <- "CCC_non_representative_autre: Autre (champ libre) - En quoi selon-vous ces citoyens diffèrent-ils de la moyenne des Français ? (Plusieurs réponses possibles.)" #label_taxe: Variante à la description de la taxe carbone avec dividendes. (taxe: ... une augmentation de la taxe carbone ... / CCE: une augmentation de la contribution climat-énergie)"
   label(e[[207]]) <- "referendum_ecocide: ~ La reconnaissance du crime d'«écocide» - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[208]]) <- "referendum_environnement_priorite_constit: ~ L'inscription dans la Constitution que la préservation de l'environnement passe avant tout - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
   label(e[[209]]) <- "referendum_environnement_constitution: ~ L'inscription dans la Constitution de la préservation de la biodiversité, de l'environnement et de la lutte contre le dérèglement climatique - [Les membres de la CCC vont sélectionner lesquelles de ces mesures seront soumises à référendum ~ affiché ssi info_CCC==1] S'il y avait un référendum, que voteriez-vous ... ? (Oui/Non/Abstention, blanc ou nul/NSP)"
@@ -1597,6 +1628,9 @@ e2 <- prepare_e2()
 # e1 <- e
 e <- e2
 
+# e1a <- prepare_e(only_finished = F) # 40 ont abandonné avant la fin
+# e2a <- prepare_e2(only_finished = F) # 49 ont abandonné avant la fin
+
 e2$vague <- 2
 e1$vague <- 1
 eb <- rbind.fill(e1, e2)
@@ -1608,7 +1642,7 @@ for (i in names(eb)) {
 
 b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
 c <- readRDS("../donnees/CCC.Rda") # données CCC 
- # TODO: extraire emails
+
 ccc <- read.dta13("../donnees/all_benedicte.dta")
 ccc$appartenance_france <- grepl("France", ccc$s2_e_q10)
 ccc$appartenance_monde <- grepl("monde", ccc$s2_e_q10)
