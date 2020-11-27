@@ -388,6 +388,7 @@ prop.table(table(data_all$s1_e_q7, (data_all$s2_e_q36 > 5)), 1) #
 
 ##### Sources financement CCC #####
 table(data_all$s7_q29_9) # 3 sont favorables à la taxe carbone comme source de financement, vs. 60 qui n'y sont pas.
+table(data_all$s7_q29_1)
 
 
 
@@ -541,53 +542,91 @@ data_cor <- data_all[,c("limitation_110_num", "taxe_aerien_num", "obligation_ren
 #                     "Compteurs intelligents", "Augmenter prix produits polluants", "Taxe carbone",
 #                     "Développer énergies renouvelables", "Densifier villes", "Taxer véhicules GES",
 #                     "Infrastructures véhicules propres", "Menus écolos", "Réduire gaspillage alimentaire")
-names(data_cor) <- c("110", "taxe_avion", "renov",
-                     "compteurs", "prix_prods", "tax_carbon",
-                     "renewables", "dense_cities", "tax_veh",
-                     "infrastructures", "green_menu", "wastes")
+names(data_cor) <- c("Limitation 110km/h", "Taxe avion", "Obligation rénovation",
+                     "Compteurs intelligents", "Prix prod. polluants", "Taxe carbone",
+                     "Dev. energ. ren.", "Densifier villes", "Taxer veh. GES",
+                     "Infrastructures veh. propres", "Oblig. menus verts", "Réduire gaspillage")
 corr <- cor(data_cor, use="complete.obs")
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
-corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+corrplot(corr, method='color', diag=FALSE, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+
+
+### Correlation avec socio-démos :
+data_all$femme <- 0 + 1*(data_all$sexe == "Femme")
+data_all$age_num <- 2020 - data_all$annee_de_naissance
+data_all$taille_ville <- (
+  4 * (data_all$s1_e_q1_clean == "grande ville")
+  + 3 * (data_all$s1_e_q1_clean == "banlieue")
+  + 2 * (data_all$s1_e_q1_clean == "petite ville")
+  + 1 * (data_all$s1_e_q1_clean == "campagne")
+  )
+data_all$diplome_num <- (
+  4 * (data_all$diplome == "5. Actuellement etudiant")
+  + 4 * (data_all$diplome == "4. Diplome superieur au bac")
+  + 3 * (data_all$diplome == "3. Baccalaureat")
+  + 2 * (data_all$diplome == "2. CAP ou BEP")
+  + 1 * (data_all$diplome == "1. Sans diplome ou CEP ou BEPC")
+  )
+
+data_cor <- data_all[,c("femme", "age_num", "taille_ville", "diplome_num", "limitation_110_num", "taxe_aerien_num", "obligation_renovation_thermique_num",
+                        "compteur_intelligent_num", "prix_produits_transport_polluant_num", "taxe_carbone_num",
+                        "dev_energies_renouvelables_cheres_num", "densifier_villes_num", "taxe_vehicules_GES_num",
+                        "infrastructures_vehicules_propres_num", "menus_ecolos_num", "gaspillage_alimentaire_num")]
+names(data_cor) <- c("Femme", "Age", "Taille ville", "Diplome", "Limitation 110km/h", "Taxe avion", "Obligation rénovation",
+                     "Compteurs intelligents", "Prix prod. polluants", "Taxe carbone",
+                     "Dev. energ. ren.", "Densifier villes", "Taxer veh. GES",
+                     "Infrastructures veh. propres", "Oblig. menus verts", "Réduire gaspillage")
+corr <- cor(data_cor, use="complete.obs")
+corrplot(as.matrix(corr[1:4,5:16]), method = "color", tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T)
+
+
+### Correlation avec valeurs :
+data_all$confiance_interpersonnelle_num <- (
+  + 1*(data_all$s1_e_q4 == "On peut faire confiance a la plupart des gens")
+  - 1*(data_all$s1_e_q4 == "On n est jamais assez prudent quand on a affaire aux autres")
+)
+data_all$confiance_capacite_citoyens_num <- (
+  + 2*(data_all$s1_e_q7 == "Tout a fait confiance")
+  + 1*(data_all$s1_e_q7 == "Plutot confiance")
+  - 1*(data_all$s1_e_q7 == "Plutot pas confiance")
+  - 2*(data_all$s1_e_q7 == "Pas du tout confiance")
+)
+data_all$satisfaction_vie_num <- data_all$s1_e_q8
+data_all$redistribution_num <- data_all$s1_e_q10 # 10 = plus de redistribution
+data_all$lien_efforts_pauvrete_num <- (
+  + 1*(data_all$s1_e_q12_clean == "pas de chance")
+  + 0*(data_all$s1_e_q12_clean == "NR")
+  - 1*(data_all$s1_e_q12_clean == "pas fait deffort")
+)
+data_all$confiance_gouvernement_num <- (
+  + 2*(data_all$s1_s_q17d_clean == "Totalement")
+  + 1*(data_all$s1_s_q17d_clean == "Plutot")
+  - 1*(data_all$s1_s_q17d_clean == "Plutot pas")
+  - 2*(data_all$s1_s_q17d_clean == "Pas du tout")
+)
+data_all$anticipation_situation_eco_num <- data_all$s2_e_q12
+
+data_cor <- data_all[,c("confiance_interpersonnelle_num", "confiance_capacite_citoyens_num", "confiance_gouvernement_num",
+                        "satisfaction_vie_num", "anticipation_situation_eco_num", "limitation_110_num", "taxe_aerien_num", "obligation_renovation_thermique_num",
+                        "compteur_intelligent_num", "prix_produits_transport_polluant_num", "taxe_carbone_num",
+                        "dev_energies_renouvelables_cheres_num", "densifier_villes_num", "taxe_vehicules_GES_num",
+                        "infrastructures_vehicules_propres_num", "menus_ecolos_num", "gaspillage_alimentaire_num")]
+names(data_cor) <- c("Conf. aux autres", "Conf. capacité citoyens", "Conf. gouvernement",
+                     "Satisfaction vie", "Anticipation situ. éco.",  "Limitation 110km/h", "Taxe avion", "Obligation rénovation",
+                     "Compteurs intelligents", "Prix prod. polluants", "Taxe carbone",
+                     "Dev. energ. ren.", "Densifier villes", "Taxer veh. GES",
+                     "Infrastructures veh. propres", "Oblig. menus verts", "Réduire gaspillage")
+corr <- cor(data_cor, use="complete.obs")
+corrplot(as.matrix(corr[1:5,6:17]), method = "color", tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T)
 
 
 
 
 ##### Corrélation recyclage taxe carbone #####
 data_cor <- data_all[,c("s2_e_q31", "s2_e_q32", "s2_e_q33", "s2_e_q34", "s2_e_q35", "s2_e_q36", "s2_e_q37", "s2_e_q38", "s2_e_q39")]
-names(data_cor) <- c("transfert modestes", "transfert tous", "transfert contraints", "baisse cotsoc",
-                     "baisse TVA", "baisse déficit", "rénovation therm", "énergies renouvelables", "transports propres")
+names(data_cor) <- c("Transfert modestes", "Transfert tous", "Transfert contraints", "Baisse cot. soc.",
+                     "Baisse TVA", "Baisse déficit", "Rénovation therm.", "Energies renouv.", "Transports propres")
 corr <- cor(data_cor, use="complete.obs")
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
-corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
-
+corrplot(corr, method='color', diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
 
 
 
@@ -680,23 +719,7 @@ names(data_cor) <- c("Trier déchets", "Eteindre appareils veille", "Transports 
                      "Légumes de saison", "Limiter viande", "Vélo et/ou marche", "Covoiturage", "Limiter emballages",
                      "Produits écolos", "Consommer moins", "Couper chauffage", "Arrêter avion")
 corr <- cor(data_cor, use="complete.obs")
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
-corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
-
+corrplot(corr, method='color', diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
 
 
 
@@ -786,22 +809,7 @@ names(data_cor) <- c("Conf. aux autres", "Conf. capacité citoyens", "Satisfacti
                      "Conf. dossier CCC", "Conf. experts", "Anticipation situ. éco.",
                      "Efforts perso CP", "Impacts perso CC")
 corr <- cor(data_cor, use="complete.obs")
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
-corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+corrplot(corr, method='color', diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
 
 
 data_cor <- data_all[,c("confiance_interpersonnelle_num", "redistribution_num", "lien_efforts_pauvrete_num",
@@ -811,19 +819,4 @@ names(data_cor) <- c("Conf. aux autres", "Redistribution", "Lien efforts-pauvret
                      "Importance environnement", "Importance action sociale", "Importance niveau vie",
                      "Mieux informé")
 corr <- cor(data_cor, use="complete.obs")
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-p.mat <- cor.mtest(data_cor) # corrplot does not work when some packages are loaded before 'corrplot' => if it doesn't work, restart R and load only corrplot.
-corrplot(corr, method='color', p.mat = p.mat, sig.level = 0.01, diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'
+corrplot(corr, method='color', diag=FALSE, tl.srt=35, tl.col='black', insig = 'blank', addCoef.col = 'black', addCoefasPercent = T , type='upper') #, order='hclust'

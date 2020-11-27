@@ -343,6 +343,9 @@ save_plotly(taxe_approbation_v1)
 (confiance_dividende_v1 <- barres(vars = "confiance_dividende", miss = F, labels="Confiance dans le fait que l'État versera le dividende"))
 save_plotly(confiance_dividende_v1) 
 
+(confiance_dividende_en <- barres(vars = "confiance_dividende", miss = F, labels="Trusts that the State will pay the dividend", legend=c("Yes", "Half", "No")))
+save_plotly(confiance_dividende_en) 
+
 (trop_impots_v1 <- barres(vars = "trop_impots", miss = T, labels="Paie-t-on trop d'impôt en France ?"))
 save_plotly(trop_impots_v1) 
 
@@ -540,6 +543,9 @@ save_plotly(pour_taxe_carbone2_v1)
 
 (pour_taxe_carbone_neutre_v1 <- barres(vars = "pour_taxe_carbone", df = e1[e1$variante_taxe_carbone=='neutre',], rev = F, thin = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sans information")))
 save_plotly(pour_taxe_carbone_neutre_v1)
+
+(pro_tax_carbon <- barres(vars = "taxe_approbation", df = e1, rev = F, thin = F, miss = T, sort = F, labels = c("Favorable to a carbon tax and dividend"), legend = c("Yes", "No", "PNR")))
+save_plotly(pro_tax_carbon) # TODO here Yes/No works btw
 
 # labels_solution <- c()
 # for (v in variables_solution) labels_solution <- c(labels_solution, sub(' - .*', '', sub('.*: ', '', Label(e1[[v]]))))
@@ -812,7 +818,11 @@ save_plotly(politiques_1_v12)
 # barres(data = barres12(variables_politiques_1, miss=F, return="data"), grouped = T, rev = F, miss=F, labels=labels_variables_politiques_1, legend = c('CCC', 'Population'))
 # TODO!: tenter grouped=T avec des barres12 multiples
 
+<<<<<<< HEAD
+(politiques_1_en_v12 <- barres12(variables_politiques_1, labels=labels_variables_politiques_1_en, legend = c("Very", "Rather", "Rather not", "Not at all"), miss=F, fr = F))
+=======
 (politiques_1_en_v12 <- barres12(variables_politiques_1, labels=labels_variables_politiques_1_en, fr=F, legend = c("Very", "Rather", "Rather not", "Not at all"), miss=F))
+>>>>>>> 84f7f4bef3b43e6cfc4b75eb6deaf9ed60d62842
 save_plotly(politiques_1_en_v12) 
 
 (politiques_2_v12 <- barres12(variables_politiques_2, labels = labels_variables_politiques_2, miss=F))
@@ -830,7 +840,11 @@ save_plotly(referendum_v12)
 
 new_labels_variables_referendum_en <- c("The inscription in the Constitution that \n the preservation of the environment comes first (W2)", "The recognition of the crime of 'ecocide' (W2)", "The inclusion in the Constitution of the preservation of biodiversity,\n the environment and the fight against climate change (W2)")
 labels_variables_referendum_v2_en <- c(labels_variables_referendum_en, new_labels_variables_referendum_en)
+<<<<<<< HEAD
+(referendum_en_v12 <- barres(data = cbind(dataKN(vars = new_variables_referendum, data=e2, rev = T), barres12(variables_referendum, return="data")), sort=F, miss=T, labels=c(new_labels_variables_referendum_en, barres12(variables_referendum, labels=labels_variables_referendum_en, return="labels", fr = F)), legend=c("Yes", "Blank", "No", "NR")))
+=======
 (referendum_en_v12 <- barres(data = cbind(dataKN(vars = new_variables_referendum, data=e2, rev = T), barres12(variables_referendum, return="data")), sort=F, fr=F, miss=T, labels=c(new_labels_variables_referendum_en, barres12(variables_referendum, labels=labels_variables_referendum_en, return="labels", fr=F)), legend=c("Yes", "Blank", "No", "NR")))
+>>>>>>> 84f7f4bef3b43e6cfc4b75eb6deaf9ed60d62842
 save_plotly(referendum_en_v12) 
 
 # labels_variables_devoile_long <- c() 
@@ -852,8 +866,14 @@ save_plotly(confiance_sortition_en)
 (pour_sortition <- barres12("pour_sortition", rev = F, legend = c("Oui ", "Non ", "NSP"), labels = "Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement", miss=T))
 save_plotly(pour_sortition) # Oui Non
 
+(pour_sortition_en <- barres12("pour_sortition", rev = F, fr=F, legend = c("Yes ", "No ", "PNR"), labels = "For an assembly made up of 150 citizens drawn by lot,\n with a right of veto on the texts voted in the Parliament", miss=T))
+save_plotly(pour_sortition_en) # Oui Non
+
 (connait_CCC <- barres12(vars = "connait_CCC", miss = F, labels="Avez-vous entendu parler de \nla Convention Citoyenne pour le Climat ?"))
 save_plotly(connait_CCC)
+
+(connait_CCC_en <- barres12(vars = "connait_CCC", miss = F, fr=F, labels="Have you heard of the \n Citizens'Convention for Climate?", legend=c("Yes, a lot", "Yes, somewhat", "Vaguely", "No")))
+save_plotly(connait_CCC_en)
 
 (Connaissance_CCC <- barres(vars = "Connaissance_CCC", df=e2, miss = F, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
 save_plotly(Connaissance_CCC) # TODO
