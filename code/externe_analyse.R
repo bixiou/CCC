@@ -1414,6 +1414,15 @@ decrit(e2$taxe_feedback_approbation[e2$variante_taxe_alternative=="urba"], miss 
 
 ##### Confiance #####
 CrossTable(as.character(eb$diplome4), as.character(eb$confiance_gens), prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
+summary(lm(gain ~ as.factor(dividende) * origine_taxe, data = e2, weights = e2$weight))
+summary(lm(gain ~ as.factor(dividende), data = e2, weights = e2$weight))
+decrit(e2$gain_subjectif[e2$dividende==0])
+decrit(e2$gain_subjectif[e2$dividende==110])
+decrit(e2$gain_subjectif[e2$dividende==170])
+decrit(e2$gain[e2$dividende==0])
+decrit(e2$gain[e2$dividende==110])
+decrit(e2$gain[e2$dividende==170])
+decrit(e2$origine_taxe)
 
 
 ##### Évolution suite à CCC #####

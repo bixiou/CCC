@@ -1008,6 +1008,8 @@ convert_e <- function(e, vague) {
     e$gain_subjectif_original[!is.na(e$gain_net_perte)] <- - n(e$gain_net_perte[!is.na(e$gain_net_perte)] )
     e$gain_subjectif <- e$gain_subjectif_original / e$uc
     label(e$gain_subjectif) <- "gain_subjectif: Gain net subjectif par UC pour la taxe avec dividende (variation en partie expliquée par trois valeurs de dividendes aléatoires: 0/110/170)."
+    e$gain <- pmax(-500, pmin(170, e$gain_subjectif)) # TODO: trim at 110/0 for respective values of dividend / assign NA to outliers
+    label(e$gain) <- "gain: Gain net subjectif par UC borné (trim) entre -500 et 170 pour la taxe avec dividende (variation en partie expliquée par trois valeurs de dividendes aléatoires: 0/110/170)."
     
     e$gagnant_categorie <- 1*grepl("gagne", e$gain_net_choix) - 0.1*grepl("NSP", e$gain_net_choix) - 1*grepl("perd", e$gain_net_choix)
   } else {
