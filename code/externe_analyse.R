@@ -41,129 +41,6 @@ decrit(e$efforts_relatifs, which = e$variante_efforts_vous==0)
 summary(lm(efforts_relatifs ~ variante_efforts_vous, data=e, weights = e$weight)) # +1***
 
 
-##### Taxe carbone ~ sondage #####
-# cf. Bursztyn et al. 2020
-decrit(e$pour_taxe_carbone, miss=T)
-decrit(e$pour_taxe_carbone, which = e$variante_taxe_carbone=='pour', miss=T)
-decrit(e$pour_taxe_carbone, which = e$variante_taxe_carbone=='contre', miss=T)
-decrit(e$pour_taxe_carbone, which = e$variante_taxe_carbone=='neutre', miss=T)
-summary(lm(pour_taxe_carbone!='Non' ~ variante_taxe_carbone, data=e, weights = e$weight)) # THE result +12**
-
-
-##### Taxe carbone ~ label_taxe * origine_taxe #####
-summary(lm(taxe_approbation!='Non' ~ question_confiance, data=e, weights = e$weight))
-summary(lm(taxe_approbation!='Non' ~ label_taxe, data=e, weights = e$weight))
-summary(lm(taxe_approbation!='Non' ~ origine_taxe, data=e, weights = e$weight))
-summary(lm(taxe_approbation!='Non' ~ (origine_taxe!='inconnue'), data=e, weights = e$weight))
-summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe, data=e, weights = e$weight))
-summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe * question_confiance, data=e, weights = e$weight)) # no effect
-summary(lm(gagnant_categorie=='Perdant' ~ question_confiance, data=e, weights = e$weight))
-summary(lm(gagnant_categorie=='Perdant' ~ label_taxe * origine_taxe * question_confiance, data=e, weights = e$weight))
-decrit(e$taxe_feedback_approbation[e$origine_taxe=="EELV"], miss = T)
-decrit(e$taxe_feedback_approbation[e$origine_taxe=="gouvernement"], miss = T)
-summary(lm(taxe_approbation!='Non' ~ origine_taxe * as.factor(dividende), data=e, weights = e$weight))
-decrit(e$taxe_feedback_approbation[e$dividende==170], miss = T)
-decrit(e$taxe_feedback_approbation[e$dividende==170 & e$origine_taxe=='gouvernement'], miss = T)
-decrit(e$taxe_feedback_approbation, which = (e$dividende==170 & e$origine_taxe=='gouvernement'), miss = T, weight = T)
-decrit(e$taxe_feedback_approbation[e$dividende==110], miss = T)
-decrit(e$taxe_feedback_approbation[e$dividende==0], miss = T)
-
-
-##### Confiance dividende ~ label_taxe * origine_taxe #####
-decrit(e$confiance_dividende)
-decrit(e$confiance_dividende, which = e$origine_taxe=='gouvernement')
-decrit(e$confiance_dividende, which = e$origine_taxe=='CCC')
-decrit(e$confiance_dividende, which = e$origine_taxe=='inconnue')
-summary(lm(confiance_dividende!='Non' ~ origine_taxe, data=e, weights = e$weight))
-summary(lm(confiance_dividende!='Non' ~ label_taxe * origine_taxe, data=e, weights = e$weight)) # no effect
-
-
-##### Incertitude #####
-decrit(e$certitude_gagnant)
-CrossTable(e$certitude_gagnant, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
-cert <- e1[,which(names(e1) %in% c("certitude_gagnant_feedback", "simule_gagnant", "bug_touche", "feedback_confirme", "feedback_infirme"))]
-cert$feedback <- T
-e1$feedback <- F
-names(cert)[1] <- "certitude_gagnant"
-cert <- rbind(cert, e1[,which(names(e1) %in% c("certitude_gagnant", "simule_gagnant", "bug_touche", "feedback", "feedback_confirme", "feedback_infirme"))])
-summary(lm(certitude_gagnant ~ feedback * bug_touche * simule_gagnant, data = cert))
-summary(lm(certitude_gagnant ~ feedback * bug_touche, data = cert))
-summary(lm(certitude_gagnant ~ feedback + simule_gagnant, data = cert))
-summary(lm(certitude_gagnant ~ feedback * feedback_confirme, data = cert))
-summary(lm(certitude_gagnant ~ feedback * feedback_infirme, data = cert))
-summary(lm(certitude_gagnant ~ feedback, data = cert))
-e1$certitude_augmente <- e1$certitude_gagnant_feedback - e1$certitude_gagnant
-summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1, subset = bug_touche==F))
-summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1)) # la variable omise est les non affectés
-# la certitude augmente chez les non affectés et quand on confirme, elle baisse légèrement quand on infirme
-summary(lm(certitude_augmente ~ bug_touche, data = e1)) # la variable omise est les non affectés
-
-
-##### Taxe carbone: Motivated reasoning ~ confiance_dividende ####
-decrit(e$update_correct)
-decrit(e$update_correct, which = e$confiance_dividende=='Oui')
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T, data=e, weights = e$weight))
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') * confiance_dividende, subset = feedback_infirme_large==T, data=e, weights = e$weight)) # 0.14*
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + confiance_dividende + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T, data=e, weights = e$weight)) # 0.06*
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T & feedback_correct==T, data=e, weights = e$weight))
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') * confiance_dividende, subset = feedback_infirme_large==T & feedback_correct==T, data=e, weights = e$weight)) # 0.14*
-summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + confiance_dividende + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T & feedback_correct==T, data=e, weights = e$weight)) # 0.06*
-
-
-##### Update correct #####
-mar_old <- par()$mar
-cex_old <- par()$cex
-par(mar = c(0.1, 3.1, 2.1, 0), cex.lab=1.2)
-
-# (a) winners
-crosstab_simule_gagnant <- crosstab(e$winning_category[e$simule_gagnant==1], e$winning_feedback_category[e$simule_gagnant==1], 
-                                    e$weight[e$simule_gagnant==1], # dnn=c(expression('Winning category,'~bold(Before)~feedback), ''),
-                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
-crosstab_simule_gagnant
-# (b) losers
-crosstab_simule_perdant <- crosstab(e$winning_category[e$simule_gagnant==0], e$winning_feedback_category[e$simule_gagnant==0], 
-                                    e$weight[e$simule_gagnant==0], # dnn=c(expression('Winning category, '~bold(Before)~feedback), ''),
-                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
-crosstab_simule_perdant
-
-## only feedback correct
-# (a) winners
-crosstab_simule_gagnant <- crosstab(e$winning_category[e$simule_gagnant==1], e$winning_feedback_category[e$simule_gagnant==1], 
-                                    e$weight[e$simule_gagnant==1], # dnn=c(expression('Winning category,'~bold(Before)~feedback), ''),
-                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
-crosstab_simule_gagnant
-# (b) losers
-crosstab_simule_perdant <- crosstab(e$winning_category[e$simule_gagnant==0], e$winning_feedback_category[e$simule_gagnant==0], 
-                                    e$weight[e$simule_gagnant==0], # dnn=c(expression('Winning category, '~bold(Before)~feedback), ''),
-                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
-crosstab_simule_perdant
-par(mar = mar_old, cex = cex_old)
-
-
-##### Biais & gagnant_categorie #####
-decrit(e$biais)
-plot((1:length(e$biais))/length(e$biais), sort(e$biais), type='l') + grid()
-lines((1:length(e$biais_plus))/length(e$biais_plus), sort(e$biais_plus), type='l', lty=2) + grid()
-lines((1:length(e$biais_moins))/length(e$biais_moins), sort(e$biais_moins), type='l', lty=2) + grid()
-decrit(e$biais_plus)
-decrit(e$biais_moins)
-decrit(e$gain)
-decrit(e$gain_min)
-decrit(e$gain < 0)
-decrit(e$gain_min < 0)
-decrit(e$gagnant_categorie) # gain_min does a better job than gain overall, truth is somewhere in between (cf. below)
-decrit(e$gagnant_categorie, which = e$question_confiance==F)
-decrit(e$gagnant_categorie, which = e$gain > 0) # TODO: study non affecté
-decrit(e$gagnant_categorie, which = e$gain < 0)
-decrit(e$gagnant_categorie, which = e$gain_min > 0)
-decrit(e$gagnant_categorie, which = e$gain_min < 0) # gain meilleur que gain_min pour prédire Perdant (84 vs 77%) mais beaucoup moins bon pour prédire Gagnant (14 vs 34%)
-CrossTable(e$confiance_dividende, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # seuls ceux qui y croient se disent gagnants souvent
-decrit(e$gagnant_categorie, which = e$gain > 0 & e$confiance_dividende=='Oui')
-decrit(e$gagnant_categorie, which = e$gain > 50 & e$confiance_dividende=='Oui') # même parmi ceux qui croient à leur gain > 0 se disent souvent non affecté (40%) et parfois perdant (21%)
-decrit(e$gagnant_categorie, which = e$gain_min > 0 & e$confiance_dividende=='Oui') # gain_min pas tellement meilleur prédicteur
-CrossTable(e$simule_gagnant > 0, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # 
-
-
 ##### Politiques env ~ info_CCC #####
 decrit(round(e1$prop_referenda_politiques_2, 3), data=e1) # TODO: image
 decrit(round(e2$prop_referenda_politiques_2, 3), data=e2)
@@ -186,47 +63,6 @@ decrit(e$obstacle_5) # incertitudes 21%, technologies 18%, demographie 18%
 decrit(e$obstacle_6) # incertitudes 24%, demographie 21%
 decrit(e$obstacle_7) # technologies 24%, incertitudes 21%
 decrit(e$obstacle_8) # rien de tout cela 67% (mais n = 50 au lieu de ~900)
-
-
-##### Problème conso L/100km ##### 
-length(which(abs(e$hausse_essence_verif_na - e$hausse_essence) > 0.001)) # toutes dans e$bug==F
-length(which(abs(e$hausse_diesel_verif_na - e$hausse_diesel) > 0.001)) # hausse_diesel et _essence ont été calculées avec la conso moyenne (pas celle renseignée par le répondant) pour bug = T
-length(which(abs(e$hausse_essence_verif - e$hausse_essence) > 0.001)) # toutes dans e$bug==T
-length(which(abs(e$hausse_diesel_verif - e$hausse_diesel) > 0.001))
-
-
-##### Mécanismes : incertitude #####
-decrit(e$certitude_gagnant)
-decrit(e$certitude_gagnant, numbers=T)
-# Il y a plus de perdants parmi ceux qui sont sûrs de leur réponse
-CrossTable(e$certitude_gagnant, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
-# Parmi les < 100 qui croient recevoir le dividende, est-ce que l'incertitude augmente la probabilité de se penser perdant ? Non, elle augmente la proba de Non affecté, i.e. Non affecté ~ NSP
-summary(lm(gagnant_categorie=='Perdant' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
-summary(lm(gagnant_categorie=='Non affecté' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
-summary(lm(gagnant_categorie=='Gagnant' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
-decrit(e$certitude_gagnant, which = e$confiance_dividende=='Oui')
-summary(lm(tax_acceptance ~ (certitude_gagnant < 1) * gagnant_categorie, data=e, subset = e$confiance_dividende=='Oui', weights = e$weight)) # no strong effect of uncertainty
-summary(lm(tax_approval ~ (certitude_gagnant < 1) * gagnant_categorie, data=e, subset = e$confiance_dividende=='Oui', weights = e$weight)) # no effect
-
-
-##### Mécanismes : confiance #####
-decrit(e$confiance_gouvernement, miss=T)
-CrossTable((e$confiance_gouvernement >= 0), e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # la confiance augmente la proba de se penser Non affecté plutôt que Perdant
-summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * (confiance_dividende < 0), data = e, weights = e$weight)) # dividende 0.33*** / gouv: 0.13**
-summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e, weights = e$weight)) # confiance_gouv pas significatif / dividende -0.27*** et -0.45***
-summary(lm(tax_acceptance ~ (confiance_gouvernement < 0) * (confiance_dividende < 0), data = e, weights = e$weight)) # dividende -0.41*** / gouv -10*
-summary(lm(tax_acceptance ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e, weights = e$weight)) # confiance_gouv pas significatif / dividende 0.38*** et 0.46***
-# summary(ivreg(tax_acceptance ~ (gagnant_categorie!='Perdant') + confiance_gouvernement + Gilets_jaunes | (confiance_dividende < 0) + confiance_gouvernement + Gilets_jaunes, data=e),diagnostics=T)
-summary(lm(update_correct ~ gagnant_categorie=='Gagnant', subset = feedback_infirme_large==T, data=e, weights = e$weight)) # not enough power (only 4 overly optimistic loser)
-summary(lm(update_correct ~ gagnant_categorie=='Gagnant', subset = feedback_infirme_large==T & feedback_correct==T, data=e, weights = e$weight))
-decrit(e$confiance_dividende) # seuls 12% croient recevoir le dividende : ça suffit à expliquer que quasiment tout le monde se pense perdant
-CrossTable(e$simule_gain_verif > 0, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
-# Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +32***p.p.
-CrossTable(e$simule_gain_verif[e$confiance_dividende=='Oui'] > 0, e$gagnant_categorie[e$confiance_dividende=='Oui'], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
-summary(lm(((simule_gain_verif > 0 & gagnant_categorie!='Perdant') | (simule_gain_verif < 0 & gagnant_categorie!='Gagnant')) ~ as.factor(confiance_dividende), data=e, weights = e$weight)) # 0.36***
-decrit(e$perte - e$hausse_depenses_verif > 30) # 19% sur-estiment les hausses de dépenses de plus de 30???/UC
-decrit(e$perte - e$hausse_depenses_verif < -30) # 56% sous-estiment les hausses de dépenses de plus de 30???/UC !
-decrit(e$perte - e$hausse_depenses_verif_na < -30) # robuste quand on remplace conso par 7
 
 
 ##### Images e1 #####
@@ -1365,8 +1201,8 @@ decrit(e$nb_avis_CCC) # mean 2.5, median 2
 decrit(e$duree/60)
 decrit(e$region)
 decrit(e$random)
-decrit(e$dividende)
-decrit(e$origine_taxe)
+decrit(e$dividende) #
+decrit(e$origine_taxe) #
 decrit(e$conso)
 decrit(e$conso_embedded) # better than conso
 # round(e$conso[which(round(e$conso)!=n(e$conso_embedded))])
@@ -1383,22 +1219,22 @@ decrit(e$pour_28h)
 decrit(e$referendum_ecocide)
 decrit(e$referendum_environnement_constitution)
 decrit(e$referendum_environnement_priorite_constit)
-decrit(e$avis_estimation)
-decrit(e$gain_net_choix)
-decrit(n(e$gain_net_gain))
-decrit(n(e$gain_net_perte))
-decrit(e$gain_subjectif)
-summary(lm(gain_subjectif==0 ~ dividende, data = e))
-decrit(e$hausse_depenses)
+decrit(e$avis_estimation) #
+decrit(e$gain_net_choix) #
+decrit(n(e$gain_net_gain)) #
+decrit(n(e$gain_net_perte)) #
+decrit(e$gain_subjectif) #
+summary(lm(gain_subjectif==0 ~ dividende, data = e)) #
+decrit(e$hausse_depenses) #
 decrit(e$uc)
-decrit(e$hausse_depenses/e$uc)
-decrit(e$gagnant_feedback_categorie)
-decrit(e$certitude_gagnant, numbers=T)
-decrit(e$certitude_gagnant_feedback)
-summary(lm(certitude_gagnant <= 0 ~ gain_net_choix + dividende, data=e))
-summary(lm(certitude_gagnant < 0 ~ gain_net_choix + dividende, data=e))
-summary(lm(gain_subjectif == 0 ~ dividende, data=e))
-decrit(e$gain_subjectif == 0)
+decrit(e$hausse_depenses/e$uc) #
+decrit(e$gagnant_feedback_categorie) #
+decrit(e$certitude_gagnant, numbers=T) #
+decrit(e$certitude_gagnant_feedback) #
+summary(lm(certitude_gagnant <= 0 ~ gain_net_choix + dividende, data=e)) #
+summary(lm(certitude_gagnant < 0 ~ gain_net_choix + dividende, data=e)) #
+summary(lm(gain_subjectif == 0 ~ dividende, data=e)) #
+decrit(e$gain_subjectif == 0) #
 
 
 ##### Représentativité CCC #####
@@ -1408,33 +1244,499 @@ decrit(e2$representativite_CCC)
 decrit("nombre_non_representative", data = e2, which = e2$representativite_CCC=="Non")
 
 
-##### détaxe urba #####
-decrit(e2$taxe_feedback_approbation[e2$variante_taxe_alternative=="détaxe"], miss = T)
-decrit(e2$taxe_feedback_approbation[e2$variante_taxe_alternative=="urba"], miss = T)
+##### Financement #####
+for (i in 1:20) {
+  print(i)
+  print(table(ccc[[paste("s7_q29", i, sep="_")]])) }
+print(table(ccc$s7_q29_20))
+
+
+##### Évolution suite à CCC #####
+# signes faibles: pour_sortition, problemes_invisibilises, obligation_renovation (y.c. referendum), CCC_avis
+
+
+##### *** Externe non CCC *** ####
+# responsable_CC cause_CC_AT et autres questions perceptions CC
+# part_anthropique efforts_relatifs soutenu_ (majorité) pour_taxe_carbone : perceptions des croyances
+# champ_libre, politique, parti, pour_28h, rôle député, voter_contre
+
+# confiance: pour_taxe_carbone ; origine*label y.c. urba/détaxe ; confiance_dividende (gagnant_categorie = ça + hausse_depenses) ; hause_depenses (écart à réalité) ; 
+#            certitude (qui ?) ; confiance_gouvernement ; dividende + gain_net ; avis_estimation
+# feedback: effet sur certitude, sur gagnant_categorie, sur approval
+# perceptions des croyances: soutenu_ part_anthropique efforts_relatifs
+# déterminants/corrélats: trop_impots redistribution confiance_gens problemes_invisibilises
+
+# pour_taxe_carbone: *** bandwagon 3
+# confiance_gouvernement: autre "cue" 3
+# origine*label: pas spécifique au gouv/label, EELV pas mieux 3
+# urba/détaxe: pas spécifique à la formule 3
+# évolution depuis 2019: post GJ, mais ptet cadrage joue 3
+# confiance_dividende: pas confiance 1
+# confiance_gouvernement ~ confiance_dividende: imputer le dividende escompté à partir de confiance_gouv et déduire le % de perdants que ça explique 1
+# dividende + gain_net: confirmation plus subtile 1
+# hause_depenses: biais existe... TODO
+# bénéfices/problèmes, gagnants/perdants: biais existent 0
+# certitude: perdants + sûrs va contre hypothèse aversion perte 2
+# perte_relatif: faible écart à la moyenne, plutôt contre hyp qu'ils s'imaginent à tort particuliers 2 TODO
+# avis_estimation: peut expliquer un peu la croyance incidence: ~20% 2
+# effet du feedback: 26% des gagnants pessimistes s'alignent, 53% maintiennent 2
+
+# 0 Carbon tax aversion + b/p g/p
+# 1 nouveau mécanisme pour croyance incidence: le dividende: joue, mais n'explique pas tout
+#     ptet un proxy pour exprimé doute plus général / moins verbalisable ("ça sent la douille") mais qui peut traduire des craintes légitimes e.g. actifs échoués, hausse prix (éq gen)
+# 2 autres mécanismes potentiels pour croyance incidence
+# 3 rôle du contexte, des acteurs et de la formule
+
+# Pourquoi tant de Perdant (v0, v1)?
+# 1 confiance_dividende
+# 1.a semble tout expliquer dans v1
+decrit(e1$confiance_dividende) # 46/42/12 Non/Moitié/Oui
+summary(lm(gagnant_categorie=="Perdant" ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # +28/48*** 30% de Perdant parmi ceux qui croient au dividende: le bon chiffre
+# summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e1, weights = e1$weight)) # capture confiance_gouv: tout passe par là
+summary(lm(taxe_approbation!="Non" ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # +37/46***
+decrit(e1$gain < 0) # 53%
+decrit(e1$gain_min < 0) # 69%
+#     gain, gain_min bon prédicteurs de Perdant (84 vs 77%) et Gagnant (14 vs 34%) (cf. Biais & ...)
+#     Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +36***p.p.
+summary(lm(((simule_gain_verif > 0 & gagnant_categorie!='Perdant') | (simule_gain_verif < 0 & gagnant_categorie!='Gagnant')) ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # 0.36***
+#     plus d'update correct parmi ceux qui ont confiance dans dividende, les non GJ et ceux qui approuvent
+summary(lm(update_correct ~ confiance_dividende, subset = feedback_infirme_large==T, data=e1, weights = e1$weight)) # 0.14***
+summary(lm(taxe_approbation!="Non" ~ question_confiance, data=e1, weights = e1$weight)) # pas d'influence de la question
+summary(lm(gagnant_categorie=="Perdant" ~ question_confiance, data=e1, weights = e1$weight)) # pas d'influence de la question
+# 1.b cet effet peut être mesuré plus finement dans v2
+summary(lm(gain ~ as.factor(dividende), data = e2, weights = e2$weight)) # 70/75% du dividende pris en compte
+summary(lm(gain ~ as.factor(dividende) * (origine_taxe=="EELV"), data = e2, weights = e2$weight)) # 61/70% du dividende pris en compte qd gouv, mais...
+impute_dividende_escompte(print=T) # .33 part du dividende pris en compte d'après gain, gain_min (imputée)
+impute_dividende_escompte(escompte_moitie = 0.8, escompte_non = 0.3, print=T) # .59 ajustement nécessaire pour se rapprocher de l'escompte réel: marche encore, mais pas si extrême que ce qu'on pensait
+#  => confiance_dividende: ptet un proxy pour exprimé doute plus général / moins verbalisable ("ça sent la douille") mais qui peut traduire des craintes légitimes e.g. actifs échoués, hausse prix (éq gen)
+#     37% Perdants hors NSP: le dividende escompté ajusté (+ gain fiscal) suffit à l'expliquer (pas aussi extrême que v1)
+wtd.mean(e2$simule_gain[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 36% gain fiscal
+# wtd.mean(e2$simule_gain[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 11% gain fiscal
+decrit("gagnant_categorie", data=e1) # 60/9
+decrit("gagnant_categorie", data=e2, which = e2$dividende==110, miss=T) # 25/24 perdants Pk telle différence ? ajout de "NSP" explique 20 p.p., cadrage 15 p.p. (v1: juste avant: hausse dépenses, v2 formulation plus douce)
+summary(lm(pour_taxe_carbone!="Non" ~ vague, data=eb)) # ne s'explique pas par évolution des préférences a priori
+decrit("gagnant_categorie", data=e2, which = e2$dividende==0, miss=T) # 48/4 Perdants gagne 20 p.p. au profit de Gagnant (qui passe à 4%), les autres restent stables: logique
+decrit("gagnant_categorie", data=e2, which = e2$dividende==170, miss=T) # 11/30 Plus que 11% de Perdants, les 14% en moins se sont répartis en trois tiers entre NSP, NA et G
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 56% explique le 25/24
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 34% explique le 11/30
+wtd.mean((e2$simule_gain + e2$dividende_escompte_impute - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 69% prédit trop de perdants
+wtd.mean((e2$simule_gain + e2$dividende_escompte_impute - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 58% prédit trop de perdants
+#     effet de AEJ:EP confirmé (pas de rapport avec explication de l'origine d'autant de perdants)
+summary(ivreg(taxe_approbation!='Non' ~ gain | as.factor(dividende), data=e2, weights = e2$weight), diagnostics = TRUE) # F-stat: 57 $diagnostics[1,3]
+summary(ivreg(taxe_approbation!='Non' ~ (gain > 0) | as.factor(dividende), data=e2, weights = e2$weight), diagnostics = TRUE) # effet 0.46***
+summary(lm(taxe_approbation!='Non' ~ as.factor(dividende), data=e2, subset = origine_taxe=="gouvernement", weights = e2$weight)) # 2/6
+summary(lm((gain > 0) ~ as.factor(dividende), data=e2, subset = origine_taxe=="gouvernement", weights = e2$weight)) # 2/6
+# 1.c Mais le dividende n'explique pas tout
+#     L'évolution de gagnant_categorie ne s'explique pas par dividende puisque celui-ci ne varie pas pour 110
+# 2 autres mécanismes 
+# 2.a o effet de cadrage 
+#     ajout de "NSP" explique 20 p.p., contexte & formulation 15 p.p. (v1: juste avant: hausse dépenses, v2 formulation plus douce)
+e2$Gagnant_categorie <- relevel(as.factor(as.character(e2$Gagnant_categorie)), "Non affecté")
+summary(lm(taxe_approbation=='Oui' ~ Gagnant_categorie, data=e2, weights = e2$weight)) 
+summary(lm(pour_taxe_carbone!="Non" ~ vague, data=eb)) # c'est bien cadrage et pas évolution des croyances entre deux vagues (qui aurait affecté approbation); effet limité à l'explication des réponses à Perdant: biais plus faible qu'on pensait mais pas des biais restent
+# 2.b o biais: s'imaginent à tort particuliers
+decrit("perte_relative_partielle", data=b) # v0 environ 60% pensent perdre plus que la moyenne (proportions similaires pour TVA, fioul, gaz)
+summary(lm(gagnant_categorie == "Perdant" ~ perte_relative_partielle > 0, data = b, weights = b$weight)) # +21***
+# 2.c o méfiance envers l'estimation: le biais précédent doublé d'une meilleure confiance en eux qu'en nous
+decrit("avis_estimation", data = e2) #  34/31/12 Trop peu/Correct/Trop
+#     Comme ceux qui croient à notre estimation intègrent le dividende, l'effet doit passer par hausse_depenses et pas seulement dividende.
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==0, weights = e2$weight) # mean 4 / médiane 3 : dividende qu'ils croient recevoir s'ils acceptent notre estimation
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==110, weights = e2$weight) # 110 / 125
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==170, weights = e2$weight) # 150 / 172
+#     Ceux qui nous croient approuvent +.24*** (TODO: corrélation avec confiance_gouv), sauf pour ceux qui répondent gagnant_categorie=NSP, qui doutent probablement du dividende
+summary(lm(taxe_approbation=="Oui" ~ as.character(avis_estimation), data = e2, weights = e2$weight)) # 46% Oui quand estimation correcte, ***26 p.p. de plus que les autres
+summary(lm(taxe_approbation=="Oui" ~ (avis_estimation=="Correcte") * I(gagnant_categorie %in% c("NSP")), data = e2, weights = e2$weight))
+#     Pour résumé: il n'y pas qu'un manque de confiance dividende, aussi la croyance de perdre plus que ce qu'on leur dit, et il y a des doutes dividende non pris en compte plus haut car ils s'expriment comme NSP
+# 2.d x incertitude + aversion à la perte: prédit faible certitude et que les moins sûrs se pensent plus perdants, c'est le contraire qu'on observe
+decrit("certitude_gagnant", data=e1)  # TODO image
+CrossTable(e1$certitude_gagnant, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Il y a plus de perdants parmi ceux qui sont sûrs de leur réponse
+# 2.e x raisonnement motivé: lié à méfiance mais ici la non-intégration d'une info n'est pas liée à la source de l'info mais à sa teneur. On s'attend à asymétrie dans update.
+#     contrairement à v0, on ne peut pas mettre en évidence asymétrie dans l'update: les perdants optimistes sont 40% (4) à s'aligner (contre 82% (~45) en v0) et les gagnants pessimistes 26% (contre 12%), échantillon trop faible
+#     pourquoi ça aurait changé ? Évolution des opinions; cadrage (certitude, (question_confiance, hausse_depenses plutôt que gain)); hasard (on ne peut pas exclure qu'il y ait de l'asymétrie); 
+#       ou bien l'asymétrie était drivée par les diesel_2_1 = T TODO: check
+CrossTable(e1$gagnant_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+# Conclusions: dividende, cadrage, biais: on a toujours plusieurs façons différentes d'expliquer les données, on a éliminé des explications mais on ne peut pas en singulariser une seule. Mtn on se demande presque pourquoi il n'y a pas plus de gens qui se disent Perdants.
+# Quoi d'autre que les 3 motifs influent sur approbation ? Confiance est une raison omniprésente
+# 3 rôle du contexte, des acteurs et de la formule: 
+# 3.a Évolution de l'opinion, singularité de l'épisode des GJ mais on ne peut pas excluse que cadrage joue. TODO: ajouter autres sources
+decrit(b$taxe_approbation, miss = T) # 71/10 Non/Oui 
+decrit(e1$taxe_approbation, miss = T) # 47/23
+decrit(e2$taxe_approbation, which=e2$dividende==110 & e2$origine_taxe=="gouvernement", miss = T) # 42/29
+# 3.b Effet du dividende (recherche a montré effet de montant taxe, ici on montre le dual)
+decrit(e2$taxe_approbation, which=e2$dividende==0 & e2$origine_taxe=="gouvernement", miss = T) # 44/31
+decrit(e2$taxe_approbation, which=e2$dividende==170 & e2$origine_taxe=="gouvernement", miss = T) # 35/36
+# decrit(e2$taxe_approbation, which=e2$dividende==110, miss = T) # 45/25
+# decrit(e2$taxe_approbation, which=e2$dividende==0, miss = T) # 51/26 TODO: image des 5
+# decrit(e2$taxe_approbation, which=e2$dividende==170, miss = T) # 34/33
+# 3.c Effet de la formule: change pas grand chose
+decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="détaxe"], miss = T) # 46/25 Non/Oui
+decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="urba"], miss = T) # 46/28
+# 3.d Effet origine, label: faibles
+summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe * question_confiance, data=e1, weights = e1$weight)) # pas d'effect
+summary(lm(taxe_approbation!='Non' ~ origine_taxe * as.factor(dividende), data=e2, weights = e2$weight)) # l'effet du gouv/EELV ne passe que pour dividende=0, donc pas lié à confiance_dividende
+summary(lm(confiance_dividende!='Non' ~ label_taxe * origine_taxe, data=e1, weights = e1$weight)) # no effect
+# 3.d Effet de confiance_gouvernement
+#     méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (v1) mais pas corrélé avec gagnant_categorie (v2)
+decrit("confiance_gouvernement", data=e1, miss=T) # 26/38/18/14 jamais/parfois/moitié/plupart temps
+summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0), data = e1, weights = e1$weight)) # gouv: 0.16**
+# summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0), data = e2, weights = e2$weight)) # gouv: 0.03 Pas corrélé suggère encore une fois que ceux qui doutent du gouv/dividende répondent NSP
+summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e1, weights = e1$weight)) # confiance_gouv pas significatif / dividende -0.27*** et -0.45***
+summary(lm(tax_acceptance ~ (confiance_gouvernement < 0), data = e1, weights = e1$weight)) # -.14***
+summary(lm(tax_acceptance ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e1, weights = e1$weight)) # confiance_gouv pas significatif / dividende 0.38*** et 0.46***
+summary(lm(tax_acceptance ~ (confiance_gouvernement < 0), data = e2, weights = e2$weight)) # -.09***
+# 3.e Effet bandwagon 
+summary(lm(pour_taxe_carbone!='Non' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # +10**
+summary(lm(pour_taxe_carbone=='Oui' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # +8***
+
+decrit(e1$perte - e1$hausse_depenses_verif > 30) # 19% sur-estiment les hausses de dépenses de plus de 30€/UC
+decrit(e1$perte - e1$hausse_depenses_verif < -30) # 56% sous-estiment les hausses de dépenses de plus de 30€/UC ! TODO comparer à v0
+
+##### Problème conso L/100km ##### 
+length(which(abs(e$hausse_essence_verif_na - e$hausse_essence) > 0.001)) # toutes dans e$bug==F
+length(which(abs(e$hausse_diesel_verif_na - e$hausse_diesel) > 0.001)) # hausse_diesel et _essence ont été calculées avec la conso moyenne (pas celle renseignée par le répondant) pour bug = T
+length(which(abs(e$hausse_essence_verif - e$hausse_essence) > 0.001)) # toutes dans e$bug==T # pour e2 les problèmes n'en sont pas, c'est que les calculs de _verif sont moins corrects que les autres
+length(which(abs(e$hausse_diesel_verif - e$hausse_diesel) > 0.001))
+
+
+##### Gagnant catégorie #####
+# v1: 60% perdants 9% G (v0: 64%/14%) / v2: 37% (s'explique par cadrage, pas par évolution préf)
+decrit("gagnant_categorie", data=e1) # TODO: image Séparer e1 et e2. Si possible utiliser plus que 3 couleurs pour voir intensité des gains
+decrit("gagnant_categorie", data=e1, which = e1$question_confiance==T) # pas d'influence de la question
+decrit("gagnant_categorie", data=e2, which = e2$dividende==110, miss=T) # 37% perdants Pk telle différence ? ajout de "NSP" explique 20 p.p., cadrage 15 p.p. (v1: juste avant: hausse dépenses, v2 formulation plus douce)
+summary(lm(pour_taxe_carbone!="Non" ~ vague, data=eb)) # ne s'explique pas par évolution des préférences a priori
+decrit("gagnant_categorie", data=e2, which = e2$dividende==0, miss=T) # Perdants gagne 20 p.p. au profit de Gagnant (qui passe à 4%), les autres restent stables: logique
+decrit("gagnant_categorie", data=e2, which = e2$dividende==170, miss=T) # Plus que 11% de Perdants, les 14% en moins se sont répartis en trois tiers entre NSP, NA et G
+decrit("hausse_depenses", data=e2, which = e2$dividende==0 & e2$gagnant_categorie=="Non affecté") # Ces NA ont des hausses_depenses 70€ plus faibles que les autres
+decrit("hausse_depenses", data=e2, which = e2$dividende>0 & e2$gagnant_categorie=="Non affecté") # Ceux-là ont les mêmes hausses_depenses que les autres
+decrit("hausse_depenses", data=e2)
+
+
+##### Feedback #####
+# contrairement à v0, pas d'asymétrie dans l'update: les perdants optimistes sont 40% (4) à s'aligner (contre 82% (~45) en v0) et les gagnants pessimistes 26% (contre 12%)
+# pourquoi ça a changé ? Évolution des opinions; cadrage (certitude, (question_confiance, hausse_depenses plutôt que gain)); hasard (on ne peut pas exclure qu'il y ait de l'asymétrie); 
+#   ou bien l'asymétrie était drivée par les diesel_2_1 = T TODO: check
+decrit("simule_gagnant", data=e1)
+decrit("bug_touche", data=e1) # 80% des ménages avec 2 voitures dont la pcpale au diesel sont touchés par un bug
+decrit("simule_gagnant", data=e1, which = e1$bug_touche==F) # 77% (v0: 76%) Crosstab similaire à v0 (D.2 p. 55)
+CrossTable(e1$gagnant_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+# CrossTable(e1$gagnant_categorie[e1$simule_gagnant==1 & e1$bug_touche==F & e1$confiance_dividende=="Oui"], e1$gagnant_feedback_categorie[e1$simule_gagnant==1 & e1$bug_touche==F & e1$confiance_dividende=="Oui"], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+# CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F & e1$confiance_dividende=="Oui"], e1$gagnant_feedback_categorie[e1$simule_gagnant==0 & e1$bug_touche==F & e1$confiance_dividende=="Oui"], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+# CrossTable(e1$gagnant_categorie[e1$simule_gagnant==1 & e1$bug_touche==F & e1$confiance_dividende!="Non"], e1$gagnant_feedback_categorie[e1$simule_gagnant==1 & e1$bug_touche==F & e1$confiance_dividende!="Non"], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+# CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F & e1$confiance_dividende!="Non"], e1$gagnant_feedback_categorie[e1$simule_gagnant==0 & e1$bug_touche==F & e1$confiance_dividende!="Non"], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
+
+
+##### Expliquer que 60% se pensent perdants au lieu de 27% #####
+# gain fiscal (N) gains_losses_data.py; pas croire au dividende (N); élasticité nulle (B): à eux seuls, expliquent beaucoup (si ce n'est tout)
+# pourquoi pas de biais dans v2? pck ceux qui ne sont pas sûrs cochent NSP plutôt que Perdant + effet de cadrage (pour expliquer évolution Gagnants).  
+   # Pb: non confirmé par certitude_gagnant: Perdant sont aussi + sûrs qu'autres dans v1 que dans v2 (on devrait plus + sûr dans v2 pour confirmer). Cela dit questions pas comparable pck l'une porte sur gagnant_categorie (v1) et l'autre sur gain (v2)
+# effets de cadrage (B). Gens pensent perdre et ne croit pas au dividende pck on leur suggère, ds v2 c'est plutôt qu'ils pensent notre estimation surestimée mais intègrent dividende. 
+#   pb de cette explication: pas d'effet sur approbation
+# potentiellement dû à MR: pensent perdre plus que les autres (B) perte_relative; pensent que tout le monde perd tout en croyant au dividende (B). Il aurait fallu avoir question dividende + perdants/gagnants dans le même sondage pour savoir
+# peu crédible: intentional misreporting (N); uncertainty + loss-aversion (N)
+# (B): explication impliquant un biais, (N): n'en impliquant pas
+# explications de l'asymétrie dans l'update (pour v0):
+#  MR: possible mais pas détectable car pas d'asymétrie dans l'update (a fortiori parmi ceux qui croient au dividende) TODO: check régression update ~ gj + g_d voir si on a au moins ça
+#  sont "biaisés" (par prudence e.g.) et update imparfait donc seuls ceux proches de zéro impactés TODO: checker si meilleur update proche de 0
+wtd.mean(e1$simule_gain_verif < 0, weights = e1$weight) # 27%
+wtd.mean(e2$simule_gain[e2$dividende==0] < 0, weights = e2$weight[e2$dividende==0]) # 95% gain fiscal
+wtd.mean(e2$simule_gain[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 36% gain fiscal
+wtd.mean(e2$simule_gain[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 11% gain fiscal
+decrit("gagnant_categorie", data=e1) # 60/9% Perdants/Gagnants
+decrit("gagnant_categorie", data=e1, which = e1$question_confiance==F) # 59/11
+decrit("gagnant_categorie", data=e2, which = e2$dividende==0, miss=T) # 48/4
+decrit("gagnant_categorie", data=e2, which = e2$dividende==110, miss=T) # 25/24
+decrit("gagnant_categorie", data=e2, which = e2$dividende==170, miss=T) # 11/30
+summary(lm(gagnant_categorie=="Perdant" ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # +28/48*** 30% de Perdant parmi ceux qui croient au dividende: le bon chiffre
+wtd.mean(e1$simule_gain_verif < 26.55 * pmin(2, e1$nb_adultes) / e1$uc, weights = e1$weight) # 38% 26.55 c'est ce qu'en moyenne les gens escomptent d'un dividende de 110
+wtd.mean(e1$simule_gain_verif < 110 * pmin(2, e1$nb_adultes) / e1$uc, weights = e1$weight) # 86%: notre spécification avec le +16 pose pb ici
+wtd.mean(e1$simule_gain_interaction < 110 * pmin(2, e1$nb_adultes) / e1$uc, weights = e1$weight) # 90% là aussi y a un +9: TODO corriger erreur python pour équilibrer
+wtd.mean((e2$simule_gain - 110 * e2$nb_adultes / e2$uc)[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 100% when <= instead of <
+0.25 + 0.75*wtd.mean(e1$simule_gain_verif < 0, weights = e1$weight) # 45% cas extrême où 25% pensent recevoir 0 et 75% 110
+ 0.25 + 0.75*wtd.mean(e2$simule_gain[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 52% cas extrême où 25% pensent recevoir 0 et 75% 110 (mieux calculé)
+wtd.mean(e1$simule_gain_verif < 110 * pmin(2, e1$nb_adultes) / e1$uc, weights = e1$weight)*0.25 + 0.75*wtd.mean(e1$simule_gain_verif < 0, weights = e1$weight) # 40% pareil mais faux car < 110 devrait donner 1
+wtd.mean(e1$simule_gain_inelastique < 0, weights = e1$weight) # 44% Plutôt qu'inélastique, utiliser gain_fiscal comme définition => d'où le fait d'utiliser e2
+wtd.mean(e1$simule_gain_inelastique < 26.55 * pmin(2, e1$nb_adultes) / e1$uc, weights = e1$weight) # 53%
+0.25 + 0.75*wtd.mean(e1$simule_gain_inelastique < 0, weights = e1$weight) # 58%: les gens raisonnant sans élasticité avec 25% pensant rien recevoir expliquent quasiment tout
+# imputer le dividende escompté à partir de confiance_gouv et déduire le % de perdants que ça explique 
+impute_dividende_escompte <- function(escompte_moitie = 0.5, escompte_non = 0, print = F) { # un escompte_moitie de 0.6 signifie que 60% du dividende est pris en compte par ceux qui répondent "À moitié"
+  escompte_dividende_by_confiance_gouv <- rep(NA, 6)
+  names(escompte_dividende_by_confiance_gouv) <- c(labels(e1$confiance_gouvernement))
+  for (i in c(labels(e1$confiance_gouvernement))) {
+    escompte_dividende_by_confiance_gouv[i] <- sum((((e1$confiance_dividende=="Oui") * e1$weight)[e1$confiance_gouvernement==i] + escompte_non * ((e1$confiance_dividende=="Non") * e1$weight)[e1$confiance_gouvernement==i] +
+        escompte_moitie * ((e1$confiance_dividende=="À moitié") * e1$weight)[e1$confiance_gouvernement==i]), na.rm=T)/sum((!is.na(e1$confiance_dividende) * e1$weight)[e1$confiance_gouvernement==i]) }
+  # data_modified[["dividende_escompte_impute"]] <<- escompte_dividende_by_confiance_gouv[as.character(data_modified[["confiance_gouvernement"]])]
+  if (print) print(paste("escompte moyen:", round(.46*escompte_non + .423*escompte_moitie + .117, 2)))
+  return(escompte_dividende_by_confiance_gouv)
+}
+impute_dividende_escompte(print=T) # part du dividende que les gens pensent recevoir (imputée)
+impute_dividende_escompte(escompte_moitie = 0.8, escompte_non = 0.3, print=T)
+e1$dividende_escompte_impute <- impute_dividende_escompte()[as.character(e1$confiance_gouvernement)] * 110 * pmin(2, e1$nb_adultes)/e1$uc # dividende par UC que les gens pensent recevoir (imputé)
+e2$dividende_escompte_impute <- impute_dividende_escompte()[as.character(e2$confiance_gouvernement)] * e2$dividende * pmin(2, e2$nb_adultes)/e2$uc
+e1$dividende_escompte_ajuste <- impute_dividende_escompte(escompte_moitie = 0.8, escompte_non = 0.3)[as.character(e1$confiance_gouvernement)] * 110 * pmin(2, e1$nb_adultes)/e1$uc
+e2$dividende_escompte_ajuste <- impute_dividende_escompte(escompte_moitie = 0.8, escompte_non = 0.3)[as.character(e2$confiance_gouvernement)] * e2$dividende * pmin(2, e2$nb_adultes)/e2$uc
+# wtd.mean(e1$simule_gain_verif + e1$dividende_escompte_impute - (110 * pmin(2, e1$nb_adultes)/e1$uc) < 0, weights = e1$weight) # 63% explique tout pour escompte non,moitié = 0, 0.5 /!\ débile de faire ça pour e1 puisqu'on a les données individuelles, cf. gain_min etc.
+# wtd.mean(e1$simule_gain_verif + e1$dividende_escompte_ajuste - (110 * pmin(2, e1$nb_adultes)/e1$uc) < 0, weights = e1$weight) # 47% mais pas qd on ajuste le dividende escompté à la valeur de v2
+wtd.mean((e2$simule_gain + e2$dividende_escompte_impute - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==0] < 0, weights = e2$weight[e2$dividende==0]) # 95%
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==0] < 0, weights = e2$weight[e2$dividende==0]) # 95%
+wtd.mean((e2$simule_gain + e2$dividende_escompte_impute - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 69% explique tout pour escompte non,moitié = 0, 0.5
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110]) # 56% explique tout même qd on ajuste le dividende escompté à la valeur de v2
+wtd.mean((e2$simule_gain + e2$dividende_escompte_impute - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 58% explique tout pour escompte non,moitié = 0, 0.5
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==170] < 0, weights = e2$weight[e2$dividende==170]) # 34% mais pas qd on ajuste le dividende escompté à la valeur de v2
+summary(lm(dividende_escompte_impute ~ (gain_net_choix=="NSP"), data=e2, weights = e2$weight)) # pas d'effet
+summary(lm(dividende_escompte_ajuste ~ (gain_net_choix=="NSP"), data=e2, weights = e2$weight)) 
+summary(lm(dividende_escompte_impute ~ (gain_net_choix=="NSP")*as.factor(dividende), data=e2, weights = e2$weight))
+decrit("confiance_gouvernement", data=e1)
+decrit("confiance_gouvernement", data=e2) # same
+decrit("confiance_gouvernement", data=e1, which = e1$question_confiance==T)
+decrit("dividende_escompte_impute", data=e1)
+decrit("dividende_escompte_impute", data=e2)
+decrit("dividende_escompte_impute", data=eb) # TODO bug label eb confiance_gouvernement*
+decrit(impute_dividende_escompte(escompte_moitie = 0.8, escompte_non = 0.3)[as.character(e1$confiance_gouvernement)])
+summary(lm(n(confiance_gouvernement) ~ question_confiance, data=e1))
+summary(lm((confiance_gouvernement>=0) ~ question_confiance, data=e1)) # étonnant: question_confiance suscite +10** confiance_gouv
+summary(lm((confiance_gouvernement>=-1) ~ question_confiance, data=e1))
+
+
+##### Avis estimation #####
+# 34/31/12 Trop peu/Correct/Trop. Ceux qui nous croient n'escomptent pas bcp le dividende et approuvent +.26*** (TODO: corrélation avec confiance_gouv), et ceux qui le font répondent gain=NA ou NSP
+decrit("avis_estimation", data=e2) # TODO: image 
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==0, weights = e2$weight) # mean 4 / médiane 3 : dividende qu'ils croient recevoir s'ils acceptent notre estimation
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==110, weights = e2$weight) # 110 / 125
+decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==170, weights = e2$weight) # 150 / 172
+summary(lm((gain + hausse_depenses_par_uc) ~ as.factor(dividende), data=e2, subset = e2$avis_estimation=="Correcte", weights = e2$weight)) # tout dividende pris en compte
+summary(lm((gain + hausse_depenses_par_uc) ~ as.factor(dividende), data=e2, subset = e2$avis_estimation!="Trop élevée", weights = e2$weight)) # seul dividende=170 pas tout à fait pris en compte
+summary(lm((gain + hausse_depenses_par_uc) ~ as.factor(dividende), data=e2, subset = e2$avis_estimation=="Trop élevée", weights = e2$weight)) # dividende pas bien pris en compte / hausse_depenses subj diffère
+decrit(e2$gain + e2$hausse_depenses_par_uc - e2$dividende, which = grepl("Correct", e2$avis_estimation)) # dividende qu'ils croient recevoir moins le vrai
+decrit(e2$gain + e2$hausse_depenses_par_uc - e2$dividende, which = grepl("Correct", e2$avis_estimation) & e2$gain==0) # bcp intuitent qu'ils perdent mais croient à notre estimation alors disent gain=0 ce qui naturellement impliquent qu'ils ne se trompent pas en moyenne (mais c'est fortuit). Interprétation appuyée par la variance plus faible.
+# decrit(e2$gain + e2$hausse_depenses_par_uc - e2$dividende, which = grepl("Correct", e2$avis_estimation) & e2$gain!=0) # dividende qu'ils croient recevoir moins le vrai
+head((e2$gain * e2$uc)[grepl("Correct", e2$avis_estimation)], 30) # bcp sont à 0 au lieu d'un nombre >0: check s'ils sont plus à désapprouver (ce qui sous-entendrait que les 0=NA~NSP sont dûs à un doute sur le dividende: confirmé ci-dessous)
+head(round((e2$simule_gain * e2$uc)[grepl("Correct", e2$avis_estimation)]), 30)
+summary(lm(taxe_approbation!="Non" ~ as.character(avis_estimation), data = e2, weights = e2$weight)) # 68% !Non qd estimation correction correcte ou NSP, ***20 p.p. de plus que les autres
+summary(lm(taxe_approbation=="Oui" ~ as.character(avis_estimation), data = e2, weights = e2$weight)) # 46% Oui quand estimation correcte, ***26 p.p. de plus que les autres
+summary(lm(taxe_approbation=="Oui" ~ (avis_estimation=="Correcte") * (gain == 0), data = e2, weights = e2$weight))
+summary(lm(taxe_approbation=="Oui" ~ I(avis_estimation %in% c("Correcte", "NSP")) * I(gagnant_categorie %in% c("NSP", "Non affecté")), data = e2, weights = e2$weight))
+
+##### Gain #####
+# 75% du dividende pris en compte. 
+decrit("gain", data=e1) # mean -32.44. Imputé à partir de réponse au dividende. Marche plutôt bien
+decrit("gain", data=e2) 
+decrit("gain", data=e2, which = e2$dividende==0) # -108.90 TODO: image cdf
+decrit("gain", data=e2, which = e2$dividende==110) # -25.45 en moyenne, 83.45€/110 i.e. 75% (26.55) du dividende pris en compte
+decrit("gain", data=e2, which = e2$dividende==170) # 16.69 en moyenne, 42.14€/60 i.e. 70% (17.86) du dividende additionnel pris en compte (74% du total i.e. 125.59 vs. 44.41)
+
+
+##### Mécanismes : incertitude #####
+# assez sûrs d'eux, surtout les perdants (v1)
+# v1: 18/40/42 pas/moyennement/sûr par rapport à gagnant_categorie, v2: 30/42/29 par rapport à gain (hors NSP)
+decrit("certitude_gagnant", data=e1)  # TODO image
+decrit("certitude_gagnant", data=e2, which = e2$gagnant_categorie!="NSP") # moins sûrs vague == 2 car il s'agit de gain subjectif, pas gagnant_categorie
+summary(lm(certitude_gagnant ~ as.factor(dividende) + vague, data = eb)) # certitude sur gain varie pas avec dividende, c'est logique
+# Il y a plus de perdants parmi ceux qui sont sûrs de leur réponse
+CrossTable(e1$certitude_gagnant, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # perdant~sûr gagnant~moyennement non affecté~pas sûr du tout
+CrossTable(e2$certitude_gagnant, e2$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # NSP~pas sûr du tout perdant~moyennement
+# Parmi les < 100 qui croient recevoir le dividende, est-ce que l'incertitude augmente la probabilité de se penser perdant ? Non, elle augmente la proba de Non affecté, i.e. Non affecté ~ NSP
+summary(lm(gagnant_categorie=='Perdant' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
+summary(lm(gagnant_categorie=='Non affecté' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
+summary(lm(gagnant_categorie=='Gagnant' ~ (certitude_gagnant < 1), data=e, subset = e$confiance_dividende=='Oui', weights = e$weight))
+decrit(e$certitude_gagnant, which = e$confiance_dividende=='Oui')
+summary(lm(tax_acceptance ~ (certitude_gagnant < 1) * gagnant_categorie, data=e, subset = e$confiance_dividende=='Oui', weights = e$weight)) # no strong effect of uncertainty
+summary(lm(tax_approval ~ (certitude_gagnant < 1) * gagnant_categorie, data=e, subset = e$confiance_dividende=='Oui', weights = e$weight)) # no effect
+CrossTable(e1$gagnant_categorie, e1$certitude_gagnant, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Perdants + sûrs que autres
+CrossTable(e2$gagnant_categorie, e2$certitude_gagnant, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Perdants aussi sûrs que autres
+CrossTable(e2$gagnant_categorie[e2$dividende==110], e2$certitude_gagnant[e2$dividende==110], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Perdants + sûrs que autres
+CrossTable(e2$gagnant_categorie[e2$dividende==170], e2$certitude_gagnant[e2$dividende==170], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Perdants un peu + sûrs que autres
+
+
+##### Mécanismes : confiance #####
+# méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (v1) mais pas corrélé avec gagnant_categorie (v2)
+# Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +32***p.p.
+decrit(e1$confiance_gouvernement, miss=T) # 26/38/18/14 jamais/parfois/moitié/plupart temps
+decrit(e2$confiance_gouvernement, miss=T) # pareil
+CrossTable((e1$confiance_gouvernement >= 0), e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # la confiance augmente la proba de se penser Non affecté plutôt que Perdant
+CrossTable((e2$confiance_gouvernement >= 0), e2$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # v2 pas de corrélation entre confiance_gouv et gagnant_categorie<:gain
+summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * (confiance_dividende < 0), data = e1, weights = e1$weight)) # dividende 0.33*** / gouv: 0.13**
+summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e1, weights = e1$weight)) # confiance_gouv pas significatif / dividende -0.27*** et -0.45***
+summary(lm(tax_acceptance ~ (confiance_gouvernement < 0) * (confiance_dividende < 0), data = e1, weights = e1$weight)) # dividende -0.41*** / gouv -10*
+summary(lm(tax_acceptance ~ (confiance_gouvernement < 0) * as.factor(confiance_dividende), data = e1, weights = e1$weight)) # confiance_gouv pas significatif / dividende 0.38*** et 0.46***
+# summary(ivreg(tax_acceptance ~ (gagnant_categorie!='Perdant') + confiance_gouvernement + Gilets_jaunes | (confiance_dividende < 0) + confiance_gouvernement + Gilets_jaunes, data=e),diagnostics=T)
+summary(lm(update_correct ~ gagnant_categorie=='Gagnant', subset = feedback_infirme_large==T, data=e, weights = e$weight)) # not enough power (only 4 overly optimistic loser)
+summary(lm(update_correct ~ gagnant_categorie=='Gagnant', subset = feedback_infirme_large==T & feedback_correct==T, data=e1, weights = e$weight)) # pas d'asymétrie
+decrit("confiance_dividende", data=e1) # seuls 12% croient recevoir le dividende : ça suffit à expliquer que quasiment tout le monde se pense perdant
+CrossTable(e1$simule_gain_verif > 0, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
+# Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +32***p.p.
+CrossTable(e1$simule_gain_verif[e1$confiance_dividende=='Oui'] > 0, e1$gagnant_categorie[e1$confiance_dividende=='Oui'], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
+summary(lm(((simule_gain_verif > 0 & gagnant_categorie!='Perdant') | (simule_gain_verif < 0 & gagnant_categorie!='Gagnant')) ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # 0.36***
+decrit(e1$perte - e1$hausse_depenses_verif > 30) # 19% sur-estiment les hausses de dépenses de plus de 30€/UC
+decrit(e1$perte - e1$hausse_depenses_verif < -30) # 56% sous-estiment les hausses de dépenses de plus de 30€/UC ! TODO comparer à v0
+decrit(e1$perte - e1$hausse_depenses_verif_na < -30) # robuste quand on remplace conso par 7
+
+
+##### Taxe carbone ~ sondage #####
+# approbation +.1*** qd on dit que majorité est pour. cf. Bursztyn et al. 2020
+decrit("pour_taxe_carbone", data = eb, miss=T) # TODO: solve bug
+decrit("pour_taxe_carbone", data = eb, which = eb$variante_taxe_carbone=='pour', miss=T)
+decrit("pour_taxe_carbone", data = eb, which = eb$variante_taxe_carbone=='contre', miss=T)
+decrit("pour_taxe_carbone", data = eb, which = eb$variante_taxe_carbone=='neutre', miss=T)
+summary(lm(pour_taxe_carbone!='Non' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # THE result +10**
+summary(lm(pour_taxe_carbone=='Oui' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # +8
+
+
+##### Taxe carbone ~ label_taxe * origine_taxe #####
+# pas d'effet du label, de question_confiance. Effet du dividende 7/13p.p. Effet de origine=EELV -.13-21** seulement pour dividende<170 (donc passe pas par confiance_dividende mais anti-EELV activé qd anti-social (ou attention à incidence accrue qd anti-EELV))
+decrit("origine_taxe", data=e1)
+summary(lm(taxe_approbation!='Non' ~ question_confiance, data=e1, weights = e1$weight)) # -.03 pas d'effet
+summary(lm(taxe_approbation!='Non' ~ label_taxe, data=e1, weights = e1$weight)) # CCE +.03 pas d'effet
+summary(lm(taxe_approbation!='Non' ~ origine_taxe, data=e1, weights = e1$weight)) # pas d'effet
+summary(lm(taxe_approbation!='Non' ~ (origine_taxe!='inconnue'), data=e1, weights = e1$weight)) # -.03  pas d'effet
+summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe, data=e1, weights = e1$weight)) # pas d'effet
+summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe * question_confiance, data=e1, weights = e1$weight)) # no effect
+summary(lm(gagnant_categorie=='Perdant' ~ question_confiance, data=e1, weights = e1$weight)) # pas d'effet
+summary(lm(gagnant_categorie=='Perdant' ~ label_taxe * origine_taxe * question_confiance, data=e1, weights = e1$weight)) # pas d'effet
+decrit("taxe_feedback_approbation", data=e1, which=e1$origine_taxe=="inconnue", miss = T)
+decrit("taxe_feedback_approbation", data=e1, which=e1$origine_taxe=="CCC", miss = T)
+decrit("taxe_feedback_approbation", data=e1, which=e1$origine_taxe=="gouvernement", miss = T)
+summary(lm(taxe_approbation!='Non' ~ origine_taxe * as.factor(dividende), data=e2, weights = e2$weight)) # l'effet du gouv/EELV ne passe que pour dividende=0, donc pas lié à confiance_dividende
+summary(lm(taxe_approbation!='Non' ~ origine_taxe, data=e2, subset=dividende>0, weights = e2$weight)) # .02 pas d'effet
+summary(lm(taxe_approbation!='Non' ~ origine_taxe, data=e2, subset=dividende==0, weights = e2$weight)) # +.15**
+summary(lm(taxe_approbation!='Non' ~ origine_taxe, data=e2, weights = e2$weight)) # gouv +7* TODO: comparer avec pilote
+summary(lm(taxe_approbation!='Non' ~ as.factor(dividende), data=e2, weights = e2$weight)) # 7./13***
+summary(lm(taxe_approbation!='Non' ~ as.factor(dividende), data=e2, subset = origine_taxe=="EELV", weights = e2$weight)) # 13*/21***
+summary(lm(taxe_approbation!='Non' ~ as.factor(dividende), data=e2, subset = origine_taxe=="gouvernement", weights = e2$weight)) # 2/6
+decrit(e2$taxe_alternative_approbation[e2$dividende==170], miss = T)
+decrit(e2$taxe_alternative_approbation[e2$dividende==170 & e2$origine_taxe=='gouvernement'], miss = T)
+decrit(e2$taxe_alternative_approbation[e2$dividende==110], miss = T)
+decrit(e2$taxe_alternative_approbation[e2$dividende==0], miss = T)
+
+
+##### Confiance dividende ~ label_taxe * origine_taxe #####
+# Moitié a pas du tout confiance, 10% y croit. Pas d'effet significatif de label et origine sur confiance dividende (inconnue faible effet)
+decrit(e1$confiance_dividende) # 46/42/12 Non/Moitié/Oui
+decrit(e1$confiance_dividende, which = e1$origine_taxe=='gouvernement')
+decrit(e1$confiance_dividende, which = e1$origine_taxe=='CCC')
+decrit(e1$confiance_dividende, which = e1$origine_taxe=='inconnue')
+summary(lm(confiance_dividende!='Non' ~ origine_taxe, data=e1, weights = e1$weight)) # inconnue -.04 no effect
+summary(lm(confiance_dividende!='Non' ~ label_taxe * origine_taxe, data=e1, weights = e1$weight)) # no effect
+
+
+##### Incertitude #####
+# gagnants moins sûrs; plus sûr après feedback car on fait douter ceux qu'on infirme; NA moins sûrs que autres;
+decrit(e$certitude_gagnant)
+CrossTable(e$certitude_gagnant, e$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
+cert <- e1[,which(names(e1) %in% c("certitude_gagnant_feedback", "simule_gagnant", "bug_touche", "feedback_confirme", "feedback_infirme"))]
+cert$feedback <- T
+e1$feedback <- F
+names(cert)[1] <- "certitude_gagnant"
+cert <- rbind(cert, e1[,which(names(e1) %in% c("certitude_gagnant", "simule_gagnant", "bug_touche", "feedback", "feedback_confirme", "feedback_infirme"))])
+summary(lm(certitude_gagnant ~ feedback * bug_touche * simule_gagnant, data = cert)) # -14* les gagnants moins sûrs
+summary(lm(certitude_gagnant ~ feedback * bug_touche, data = cert)) # 9* plus sûr lors du feedback
+summary(lm(certitude_gagnant ~ feedback + simule_gagnant, data = cert)) # confirmé
+summary(lm(certitude_gagnant ~ feedback * feedback_confirme, data = cert)) # 20* ceux avec qui ont est d'accord sont plus sûr
+summary(lm(certitude_gagnant ~ feedback * feedback_infirme, data = cert)) # 23* ceux qu'on infirme sont plus sûr mais avant le feedback seulement
+summary(lm(certitude_gagnant ~ feedback, data = cert)) # 8*
+e1$certitude_augmente <- e1$certitude_gagnant_feedback - e1$certitude_gagnant
+summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1, subset = bug_touche==F)) # certitude baisse 20* qd on infirme
+summary(lm(certitude_augmente ~ feedback_infirme + feedback_confirme, data = e1)) # la variable omise est les non affectés
+# la certitude augmente chez les non affectés et quand on confirme, elle baisse légèrement quand on infirme TODO vérifier interprétation
+summary(lm(certitude_augmente ~ bug_touche, data = e1)) # -7 la variable omise est les non affectés
+
+
+##### Taxe carbone: Motivated reasoning ~ confiance_dividende ####
+#  plus d'update correct parmi ceux qui ont confiance dans dividende, les non GJ et ceux qui approuvent
+decrit(e1$update_correct) # 24%
+decrit(e1$update_correct, which = e1$confiance_dividende=='Oui') # 29%
+summary(lm(update_correct ~ confiance_dividende, subset = feedback_infirme_large==T, data=e1, weights = e1$weight)) # 0.14***
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T, data=e1, weights = e1$weight))
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') * confiance_dividende, subset = feedback_infirme_large==T, data=e1, weights = e1$weight)) # 0.14***
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + confiance_dividende + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T, data=e1, weights = e1$weight)) # 0.06*
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T & feedback_correct==T, data=e1, weights = e1$weight))
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') * confiance_dividende, subset = feedback_infirme_large==T & feedback_correct==T, data=e1, weights = e1$weight)) # 0.14*
+summary(lm(update_correct ~ (gagnant_categorie=='Gagnant') + confiance_dividende + Gilets_jaunes + taxe_approbation, subset = feedback_infirme_large==T & feedback_correct==T, data=e1, weights = e1$weight)) # 0.06*
+
+
+##### Update correct #####
+mar_old <- par()$mar
+cex_old <- par()$cex
+par(mar = c(0.1, 3.1, 2.1, 0), cex.lab=1.2)
+
+# (a) winners
+crosstab_simule_gagnant <- crosstab(e$winning_category[e$simule_gagnant==1], e$winning_feedback_category[e$simule_gagnant==1], 
+                                    e$weight[e$simule_gagnant==1], # dnn=c(expression('Winning category,'~bold(Before)~feedback), ''),
+                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
+crosstab_simule_gagnant
+# (b) losers
+crosstab_simule_perdant <- crosstab(e$winning_category[e$simule_gagnant==0], e$winning_feedback_category[e$simule_gagnant==0], 
+                                    e$weight[e$simule_gagnant==0], # dnn=c(expression('Winning category, '~bold(Before)~feedback), ''),
+                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
+crosstab_simule_perdant
+
+## only feedback correct
+# (a) winners
+crosstab_simule_gagnant <- crosstab(e$winning_category[e$simule_gagnant==1], e$winning_feedback_category[e$simule_gagnant==1], 
+                                    e$weight[e$simule_gagnant==1], # dnn=c(expression('Winning category,'~bold(Before)~feedback), ''),
+                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
+crosstab_simule_gagnant
+# (b) losers
+crosstab_simule_perdant <- crosstab(e$winning_category[e$simule_gagnant==0], e$winning_feedback_category[e$simule_gagnant==0], 
+                                    e$weight[e$simule_gagnant==0], # dnn=c(expression('Winning category, '~bold(Before)~feedback), ''),
+                                    prop.r=T, sort=2:1, cex.axis=0.9) # sort=2:1, dir=c("h", "v"), inv.x=T, inv.y=T, color = FALSE # see mosaicplot
+crosstab_simule_perdant
+par(mar = mar_old, cex = cex_old)
+
+
+##### Biais & gagnant_categorie #####
+# v1: gain_min mieux que gain en moyenne (vraiment?), gain meilleur que gain_min pour prédire Perdant (84 vs 77%) mais beaucoup moins bon pour prédire Gagnant (14 vs 34%)
+#  même parmi ceux qui croient à leur gain > 0 se disent souvent non affecté (40%) et parfois perdant (21%) cadrage
+decrit(e1$biais) # TODO create in v2, check bien défini (0)
+plot((1:length(e1$biais))/length(e1$biais), sort(e1$biais), type='l') + grid()
+lines((1:length(e1$biais_plus))/length(e1$biais_plus), sort(e1$biais_plus), type='l', lty=2) + grid()
+lines((1:length(e1$biais_moins))/length(e1$biais_moins), sort(e1$biais_moins), type='l', lty=2) + grid()
+decrit(e1$biais_plus)
+decrit(e1$biais_moins)
+decrit(e1$gain)
+decrit(e1$gain_min)
+decrit(e1$gain < 0) # 53%
+decrit(e1$gain_min < 0) # 69%
+decrit(e1$gagnant_categorie) # gain_min does a better job than gain overall, truth is somewhere in between (cf. below)
+decrit(e1$gagnant_categorie, which = e1$question_confiance==F)
+decrit(e1$gagnant_categorie, which = e1$gain > 0) # TODO: study non affecté
+decrit(e1$gagnant_categorie, which = e1$gain < 0)
+decrit(e1$gagnant_categorie, which = e1$gain_min > 0)
+decrit(e1$gagnant_categorie, which = e1$gain_min < 0) # gain meilleur que gain_min pour prédire Perdant (84 vs 77%) mais beaucoup moins bon pour prédire Gagnant (14 vs 34%)
+CrossTable(e1$confiance_dividende, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # seuls ceux qui y croient se disent gagnants souvent
+decrit(e1$gagnant_categorie, which = e1$gain > 0 & e1$confiance_dividende=='Oui')
+decrit(e1$gagnant_categorie, which = e1$gain > 50 & e1$confiance_dividende=='Oui') # même parmi ceux qui croient à leur gain > 0 se disent souvent non affecté (40%) et parfois perdant (21%)
+decrit(e1$gagnant_categorie, which = e1$gain_min > 0 & e1$confiance_dividende=='Oui') # gain_min pas tellement meilleur prédicteur
+CrossTable(e1$simule_gagnant > 0, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # 
+
+
+##### approbation y.c. détaxe urba #####
+# Valeur du dividende accroît approbation mais formule alternative correspond à dividende <110
+decrit(e1$taxe_approbation, miss = T) # 47/23
+decrit(e2$taxe_approbation, miss = T) # 43/28 Non/Oui # TODO: régression entre base/détaxe/urba
+decrit(e2$taxe_approbation, which=e2$dividende==0, miss = T) # 51/26 Non/Oui TODO: image des 5
+decrit(e2$taxe_approbation, which=e2$dividende==110, miss = T) # 45/25
+decrit(e2$taxe_approbation, which=e2$dividende==170, miss = T) # 34/33
+decrit(e2$taxe_approbation, which=e2$dividende==0 & e2$origine_taxe=="gouvernement", miss = T) # 44/31
+decrit(e2$taxe_approbation, which=e2$dividende==110 & e2$origine_taxe=="gouvernement", miss = T) # 42/29
+decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="détaxe"], miss = T) # 46/25 Non/Oui
+decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="urba"], miss = T) # 46/28
+
 
 ##### Confiance #####
-CrossTable(as.character(eb$diplome4), as.character(eb$confiance_gens), prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) 
-summary(lm(gain ~ as.factor(dividende) * origine_taxe, data = e2, weights = e2$weight))
+# 61/70% du dividende 110/170 pris en compte qd gouv. Gain en baisse qd EELV et dividende==0 ou 170
+CrossTable(as.character(eb$diplome4), as.character(eb$confiance_gens), prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # 85% diplome 1 / 76% 4
 summary(lm(gain ~ as.factor(dividende), data = e2, weights = e2$weight))
-decrit(e2$gain_subjectif[e2$dividende==0])
-decrit(e2$gain_subjectif[e2$dividende==110])
-decrit(e2$gain_subjectif[e2$dividende==170])
+summary(lm(gain ~ as.factor(dividende) * (origine_taxe=="EELV"), data = e2, weights = e2$weight))
+summary(lm(gain ~ as.factor(dividende), data = e2, subset=origine_taxe=="gouvernement", weights = e2$weight)) # 67.35***/119.14*** i.e. 61/70% du dividende pris en compte TODO update ci-dessus
+summary(lm(gain ~ as.factor(dividende), data = e2, subset=origine_taxe=="EELV", weights = e2$weight)) # 99/130 -28 i.e. les gens croient perdre plus qd EELV, surtout quand dividende==0 ou 170
+# decrit(e2$gain_subjectif[e2$dividende==0])
+# decrit(e2$gain_subjectif[e2$dividende==110])
+# decrit(e2$gain_subjectif[e2$dividende==170])
 decrit(e2$gain[e2$dividende==0])
 decrit(e2$gain[e2$dividende==110])
 decrit(e2$gain[e2$dividende==170])
 decrit(e2$origine_taxe)
 
 
-##### Évolution suite à CCC #####
-# signes faibles: pour_sortition, problemes_invisibilises, obligation_renovation (y.c. referendum), CCC_avis
-
-##### Externe non CCC ####
-# responsable_CC cause_CC_AT et autres questions perceptions CC
-# part_anthropique efforts_relatifs soutenu_ (majorité) pour_taxe_carbone : perceptions des croyances
-# champ_libre, politique, parti, pour_28h, rôle député, voter_contre
-
-##### Financement #####
-for (i in 1:20) {
-  print(i)
-  print(table(ccc[[paste("s7_q29", i, sep="_")]])) }
-print(table(ccc$s7_q29_20))

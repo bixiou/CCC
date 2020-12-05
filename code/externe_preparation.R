@@ -299,7 +299,7 @@ relabel_and_rename <- function(e) {
   label(e[[159]]) <- "confiance_dividende: ~ [Si question_confiance > 0] Avez-vous confiance dans le fait que l'État vous versera effectivement 110€ par an (220€ pour un couple) si une telle réforme est mise en place ? (Oui/À moitié/Non)"
   label(e[[160]]) <- "hausse_depenses_subjective: ~ À combien estimez-vous alors la hausse des dépenses de combustibles de votre ménage ? (aucune hausse : au contraire, mon ménage réduirait ses dépenses de combustibles/aucune hausse, aucune baisse/entre 1 et 30/30 et 70/70 et 120/120 et 190/à plus de 190 € par an /UC)"
   label(e[[161]]) <- "gagnant_categorie: ~ Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
-  label(e[[162]]) <- "certitude_gagnant: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
+  label(e[[162]]) <- "certitude_gagnant: ~ Degré de certitude à gain_subjectif (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
   label(e[[163]]) <- "taxe_approbation: ~ taxe_approbation: Approbation d'une hausse de la taxe carbone compensée (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence) (Oui/Non/NSP) ~ origine_taxe (gouvernement/CCC/inconnue) / label_taxe (CCE/taxe)"
   label(e[[164]]) <- "gagnant_feedback_categorie: ~ info si le ménage est gagnant/perdant - Ménage Gagnant/Non affecté/Perdant par hausse taxe carbone redistribuée à tous (+110€/an /adulte, +13/15% gaz/fioul, +0.11/13 €/L diesel/essence)"
   label(e[[165]]) <- "certitude_gagnant_feedback: ~ Degré de certitude à gagnant_categorie (Je suis/suis moyennement/ne suis pas vraiment/ne suis pas du tout sûr·e de ma réponse)"
@@ -531,6 +531,10 @@ convert_e <- function(e, vague) {
   temp <- -3*(e$issue_CC=='Non, certainement pas') - (e$issue_CC=='Non, probablement pas') + (e$issue_CC=='Oui, probablement') + 3*(e$issue_CC=='Oui, certainement')
   e$issue_CC <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Non, certainement pas', 'Non, probablement pas', 'Oui, probablement', 'Oui, certainement')), annotation=Label(e$issue_CC))
 
+  if (vague == 2) {
+  temp <- -1*grepl('trop petit', e$avis_estimation) - 0.1*grepl('NSP', e$avis_estimation) + 1*grepl('trop élevé', e$avis_estimation)
+  e$avis_estimation <- as.item(temp, labels=structure(c(-1, -0.1, 0, 1), names = c('Trop petite', 'NSP', 'Correcte', 'Trop élevée')), missing.values = -0.1, annotation=Label(e$avis_estimation)) }
+
   temp <- -3*(e$confiance_sortition=='Pas du tout confiance') - (e$confiance_sortition=='Plutôt pas confiance') + (e$confiance_sortition=='Plutôt confiance') + 3*(e$confiance_sortition=='Tout à fait confiance')
   e$confiance_sortition <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Pas du tout confiance', 'Plutôt pas confiance', 'Plutôt confiance', 'Tout à fait confiance')), annotation=Label(e$confiance_sortition))
 
@@ -548,8 +552,8 @@ convert_e <- function(e, vague) {
   e$confiance_gouvernement <- as.item(temp, labels=structure(c(-2:2,0.1), names = c('Jamais', 'Parfois', 'Moitié du temps', 'Plupart du temps', 'Toujours', 'NSP')), missing.values=0.1, annotation=Label(e$confiance_gouvernement))
   
   if (vague==1) {
-    temp <- 1*(e$confiance_dividende=='Oui') - 1*(e$confiance_dividende=='Non')
-    e$confiance_dividende <- as.item(temp, labels=structure(c(-1:1), names=c('Non', 'À moitié', 'Oui')), annotation=Label(e$confiance_dividende)) }
+    temp <- 1*(e$confiance_dividende=='Oui') + 0.5*(e$confiance_dividende=='À moitié')
+    e$confiance_dividende <- as.item(temp, labels=structure(c(0, 0.5, 1), names=c('Non', 'À moitié', 'Oui')), annotation=Label(e$confiance_dividende)) }
 
   temp <- - grepl("Non", e$connait_CCC) + grepl("Oui, je sais assez", e$connait_CCC) + 2*grepl("Oui, je sais très bien", e$connait_CCC)
   e$connait_CCC <- as.item(temp, labels=structure(c(-1:2), names = c('Non', 'Vaguement', 'Oui, assez', 'Oui, très')), annotation=Label(e$connait_CCC))
@@ -743,7 +747,7 @@ convert_e <- function(e, vague) {
 #   e$gaz <- grepl('gaz', e$chauffage, ignore.case = T)
 #   e$fioul <- grepl('fioul', e$chauffage, ignore.case = T)
 #   e$hausse_chauffage <- -55.507189 + e$gaz * 124.578484 + e$fioul * 221.145441 + e$surface * 0.652174  
-  # hausses telles que calculées sans bug
+  # hausses telles que calculées sans bug. Ces calculs ne sont valables que pour e1; pour e2 on a mis à jour les prix de l'essence etc. dans qualtrics, donc la version non _verif est plus correcte
 	e$hausse_diesel_verif[e$nb_vehicules == 0] <- (0.5*(6.39/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 0] # share_diesel * conso * km * price * (1-elasticite) * price_increase
 	e$hausse_diesel_verif[e$nb_vehicules == 1] <- ((e$fuel_1=='Diesel') * (ifelse(is.na(e$conso_1), 6.39, e$conso_1)/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 1] # DONE: replaced e$conso
   e$hausse_diesel_verif[e$nb_vehicules == 2] <- (((e$fuel_2_1=='Diesel')*2/3 + (e$fuel_2_2=='Diesel')/3) * (ifelse(is.na(e$conso_2), 6.39, e$conso_2)/100) * e$km * 1.4 * (1 - 0.4) * 0.090922)[e$nb_vehicules == 2]
@@ -761,7 +765,7 @@ convert_e <- function(e, vague) {
   # bug: conso_2=NA pour conso_2_choix=NSP & fuel_2_1=Diesel, créant le même bug simule_gagnant=1 et hausse_depenses=NA decrit(e1$fuel_2_1[e1$bug==F & is.na(e1$hausse_depenses)]) decrit(e1$conso_2_choix[e1$bug==F & is.na(e1$hausse_depenses)]) (bug de nouveau dans le pilote 2)
   # c'était dû à une coquille (conso_2_1 était écrit au lieu de conso2_1). ça concerne 17 obs. parmi les 190 premières, i.e. pour date_enregistree <= "2020-10-09 03:06:24"
   e$bug <- e$date_enregistree < "2020-04-28 05:55:00" # 1:792: T / 793:1003: F
-  e$bug_touche <- e$fuel_2_1=='Diesel' & e$bug
+  e$bug_touche <- (e$fuel_2_1=='Diesel' &  !is.na(e$fuel_2_1)) & e$bug
   
   e$hausse_depenses_verif <- e$hausse_diesel_verif + e$hausse_essence_verif + e$hausse_chauffage # hausses telles que calculées sans bug (celle utilisée pour bug==F)
   e$hausse_depenses_verif_na <- e$hausse_diesel_verif_na + e$hausse_essence_verif_na + e$hausse_chauffage # hausses sans tenir compte de la conso renseignée (celle utilisée pour bug==T)
@@ -807,29 +811,29 @@ convert_e <- function(e, vague) {
     label(e$simule_gain_verif) <- "simule_gain_verif: Gain net annuel simulé par UC suite à une hausse de taxe carbone compensée (avec le bon calcul)"
     
     # TODO: refaire pour vague==2
-    # e$hausse_carburants <- e$hausse_diesel + e$hausse_essence
-    # e$hausse_chauffage_interaction_inelastique <- 152.6786*e$fioul + e$surface * (1.6765*e$gaz + 1.1116*e$fioul) # TODO
-    # e$depense_chauffage <- ((1*(e$fioul) * (152.6786 + 1.1116*e$surface)) / 0.148079 + 1.6765*e$gaz*e$surface / 0.133456)
-    # e$hausse_depenses_interaction <- e$hausse_carburants + e$hausse_chauffage_interaction_inelastique * (1 - 0.2)
-    # e$hausse_depenses_interaction_inelastique <- e$hausse_carburants/(1 - 0.4) + e$hausse_chauffage_interaction_inelastique
-    # e$simule_gain_interaction <- (9.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction) / e$uc # élasticité de 0.2 pour le gaz
-    # e$simule_gagnant_interaction <- 1*(e$simule_gain_interaction > 0)
-    # e$simule_gain_inelastique <- (pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction_inelastique) / e$uc # élasticité nulle. Inclure + 22.4 rendrait le taux d'erreur uniforme suivant les deux catégories, on ne le fait pas pour être volontairement conservateur
-    # label(e$hausse_chauffage_interaction_inelastique) <- "hausse_chauffage_interaction_inelastique: Hausse des dépenses de chauffage simulées pour le ménage avec des termes d'interaction entre surface et gaz/fioul plutôt que sans, suite à la taxe (élasticité nulle)"
-    # label(e$depense_chauffage) <- "depense_chauffage: Dépense de chauffage annuelle estimée du ménage, avant la réforme"
-    # label(e$simule_gain_interaction) <- "simule_gain_interaction: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone compensée: 9.1 + pmin(2, nb_adultes) * 110 - hausse_chauffage_interaction_inelastique * 0.8 - hausse_carburants"
-    # label(e$simule_gagnant_interaction) <- "simule_gagnant_interaction: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations avec des termes d'interaction surface*fioul/gaz: 1*(simule_gain_interaction > 0)"
-    # label(e$simule_gain_inelastique) <- "simule_gain_inelastique: Gain net par UC annuel simulé (avec interaction) avec une élasticité nulle, pour le ménage du répondant suite à une hausse de taxe carbone compensée:  nb_adultes * 110 - hausse_chauffage_interaction_inelastique - hausse_carburants / 0.6"
-    # # label(e$simule_gain_elast_perso) <- "simule_gain_elast_perso: Gain net par UC annuel simulé (avec interaction) avec l'élasticité renseignée par le répondant, pour le ménage du répondant suite à une hausse de taxe carbone compensée: pmin(2, nb_adultes) * 110 - hausse_partielle_inelastique * (1 - Elasticite_partielle_perso) - hausse_autre_partielle"
-    # label(e$hausse_depenses_interaction) <- "hausse_depenses_interaction: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
-    # label(e$hausse_depenses_interaction_inelastique) <- "hausse_depenses_interaction_inelastique: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité nulle)"
+    e$hausse_carburants <- e$hausse_diesel_verif + e$hausse_essence_verif
+    e$hausse_chauffage_interaction_inelastique <- 152.6786*e$fioul + e$surface * (1.6765*e$gaz + 1.1116*e$fioul) # TODO
+    e$depense_chauffage <- ((1*(e$fioul) * (152.6786 + 1.1116*e$surface)) / 0.148079 + 1.6765*e$gaz*e$surface / 0.133456)
+    e$hausse_depenses_interaction <- e$hausse_carburants + e$hausse_chauffage_interaction_inelastique * (1 - 0.2)
+    e$hausse_depenses_interaction_inelastique <- e$hausse_carburants/(1 - 0.4) + e$hausse_chauffage_interaction_inelastique
+    e$simule_gain_interaction <- (9.1 + pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction) / e$uc # élasticité de 0.2 pour le gaz
+    e$simule_gagnant_interaction <- 1*(e$simule_gain_interaction > 0)
+    e$simule_gain_inelastique <- (pmin(2, e$nb_adultes) * 110 - e$hausse_depenses_interaction_inelastique) / e$uc # élasticité nulle. Inclure + 22.4 rendrait le taux d'erreur uniforme suivant les deux catégories, on ne le fait pas pour être volontairement conservateur
+    label(e$hausse_chauffage_interaction_inelastique) <- "hausse_chauffage_interaction_inelastique: Hausse des dépenses de chauffage simulées pour le ménage avec des termes d'interaction entre surface et gaz/fioul plutôt que sans, suite à la taxe (élasticité nulle)"
+    label(e$depense_chauffage) <- "depense_chauffage: Dépense de chauffage annuelle estimée du ménage, avant la réforme"
+    label(e$simule_gain_interaction) <- "simule_gain_interaction: Gain net par UC annuel simulé avec des termes d'interaction surface*fioul/gaz pour le ménage du répondant suite à une hausse de taxe carbone compensée: 9.1 + pmin(2, nb_adultes) * 110 - hausse_chauffage_interaction_inelastique * 0.8 - hausse_carburants"
+    label(e$simule_gagnant_interaction) <- "simule_gagnant_interaction: Indicatrice sur la prédiction que le ménage serait gagnant avec la taxe compensée, d'après nos simulations avec des termes d'interaction surface*fioul/gaz: 1*(simule_gain_interaction > 0)"
+    label(e$simule_gain_inelastique) <- "simule_gain_inelastique: Gain net par UC annuel simulé (avec interaction) avec une élasticité nulle, pour le ménage du répondant suite à une hausse de taxe carbone compensée:  nb_adultes * 110 - hausse_chauffage_interaction_inelastique - hausse_carburants / 0.6"
+    # label(e$simule_gain_elast_perso) <- "simule_gain_elast_perso: Gain net par UC annuel simulé (avec interaction) avec l'élasticité renseignée par le répondant, pour le ménage du répondant suite à une hausse de taxe carbone compensée: pmin(2, nb_adultes) * 110 - hausse_partielle_inelastique * (1 - Elasticite_partielle_perso) - hausse_autre_partielle"
+    label(e$hausse_depenses_interaction) <- "hausse_depenses_interaction: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité de 0.4/0.2 pour carburants/chauffage)"
+    label(e$hausse_depenses_interaction_inelastique) <- "hausse_depenses_interaction_inelastique: Hausse des dépenses énergétiques simulées pour le ménage avec les termes d'interaction, suite à la taxe (élasticité nulle)"
   } else {
     e$dividende <- n(e$dividende)
-    e$simule_gain_menage <- e$nb_adultes * e$dividende - e$hausse_depenses 
+    e$simule_gain_menage <- e$nb_adultes * e$dividende - e$hausse_depenses # gain fiscal utilisé pour hausse_depenses, alors que dans v1 c'est gain budget
   }
   e$simule_gain <- e$simule_gain_menage / e$uc
-  label(e$simule_gain_menage) <- "simule_gain_menage: Gain net annuel simulé pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende. Vague 1: 16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses. Vague 2: nb_adultes * dividende - hausse_depenses"
-  label(e$simule_gain) <- "simule_gain: Gain net annuel simulé par UC pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende: simule_gain_menage/UC"
+  label(e$simule_gain_menage) <- "simule_gain_menage: Gain net annuel simulé pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende. Vague 1: 16.1 + pmin(2, nb_adultes) * 110 - hausse_depenses (gain budget). Vague 2: nb_adultes * dividende - hausse_depenses (gain fiscal)"
+  label(e$simule_gain) <- "simule_gain: Gain net annuel simulé par UC pour le ménage du répondant suite à une hausse de taxe carbone compensée, ajusté à la vague et valeur du dividende. /!\ v1: gain budget / v2: gain fiscal utilisé. (simule_gain_menage/UC)"
   
   e$Revenu <- e$revenu/1e3 # TODO: labels
   e$Revenu_conjoint <- e$revenu_conjoint/1e3
@@ -1003,7 +1007,7 @@ convert_e <- function(e, vague) {
   label(e$connaissance_CCC_150) <- "connaissance_CCC_150: Indicatrice que la réponse à connaissance_CCC mentionne le nombre de membres de la CCC (150)" # autre indicatrice qui aurait pu être intéressante : si ça mentionne que la CCC est française ou, au contraire, se méprend en parlant d'une initiative internationale
   
   if (vague==2) {
-    e$gain_subjectif_original <- 0
+    e$gain_subjectif_original[grepl("pas affecté", e$gain_net_choix)] <- 0
     e$gain_subjectif_original[!is.na(e$gain_net_gain)] <- n(e$gain_net_gain[!is.na(e$gain_net_gain)])
     e$gain_subjectif_original[!is.na(e$gain_net_perte)] <- - n(e$gain_net_perte[!is.na(e$gain_net_perte)] )
     e$gain_subjectif <- e$gain_subjectif_original / e$uc
@@ -1020,6 +1024,9 @@ convert_e <- function(e, vague) {
   
   e$Gagnant_categorie <- as.character(e$gagnant_categorie)
   e$Gagnant_categorie[e$Gagnant_categorie=="NSP"] <- "NSP "
+  
+  if (vague==1) e$dividende <- 110
+  else e$label_taxe <- "taxe"
   
   e <- e[, -c(9:17, 131, 132, 134, 136, 137, 139, 187)] # 39:49,
   return(e)
