@@ -170,11 +170,31 @@ save_plotly(interet_politique_v1)
 (gagnant_categorie_v1 <- barres(vars = "gagnant_categorie", miss = F, labels="Suite à une taxe carbone avec dividende, vous seriez ...", rev=F))
 save_plotly(gagnant_categorie_v1) 
 
+data_gagnant_by_confiance_div <- cbind(dataN("gagnant_categorie", data = e1[which(e1$confiance_dividende=="Oui"),]), dataN("gagnant_categorie", data = e1[which(e1$confiance_dividende=="À moitié"),]), dataN("gagnant_categorie", data = e1[which(e1$confiance_dividende=="Non"),]))
+(gagnant_by_confiance_div <- barres(data = data_gagnant_by_confiance_div[3:1,], sort=F, thin=T, miss = F, rev = F, labels=rev(c("Catégorie de gain subjectif lorsque\n la confiance dans le dividende est... Non", "... À moitié", "... Oui")), legend=c("Gagnant", "Non affecté", "Perdant")))
+save_plotly(gagnant_by_confiance_div)
+
+data_gagnant_by_confiance_div_all <- cbind(data_gagnant_by_confiance_div, dataN("gagnant_categorie", data = e1))
+(gagnant_by_confiance_div_all <- barres(data = data_gagnant_by_confiance_div_all[3:1,], sort=F, thin=T, miss = F, labels=rev(c("Catégorie de gain subjectif\n toute réponses confondues", "lorsque la confiance dans le dividende est\n ... Non", "... À moitié", "... Oui")), legend=c("Gagnant", "Non affecté", "Perdant"), rev = F))
+save_plotly(gagnant_by_confiance_div_all)
+
+data_gagnant_by_Certitude_gagnant <- cbind(dataN("gagnant_categorie", data = e1[which(e1$Certitude_gagnant=="Pas sûr"),]), dataN("gagnant_categorie", data = e1[which(e1$Certitude_gagnant=="Moyennement sûr"),]), dataN("gagnant_categorie", data = e1[which(e1$Certitude_gagnant=="Sûr"),]), dataN("gagnant_categorie", data = e1))
+(gagnant_by_Certitude_gagnant <- barres(data = data_gagnant_by_Certitude_gagnant[3:1,], sort=F, thin=T, miss = F, rev = F, labels=rev(c("Catégorie de gain subjectif", "lorsque le répondant en est... Sûr", "... Moyennement sûr", "... Pas sûr")), legend=c("Gagnant", "Non affecté", "Perdant")))
+save_plotly(gagnant_by_Certitude_gagnant)
+
 (certitude_gagnant_v1 <- barres(vars = "certitude_gagnant", miss = F, labels="Degré de certitude à la cagéorie gagnant/perdant"))
 save_plotly(certitude_gagnant_v1) 
 
 (taxe_approbation_v1 <- barres(vars = "taxe_approbation", thin=F, miss = T, labels="Approbation d'une taxe avec dividende\n", rev = F))
 save_plotly(taxe_approbation_v1) 
+
+data_approbation_by_confiance_div <- cbind(dataN("taxe_approbation", data = e1[which(e1$confiance_dividende=="Oui"),]), dataN("taxe_approbation", data = e1[which(e1$confiance_dividende=="À moitié"),]), dataN("taxe_approbation", data = e1[which(e1$confiance_dividende=="Non"),]))
+(approbation_by_confiance_div <- barres(data = data_approbation_by_confiance_div, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe avec dividende lorsque\n la confiance dans le dividende est: Non", "... À moitié", "... Oui")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(approbation_by_confiance_div)
+
+data_approbation_by_confiance_div_all <- cbind(data_approbation_by_confiance_div, dataN("taxe_approbation", data = e1))
+(approbation_by_confiance_div_all <- barres(data = data_approbation_by_confiance_div_all, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe avec dividende\n toutes réponses confondues", "lorsque la confiance dans le dividende est\n ... Non", "... À moitié", "... Oui")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(approbation_by_confiance_div_all)
 
 (confiance_dividende_v1 <- barres(vars = "confiance_dividende", miss = F, labels="Confiance dans le fait que l'État versera le dividende"))
 save_plotly(confiance_dividende_v1) 
@@ -555,11 +575,22 @@ save_plotly(interet_politique_v2)
 (gagnant_categorie_v2 <- barres(vars = "gagnant_categorie", df=e2, miss = T, labels="Suite à une taxe carbone avec dividende, vous seriez ...", rev=T))
 save_plotly(gagnant_categorie_v2) 
 
+(avis_estimation <- barres(vars = "avis_estimation", df=e2, miss = T, labels="Que pensez-vous de notre estimation\n de l'augmentation de taxes payées ?", rev=T))
+save_plotly(avis_estimation) 
+
 (certitude_gagnant_v2 <- barres(vars = "certitude_gagnant", df=e2, miss = F, labels="Degré de certitude à la cagéorie gagnant/perdant"))
 save_plotly(certitude_gagnant_v2) 
 
 (taxe_approbation_v2 <- barres(vars = "taxe_approbation", df=e2, thin=F, miss = T, labels="Approbation d'une taxe avec dividende\n", rev = F))
 save_plotly(taxe_approbation_v2) 
+
+data_approbation_by_gagnant_cat <- cbind(dataN("taxe_approbation", data = e2[which(e2$gagnant_categorie=="Gagnant"),]), dataN("taxe_approbation", data = e2[which(e2$gagnant_categorie=="Non affecté"),]), dataN("taxe_approbation", data = e2[which(e2$gagnant_categorie=="Perdant"),]), dataN("taxe_approbation", data = e2[which(e2$gagnant_categorie=="NSP"),]))
+(approbation_by_gagnant_cat <- barres(data = data_approbation_by_gagnant_cat, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe avec dividende lorsque\n la catégorie de gain subjectif est: NSP", "... Perdant", "... Non affecté", "... Gagnant")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(approbation_by_gagnant_cat)
+
+data_approbation_by_avis_estim <- cbind(dataN("taxe_approbation", data = e2[which(e2$avis_estimation=="Trop élevée"),]), dataN("taxe_approbation", data = e2[which(e2$avis_estimation=="Correcte"),]), dataN("taxe_approbation", data = e2[which(e2$avis_estimation=="Trop petite"),]), dataN("taxe_approbation", data = e2[which(e2$avis_estimation=="NSP"),]))
+(approbation_by_avis_estim <- barres(data = data_approbation_by_avis_estim, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe avec dividende lorsque\n l'estimation des dépenses est perçue comme: NSP", "... Trop petite", "... Correcte", "... Trop élevée")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(approbation_by_avis_estim)
 
 (trop_impots_v2 <- barres(vars = "trop_impots", df=e2, miss = T, labels="Paie-t-on trop d'impôt en France ?"))
 save_plotly(trop_impots_v2) 
@@ -654,11 +685,7 @@ save_plotly(politiques_1_v12)
 # barres(data = barres12(variables_politiques_1, miss=F, return="data"), grouped = T, rev = F, miss=F, labels=labels_variables_politiques_1, legend = c('CCC', 'Population'))
 # TODO!: tenter grouped=T avec des barres12 multiples
 
-<<<<<<< HEAD
 (politiques_1_en_v12 <- barres12(variables_politiques_1, labels=labels_variables_politiques_1_en, legend = c("Very", "Rather", "Rather not", "Not at all"), miss=F, fr = F))
-=======
-(politiques_1_en_v12 <- barres12(variables_politiques_1, labels=labels_variables_politiques_1_en, fr=F, legend = c("Very", "Rather", "Rather not", "Not at all"), miss=F))
->>>>>>> 84f7f4bef3b43e6cfc4b75eb6deaf9ed60d62842
 save_plotly(politiques_1_en_v12) 
 
 (politiques_2_v12 <- barres12(variables_politiques_2, labels = labels_variables_politiques_2, miss=F))
@@ -676,11 +703,7 @@ save_plotly(referendum_v12)
 
 new_labels_variables_referendum_en <- c("The inscription in the Constitution that \n the preservation of the environment comes first (W2)", "The recognition of the crime of 'ecocide' (W2)", "The inclusion in the Constitution of the preservation of biodiversity,\n the environment and the fight against climate change (W2)")
 labels_variables_referendum_v2_en <- c(labels_variables_referendum_en, new_labels_variables_referendum_en)
-<<<<<<< HEAD
-(referendum_en_v12 <- barres(data = cbind(dataKN(vars = new_variables_referendum, data=e2, rev = T), barres12(variables_referendum, return="data")), sort=F, miss=T, labels=c(new_labels_variables_referendum_en, barres12(variables_referendum, labels=labels_variables_referendum_en, return="labels", fr = F)), legend=c("Yes", "Blank", "No", "NR")))
-=======
 (referendum_en_v12 <- barres(data = cbind(dataKN(vars = new_variables_referendum, data=e2, rev = T), barres12(variables_referendum, return="data")), sort=F, fr=F, miss=T, labels=c(new_labels_variables_referendum_en, barres12(variables_referendum, labels=labels_variables_referendum_en, return="labels", fr=F)), legend=c("Yes", "Blank", "No", "NR")))
->>>>>>> 84f7f4bef3b43e6cfc4b75eb6deaf9ed60d62842
 save_plotly(referendum_en_v12) 
 
 # labels_variables_devoile_long <- c() 
@@ -737,11 +760,32 @@ save_plotly(gagnant_categorie) # TODO: écrire: qq soit dividende
 # (Gagnant_categorie <- barres12(vars = "Gagnant_categorie", miss = T, labels="Suite à une taxe carbone avec dividende, vous seriez ..."))
 # save_plotly(Gagnant_categorie) # TODO: pour dividende = 110
 
+data_gagnant_categorie_evol <- cbind(dataN("gagnant_categorie", data = e2[which(e2$dividende==110),])[c(3:1,4)], dataN("gagnant_categorie", data = e1)[c(3:1,4)], dataN("gagnant_categorie", data = b))
+(gagnant_categorie_evol <- barres(data = data_gagnant_categorie_evol, sort=F, thin=T, miss = T, labels=rev(c("Catégorie de gain subjectif\n en 02/19", "... en 04/20", "... en 10/20")), legend=c("Gagnant", "Non affecté", "Perdant", "NSP"), rev = F))
+save_plotly(gagnant_categorie_evol)
+
+data_gagnant_categorie_evol2 <- cbind(dataN("gagnant_categorie", data = e2[which(e2$dividende==110),])[c(3:1,4)]/sum(dataN("gagnant_categorie", data = e2[which(e2$dividende==110),])), dataN("gagnant_categorie", data = e1)[c(3:1,4)], dataN("gagnant_categorie", data = b))
+(gagnant_categorie_evol2 <- barres(data = data_gagnant_categorie_evol2, sort=F, thin=T, miss = F, color = c(color(3), "lightgrey"), labels=rev(c("Catégorie de gain subjectif\n en 02/19", "... en 04/20", "... en 10/20")), legend=c("Gagnant", "Non affecté", "Perdant", "NSP "), rev = F))
+save_plotly(gagnant_categorie_evol2)
+
 (certitude_gagnant <- barres12(vars = "certitude_gagnant", miss = F, labels="Degré de certitude à la cagéorie gagnant/perdant"))
 save_plotly(certitude_gagnant) 
 
-(taxe_approbation <- barres12(vars = "taxe_approbation", thin=T, miss = T, legend=c("Oui ", "Non ", "NSP"), labels="Approbation d'une taxe avec dividende\n", rev = F))
-save_plotly(taxe_approbation) # TODO: oui_non / écrire: qq soit dividende
+(taxe_approbation_110 <- barres12(vars = "taxe_approbation", df = list(e1, e2[which(e2$dividende==110),]), thin=T, miss = T, legend=c("Oui ", "Non ", "NSP"), labels="Approbation d'une taxe avec dividende\n de 110€/an", rev = F))
+save_plotly(taxe_approbation_110) # TODO: oui_non ici et dessous
+
+data_taxe_div_approbation <- cbind(dataN("taxe_approbation", data = e2[which(e2$dividende==170),]), dataN("taxe_approbation", data = e2[which(e2$dividende==110),]), dataN("taxe_approbation", data = e2[which(e2$dividende==0),]))
+(taxe_div_approbation <- barres(data = data_taxe_div_approbation, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une hausse de la taxe carbone", "... avec en plus un dividende de 110€/an", "... de 170€/an")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(taxe_div_approbation)
+
+data_taxe_approbation_all_v2 <- cbind(dataN("taxe_alternative_approbation", data = e2[which(e2$variante_alternative=="détaxe"),]), dataN("taxe_alternative_approbation", data = e2[which(e2$variante_alternative=="urba"),]), data_taxe_div_approbation)
+(taxe_approbation_all_v2 <- barres(data = data_taxe_approbation_all_v2, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une hausse de la taxe carbone...", "... redistribuée en un dividende de 110€/an", "... de 170€/an", 
+                                                                                                         expression("... seulement au-delà d'1tCO<sub>2</sub>/an\n redistribuée en un dividende de 60€/an"), "... redistribuée en un dividende différencié allant de\n 88€/an en centre-ville à 133€/an en zone rurale")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(taxe_approbation_all_v2)
+
+data_taxe_approbation_evol <- cbind(dataN("taxe_approbation", data = e2[which(e2$dividende==110),]), dataN("taxe_approbation", data = e1), dataN("taxe_approbation", data = b))
+(taxe_approbation_evol <- barres(data = data_taxe_approbation_evol, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe carbone avec dividende\n en 02/19", "... en 04/20", "... en 10/20")), legend=c("Oui ", "Non", "NSP"), rev = F))
+save_plotly(taxe_approbation_evol)
 
 (trop_impots <- barres12(vars = "trop_impots", miss = T, labels="Paie-t-on trop d'impôt en France ?"))
 save_plotly(trop_impots) 
@@ -879,12 +923,19 @@ save_plotly(part_anthropique)
 
 data_taxe_carbone_v1 <- cbind(dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='neutre',]))
 data_taxe_carbone_v2 <- cbind(dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = e2[e2$variante_taxe_carbone=='neutre',]))
-data_taxe_carbone <- cbind(data_taxe_carbone_v2[,1], data_taxe_carbone_v1[,1], data_taxe_carbone_v2[,2], data_taxe_carbone_v1[,2], data_taxe_carbone_v2[,3], data_taxe_carbone_v1[,3])
-(pour_taxe_carbone <- barres(data = data_taxe_carbone, rev = F, miss = T, sort = F, labels = labels12(c("Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est <b>pour</b>", "Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est <b>contre</b>", "Favorable à une augmentation de la taxe carbone\nVariante: sans information")), legend=c('Oui ', 'Non ', 'NSP')))
+data_taxe_carbone_all <- cbind(data_taxe_carbone_v2[,1], data_taxe_carbone_v1[,1], data_taxe_carbone_v2[,2], data_taxe_carbone_v1[,2], data_taxe_carbone_v2[,3], data_taxe_carbone_v1[,3])
+(pour_taxe_carbone_all <- barres(data = data_taxe_carbone_all, rev = F, miss = T, sort = F, labels = labels12(c("Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est <b>pour</b>", "Favorable à une augmentation de la taxe carbone\nVariante: sachant qu'une majorité de Français est <b>contre</b>", "Favorable à une augmentation de la taxe carbone\nVariante: sans information")), legend=c('Oui ', 'Non ', 'NSP')))
+save_plotly(pour_taxe_carbone_all) 
+
+data_taxe_carbone_b <- cbind(dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='neutre',]))
+(pour_taxe_carbone <- barres(data = data_taxe_carbone_b, rev = F, miss = T, sort = F, labels = c("... sachant qu'une majorité de Français est <i>pour</i>", "... sachant qu'une majorité de Français est <i>contre</i>", "Favorable à une augmentation de la taxe carbone\nVariante... <i>sans information</i>"), legend=c('Oui ', 'Non ', 'NSP')))
 save_plotly(pour_taxe_carbone) 
 
 (pour_taxe_carbone_neutre <- barres12(vars = "pour_taxe_carbone", df = list(e1[e1$variante_taxe_carbone=='neutre',], e2[e2$variante_taxe_carbone=='neutre',]), legend=c("Oui ", "Non ", "NSP"), rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sans information")))
 save_plotly(pour_taxe_carbone_neutre)
+
+(pour_taxe_carbone_evol <- barres12(vars = "pour_taxe_carbone", legend=c("Oui ", "Non ", "NSP"), rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone")))
+save_plotly(pour_taxe_carbone_evol)
 
 (solution_CC_v12 <- barres(data=rbind(dataKN(variables_solution, e1, miss=F), dataKN(variables_solution, e2, miss=F)), labels=labels_solution, legend = c("Vague 1", "Vague 2"), sort = T, grouped=T, rev = F, miss = F))
 save_plotly(solution_CC_v12)
@@ -927,6 +978,38 @@ variables_CCC_non_representative <- paste("CCC_non_representative", c("gauche", 
 labels_CCC_non_representative <- c("Plus à gauche", "Plus à droite", "Plus écologistes", "Moins écologistes", "Plus pro-gouvernement", "Moins pro-gouvernement", "Autre")
 (CCC_non_representative <- barres(vars = variables_CCC_non_representative, df=e2, showLegend=F, rev=F, miss = F, sort = T, labels = labels_CCC_non_representative))
 save_plotly(CCC_non_representative)
+
+# TODO! hausse dépenses v1 (avec comparaison); biais (v1; v0, v2; v0, v1, v2)
+par(mar = c(3.4, 3.4, 1.1, 0.1), cex=1.5)
+# gain v1 TODO: hline at 61/90 to show Perdants/Gagnants
+cdf_gain_e1<- Ecdf(e1$gain) 
+plot(Ecdf(e1$gain_min), type="s", lwd=2, col="red", lty=2, xlim=c(-300, 150), main="", ylab="", xlab="") + grid()
+lines(cdf_gain_e1$x, cdf_gain_e1$y, lwd=2, type='s', col="red")
+title(ylab=expression("Proportion "<=" x"), xlab="Gain (in €/year per c.u.)", line=2.3)
+# legend("topleft", col=c("red", "red"), cex = 0.85, lty = c(1,2), lwd=2, legend = c("Subjective (imputed)", "Subjective (imputed, minimum)"))
+legend("topleft", col=c("red", "red"), cex = 0.85, lty = c(1,2), lwd=2, legend = c("Subjectif (imputé)", "Subjectif (imputé, minimum)"))
+par(mar = mar_old, cex = cex_old)
+
+# gain v2
+par(mar = c(3.4, 3.4, 1.1, 0.1), cex=1.5)
+cdf_gain_e2 <- Ecdf(e2$gain) 
+cdf_gain <- Ecdf(objective_gains$all) 
+cdf_simule_gain <- Ecdf(e2$simule_gain[e2$dividende==110]) # TODO: données BdF
+cdf_all_inelastic <- Ecdf(objective_gains_inelastic$all) # TODO: données e2
+plot(Ecdf(b$gain), type="s", lwd=2, col="orange", xlim=c(-400, 150), main="", ylab="", xlab="") + grid()
+lines(cdf_gain_e2$x, cdf_gain_e2$y, lwd=2, type='s', col="red")
+lines(cdf_simule_gain$x, cdf_simule_gain$y, lwd=2, col="darkblue")
+lines(cdf_all_inelastic$x, cdf_all_inelastic$y, lwd=2, lty=2, col="darkblue")
+title(ylab=expression("Proportion "<=" x"), xlab="Gain (in €/year per c.u.)", line=2.3)
+# abline(v=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), lty=3, col="orange")
+# axis(3, at=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), tck=0.0, lwd=0, lwd.ticks = 0, padj=1.5, col.axis="orange", cex.axis=0.9)
+# legend("topleft", col=c("orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjective", "Objective", "Objective inelastic"))
+legend("topleft", col=c("red", "orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjective: Wave 0", "Subjective: Wave 2", "Objective", "Objective inelastic"))
+# legend("topleft", col=c("red", "orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjectif: Vague 0", "Subjectif: Vague 2", "Objectif", "Objectif inélastique"))
+# legend("topleft", col=c("orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjectif", "Objectif", "Objectif inélastique"))
+# legend("topleft", col=c("orange", "darkblue"), cex = 0.85, lwd=2, legend = c("Subjective", "Objective"))
+# restore graphical parameters
+par(mar = mar_old, cex = cex_old)
 
 
 ##### Champ libre #####
@@ -1255,7 +1338,7 @@ print(table(ccc$s7_q29_20))
 # signes faibles: pour_sortition, problemes_invisibilises, obligation_renovation (y.c. referendum), CCC_avis
 
 
-##### *** Externe non CCC *** ####
+##### Externe non CCC ####
 # responsable_CC cause_CC_AT et autres questions perceptions CC
 # part_anthropique efforts_relatifs soutenu_ (majorité) pour_taxe_carbone : perceptions des croyances
 # champ_libre, politique, parti, pour_28h, rôle député, voter_contre
@@ -1287,6 +1370,8 @@ print(table(ccc$s7_q29_20))
 # 2 autres mécanismes potentiels pour croyance incidence
 # 3 rôle du contexte, des acteurs et de la formule
 
+
+##### *** Plan présentation Cired *** #####
 # Pourquoi tant de Perdant (v0, v1)?
 # 1 confiance_dividende
 # 1.a semble tout expliquer dans v1
@@ -1297,7 +1382,7 @@ summary(lm(taxe_approbation!="Non" ~ as.factor(confiance_dividende), data=e1, we
 decrit(e1$gain < 0) # 53%
 decrit(e1$gain_min < 0) # 69%
 #     gain, gain_min bon prédicteurs de Perdant (84 vs 77%) et Gagnant (14 vs 34%) (cf. Biais & ...)
-#     Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +36***p.p.
+#     Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +32***p.p.
 summary(lm(((simule_gain_verif > 0 & gagnant_categorie!='Perdant') | (simule_gain_verif < 0 & gagnant_categorie!='Gagnant')) ~ as.factor(confiance_dividende), data=e1, weights = e1$weight)) # 0.36***
 #     plus d'update correct parmi ceux qui ont confiance dans dividende, les non GJ et ceux qui approuvent
 summary(lm(update_correct ~ confiance_dividende, subset = feedback_infirme_large==T, data=e1, weights = e1$weight)) # 0.14***
@@ -1327,6 +1412,7 @@ summary(ivreg(taxe_approbation!='Non' ~ (gain > 0) | as.factor(dividende), data=
 summary(lm(taxe_approbation!='Non' ~ as.factor(dividende), data=e2, subset = origine_taxe=="gouvernement", weights = e2$weight)) # 2/6
 summary(lm((gain > 0) ~ as.factor(dividende), data=e2, subset = origine_taxe=="gouvernement", weights = e2$weight)) # 2/6
 # 1.c Mais le dividende n'explique pas tout
+#     Potentiellement sa non-prise en compte est largement inintentionnelle
 #     L'évolution de gagnant_categorie ne s'explique pas par dividende puisque celui-ci ne varie pas pour 110
 # 2 autres mécanismes 
 # 2.a o effet de cadrage 
@@ -1337,29 +1423,31 @@ summary(lm(pour_taxe_carbone!="Non" ~ vague, data=eb)) # c'est bien cadrage et p
 # 2.b o biais: s'imaginent à tort particuliers
 decrit("perte_relative_partielle", data=b) # v0 environ 60% pensent perdre plus que la moyenne (proportions similaires pour TVA, fioul, gaz)
 summary(lm(gagnant_categorie == "Perdant" ~ perte_relative_partielle > 0, data = b, weights = b$weight)) # +21***
+decrit(e1$perte - e1$hausse_depenses_verif > 30) # 19% sur-estiment les hausses de dépenses de plus de 30€/UC
+decrit(e1$perte - e1$hausse_depenses_verif < -30) # 56% sous-estiment les hausses de dépenses de plus de 30€/UC ! TODO comparer à v0, voir dans v0 s'ils surestiment aussi plus perte_partielle
 # 2.c o méfiance envers l'estimation: le biais précédent doublé d'une meilleure confiance en eux qu'en nous
 decrit("avis_estimation", data = e2) #  34/31/12 Trop peu/Correct/Trop
 #     Comme ceux qui croient à notre estimation intègrent le dividende, l'effet doit passer par hausse_depenses et pas seulement dividende.
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==0, weights = e2$weight) # mean 4 / médiane 3 : dividende qu'ils croient recevoir s'ils acceptent notre estimation
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==110, weights = e2$weight) # 110 / 125
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = (e2$avis_estimation %in% c("Correcte", "NSP")) & e2$dividende==170, weights = e2$weight) # 150 / 172
-#     Ceux qui nous croient approuvent +.24*** (TODO: corrélation avec confiance_gouv), sauf pour ceux qui répondent gagnant_categorie=NSP, qui doutent probablement du dividende
+#     Ceux qui nous croient approuvent +.24*** (TODO!: corrélation avec confiance_gouv), sauf pour ceux qui répondent gagnant_categorie=NSP, qui doutent probablement du dividende
 summary(lm(taxe_approbation=="Oui" ~ as.character(avis_estimation), data = e2, weights = e2$weight)) # 46% Oui quand estimation correcte, ***26 p.p. de plus que les autres
 summary(lm(taxe_approbation=="Oui" ~ (avis_estimation=="Correcte") * I(gagnant_categorie %in% c("NSP")), data = e2, weights = e2$weight))
 #     Pour résumé: il n'y pas qu'un manque de confiance dividende, aussi la croyance de perdre plus que ce qu'on leur dit, et il y a des doutes dividende non pris en compte plus haut car ils s'expriment comme NSP
 # 2.d x incertitude + aversion à la perte: prédit faible certitude et que les moins sûrs se pensent plus perdants, c'est le contraire qu'on observe
-decrit("certitude_gagnant", data=e1)  # TODO image
+decrit("certitude_gagnant", data=e1)  # 
 CrossTable(e1$certitude_gagnant, e1$gagnant_categorie, prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # Il y a plus de perdants parmi ceux qui sont sûrs de leur réponse
 # 2.e x raisonnement motivé: lié à méfiance mais ici la non-intégration d'une info n'est pas liée à la source de l'info mais à sa teneur. On s'attend à asymétrie dans update.
 #     contrairement à v0, on ne peut pas mettre en évidence asymétrie dans l'update: les perdants optimistes sont 40% (4) à s'aligner (contre 82% (~45) en v0) et les gagnants pessimistes 26% (contre 12%), échantillon trop faible
 #     pourquoi ça aurait changé ? Évolution des opinions; cadrage (certitude, (question_confiance, hausse_depenses plutôt que gain)); hasard (on ne peut pas exclure qu'il y ait de l'asymétrie); 
-#       ou bien l'asymétrie était drivée par les diesel_2_1 = T TODO: check
+#       ou bien l'asymétrie était drivée par les diesel_2_1 = T TODO!: check
 CrossTable(e1$gagnant_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==1 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
 CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], e1$gagnant_feedback_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE)
 # Conclusions: dividende, cadrage, biais: on a toujours plusieurs façons différentes d'expliquer les données, on a éliminé des explications mais on ne peut pas en singulariser une seule. Mtn on se demande presque pourquoi il n'y a pas plus de gens qui se disent Perdants.
 # Quoi d'autre que les 3 motifs influent sur approbation ? Confiance est une raison omniprésente
 # 3 rôle du contexte, des acteurs et de la formule: 
-# 3.a Évolution de l'opinion, singularité de l'épisode des GJ mais on ne peut pas excluse que cadrage joue. TODO: ajouter autres sources
+# 3.a Évolution de l'opinion, singularité de l'épisode des GJ mais on ne peut pas excluse que cadrage joue. TODO!: ajouter autres sources
 decrit(b$taxe_approbation, miss = T) # 71/10 Non/Oui 
 decrit(e1$taxe_approbation, miss = T) # 47/23
 decrit(e2$taxe_approbation, which=e2$dividende==110 & e2$origine_taxe=="gouvernement", miss = T) # 42/29
@@ -1389,8 +1477,6 @@ summary(lm(tax_acceptance ~ (confiance_gouvernement < 0), data = e2, weights = e
 summary(lm(pour_taxe_carbone!='Non' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # +10**
 summary(lm(pour_taxe_carbone=='Oui' ~ variante_taxe_carbone, data=eb, weights = eb$weight)) # +8***
 
-decrit(e1$perte - e1$hausse_depenses_verif > 30) # 19% sur-estiment les hausses de dépenses de plus de 30€/UC
-decrit(e1$perte - e1$hausse_depenses_verif < -30) # 56% sous-estiment les hausses de dépenses de plus de 30€/UC ! TODO comparer à v0
 
 ##### Problème conso L/100km ##### 
 length(which(abs(e$hausse_essence_verif_na - e$hausse_essence) > 0.001)) # toutes dans e$bug==F
@@ -1401,7 +1487,7 @@ length(which(abs(e$hausse_diesel_verif - e$hausse_diesel) > 0.001))
 
 ##### Gagnant catégorie #####
 # v1: 60% perdants 9% G (v0: 64%/14%) / v2: 37% (s'explique par cadrage, pas par évolution préf)
-decrit("gagnant_categorie", data=e1) # TODO: image Séparer e1 et e2. Si possible utiliser plus que 3 couleurs pour voir intensité des gains
+decrit("gagnant_categorie", data=e1) # TODO!: image Séparer e1 et e2. Si possible utiliser plus que 3 couleurs pour voir intensité des gains
 decrit("gagnant_categorie", data=e1, which = e1$question_confiance==T) # pas d'influence de la question
 decrit("gagnant_categorie", data=e2, which = e2$dividende==110, miss=T) # 37% perdants Pk telle différence ? ajout de "NSP" explique 20 p.p., cadrage 15 p.p. (v1: juste avant: hausse dépenses, v2 formulation plus douce)
 summary(lm(pour_taxe_carbone!="Non" ~ vague, data=eb)) # ne s'explique pas par évolution des préférences a priori
@@ -1501,7 +1587,7 @@ summary(lm((confiance_gouvernement>=-1) ~ question_confiance, data=e1))
 
 ##### Avis estimation #####
 # 34/31/12 Trop peu/Correct/Trop. Ceux qui nous croient n'escomptent pas bcp le dividende et approuvent +.26*** (TODO: corrélation avec confiance_gouv), et ceux qui le font répondent gain=NA ou NSP
-decrit("avis_estimation", data=e2) # TODO: image 
+decrit("avis_estimation", data=e2) # TODO!: image 
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==0, weights = e2$weight) # mean 4 / médiane 3 : dividende qu'ils croient recevoir s'ils acceptent notre estimation
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==110, weights = e2$weight) # 110 / 125
 decrit(e2$gain + e2$hausse_depenses_par_uc, which = grepl("Correct", e2$avis_estimation) & e2$dividende==170, weights = e2$weight) # 150 / 172
@@ -1522,7 +1608,7 @@ summary(lm(taxe_approbation=="Oui" ~ I(avis_estimation %in% c("Correcte", "NSP")
 # 75% du dividende pris en compte. 
 decrit("gain", data=e1) # mean -32.44. Imputé à partir de réponse au dividende. Marche plutôt bien
 decrit("gain", data=e2) 
-decrit("gain", data=e2, which = e2$dividende==0) # -108.90 TODO: image cdf
+decrit("gain", data=e2, which = e2$dividende==0) # -108.90 TODO!: image cdf
 decrit("gain", data=e2, which = e2$dividende==110) # -25.45 en moyenne, 83.45€/110 i.e. 75% (26.55) du dividende pris en compte
 decrit("gain", data=e2, which = e2$dividende==170) # 16.69 en moyenne, 42.14€/60 i.e. 70% (17.86) du dividende additionnel pris en compte (74% du total i.e. 125.59 vs. 44.41)
 
@@ -1530,7 +1616,7 @@ decrit("gain", data=e2, which = e2$dividende==170) # 16.69 en moyenne, 42.14€/
 ##### Mécanismes : incertitude #####
 # assez sûrs d'eux, surtout les perdants (v1)
 # v1: 18/40/42 pas/moyennement/sûr par rapport à gagnant_categorie, v2: 30/42/29 par rapport à gain (hors NSP)
-decrit("certitude_gagnant", data=e1)  # TODO image
+decrit("certitude_gagnant", data=e1)  
 decrit("certitude_gagnant", data=e2, which = e2$gagnant_categorie!="NSP") # moins sûrs vague == 2 car il s'agit de gain subjectif, pas gagnant_categorie
 summary(lm(certitude_gagnant ~ as.factor(dividende) + vague, data = eb)) # certitude sur gain varie pas avec dividende, c'est logique
 # Il y a plus de perdants parmi ceux qui sont sûrs de leur réponse
@@ -1713,15 +1799,15 @@ CrossTable(e1$simule_gagnant > 0, e1$gagnant_categorie, prop.c = FALSE, prop.t =
 
 ##### approbation y.c. détaxe urba #####
 # Valeur du dividende accroît approbation mais formule alternative correspond à dividende <110
-decrit(e1$taxe_approbation, miss = T) # 47/23
-decrit(e2$taxe_approbation, miss = T) # 43/28 Non/Oui # TODO: régression entre base/détaxe/urba
-decrit(e2$taxe_approbation, which=e2$dividende==0, miss = T) # 51/26 Non/Oui TODO: image des 5
-decrit(e2$taxe_approbation, which=e2$dividende==110, miss = T) # 45/25
-decrit(e2$taxe_approbation, which=e2$dividende==170, miss = T) # 34/33
-decrit(e2$taxe_approbation, which=e2$dividende==0 & e2$origine_taxe=="gouvernement", miss = T) # 44/31
-decrit(e2$taxe_approbation, which=e2$dividende==110 & e2$origine_taxe=="gouvernement", miss = T) # 42/29
-decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="détaxe"], miss = T) # 46/25 Non/Oui
-decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="urba"], miss = T) # 46/28
+decrit("taxe_approbation", data=e1, miss = T) # 47/23
+decrit("taxe_approbation", data=e2, miss = T) # 42/28 Non/Oui # TODO: régression entre base/détaxe/urba
+decrit("taxe_approbation", data=e2, which=e2$dividende==0, miss = T) # 49/26 Non/Oui TODO!: image des 5
+decrit("taxe_approbation", data=e2, which=e2$dividende==110, miss = T) # 42/26
+decrit("taxe_approbation", data=e2, which=e2$dividende==170, miss = T) # 35/32
+decrit("taxe_approbation", data=e2, which=e2$dividende==0 & e2$origine_taxe=="gouvernement", miss = T) # 41/31
+decrit("taxe_approbation", data=e2, which=e2$dividende==110 & e2$origine_taxe=="gouvernement", miss = T) # 39/30
+decrit("taxe_alternative_approbation", data=e2, which=e2$variante_alternative=="détaxe", miss = T) # 44/27 Non/Oui
+decrit("taxe_alternative_approbation", data=e2, which=e2$variante_alternative=="urba", miss = T) # 44/29
 
 
 ##### Confiance #####
@@ -1729,7 +1815,7 @@ decrit(e2$taxe_alternative_approbation[e2$variante_alternative=="urba"], miss = 
 CrossTable(as.character(eb$diplome4), as.character(eb$confiance_gens), prop.c = FALSE, prop.t = FALSE, prop.chisq = FALSE) # 85% diplome 1 / 76% 4
 summary(lm(gain ~ as.factor(dividende), data = e2, weights = e2$weight))
 summary(lm(gain ~ as.factor(dividende) * (origine_taxe=="EELV"), data = e2, weights = e2$weight))
-summary(lm(gain ~ as.factor(dividende), data = e2, subset=origine_taxe=="gouvernement", weights = e2$weight)) # 67.35***/119.14*** i.e. 61/70% du dividende pris en compte TODO update ci-dessus
+summary(lm(gain ~ as.factor(dividende), data = e2, subset=origine_taxe=="gouvernement", weights = e2$weight)) # 67.35***/119.14*** i.e. 61/70% du dividende pris en compte TODO! update ci-dessus
 summary(lm(gain ~ as.factor(dividende), data = e2, subset=origine_taxe=="EELV", weights = e2$weight)) # 99/130 -28 i.e. les gens croient perdre plus qd EELV, surtout quand dividende==0 ou 170
 # decrit(e2$gain_subjectif[e2$dividende==0])
 # decrit(e2$gain_subjectif[e2$dividende==110])

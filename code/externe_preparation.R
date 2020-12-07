@@ -534,13 +534,18 @@ convert_e <- function(e, vague) {
   if (vague == 2) {
   temp <- -1*grepl('trop petit', e$avis_estimation) - 0.1*grepl('NSP', e$avis_estimation) + 1*grepl('trop élevé', e$avis_estimation)
   e$avis_estimation <- as.item(temp, labels=structure(c(-1, -0.1, 0, 1), names = c('Trop petite', 'NSP', 'Correcte', 'Trop élevée')), missing.values = -0.1, annotation=Label(e$avis_estimation)) }
-
+  e$Avis_estimation <- as.factor(as.character(e$avis_estimation))
+  e$Avis_estimation <- relevel(e$Avis_estimation, "Trop petite")
+  label(e$Avis_estimation) <- Label(e$avis_estimation)
+  
   temp <- -3*(e$confiance_sortition=='Pas du tout confiance') - (e$confiance_sortition=='Plutôt pas confiance') + (e$confiance_sortition=='Plutôt confiance') + 3*(e$confiance_sortition=='Tout à fait confiance')
   e$confiance_sortition <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Pas du tout confiance', 'Plutôt pas confiance', 'Plutôt confiance', 'Tout à fait confiance')), annotation=Label(e$confiance_sortition))
 
   temp <- -2*(e$certitude_gagnant=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant=='Je suis sûr·e de ma réponse')
   e$certitude_gagnant <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant))
-
+  temp <- -1*(e$certitude_gagnant<0) + (e$certitude_gagnant==1)
+  e$Certitude_gagnant <- as.item(temp, labels=structure(c(-1:1), names = c('Pas sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant))
+  
   if (vague==1) {
     temp <- -2*(e$certitude_gagnant_feedback=='Je ne suis pas du tout sûr·e de ma réponse') - (e$certitude_gagnant_feedback=='Je ne suis pas vraiment sûr·e de ma réponse') + (e$certitude_gagnant_feedback=='Je suis sûr·e de ma réponse')
     e$certitude_gagnant_feedback <- as.item(temp, labels=structure(c(-2:1), names = c('Pas du tout sûr', 'Pas vraiment sûr', 'Moyennement sûr', 'Sûr')), annotation=Label(e$certitude_gagnant_feedback))
@@ -844,7 +849,8 @@ convert_e <- function(e, vague) {
   e$Revenu_conjoint2 <- e$revenu_conjoint^2/1e6
   e$Simule_gain2 <- e$simule_gain^2/1e6
   
-  if (vague==1) e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'inconnue')
+  if (vague==1) e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'gouvernement') # inconnue
+  else e$origine_taxe <- relevel(as.factor(e$origine_taxe), 'gouvernement')
   if (vague==1) e$label_taxe <- relevel(as.factor(e$label_taxe), 'taxe')
   e$variante_taxe_carbone <- relevel(as.factor(e$variante_taxe_carbone), 'neutre')
   label(e$variante_taxe_carbone) <- "variante_taxe_carbone: Variante aléatoire pour pour_taxe_carbone: neutre/pour/contre: no info / Selon un sondage de 2018/2019, une majorité de Français est pour/contre une augmentation de la taxe carbone"
@@ -1024,6 +1030,7 @@ convert_e <- function(e, vague) {
   
   e$Gagnant_categorie <- as.character(e$gagnant_categorie)
   e$Gagnant_categorie[e$Gagnant_categorie=="NSP"] <- "NSP "
+  e$Gagnant_categorie <- relevel(as.factor(as.character(e$Gagnant_categorie)), "Non affecté")
   
   if (vague==1) e$dividende <- 110
   else e$label_taxe <- "taxe"
@@ -1651,6 +1658,7 @@ for (i in names(eb)) {
 
 b <- readRDS("../donnees/beliefs_climate_policies.Rda") # données Adrien-Thomas 2019
 c <- readRDS("../donnees/CCC.Rda") # données CCC 
+objective_gains_inelastic <- readRDS("../donnees/objective_gains_inelastic.Rda") # données gain 
 
 ccc <- read.dta13("../donnees/all_benedicte.dta")
 ccc$appartenance_france <- grepl("France", ccc$s2_e_q10)

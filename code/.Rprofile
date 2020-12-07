@@ -457,13 +457,8 @@ barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "V2", m
   else if (return=="labels") return(labels12(labels[agree], en = !fr))
   else if (return=="legend") return(legend)
   else return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
-<<<<<<< HEAD
-                labels=labels12(labels[agree], en = !fr), legend=legend, 
-                miss=miss, weights = weights, fr=fr, rev=rev, color=c(), rev_color = rev_color, hover=hover, sort=F, thin=thin, showLegend=showLegend))
-=======
                 labels=labels12(labels[agree], en = !fr, comp = comp), legend=legend, 
                 miss=miss, weights = weights, fr=fr, rev=rev, color=color, rev_color = rev_color, hover=hover, sort=F, thin=thin, showLegend=showLegend))
->>>>>>> 84f7f4bef3b43e6cfc4b75eb6deaf9ed60d62842
 }
 
 labels12 <- function(labels, en=F, comp = "V2") {
