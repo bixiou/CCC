@@ -990,27 +990,44 @@ title(ylab=expression("Proportion "<=" x"), xlab="Gain (in €/year per c.u.)", 
 legend("topleft", col=c("red", "red"), cex = 0.85, lty = c(1,2), lwd=2, legend = c("Subjectif (imputé)", "Subjectif (imputé, minimum)"))
 par(mar = mar_old, cex = cex_old)
 
-# gain v2
+# gain v2 TODO: reproduire figures avec weights (elles sont enregistrées sans)
 par(mar = c(3.4, 3.4, 1.1, 0.1), cex=1.5)
-cdf_gain_e2 <- Ecdf(e2$gain) 
+cdf_gain_e2 <- Ecdf(e2$gain[e2$dividende==110], weights = e2$weight[e2$dividende==110]) 
 cdf_gain <- Ecdf(objective_gains$all) 
-cdf_simule_gain <- Ecdf(e2$simule_gain[e2$dividende==110]) # TODO: données BdF
+cdf_simule_gain <- Ecdf(e2$simule_gain[e2$dividende==110], weights = e2$weight[e2$dividende==110]) # TODO: données BdF
 cdf_all_inelastic <- Ecdf(objective_gains_inelastic$all) # TODO: données e2
-plot(Ecdf(b$gain), type="s", lwd=2, col="orange", xlim=c(-400, 150), main="", ylab="", xlab="") + grid()
-lines(cdf_gain_e2$x, cdf_gain_e2$y, lwd=2, type='s', col="red")
+plot(cdf_gain_e2$x, cdf_gain_e2$y, lwd=2, type='s', col="red", xlim=c(-400, 150), main="", ylab="", xlab="") + grid()
+lines(Ecdf(b$gain), type="s", lwd=2, col="orange")
 lines(cdf_simule_gain$x, cdf_simule_gain$y, lwd=2, col="darkblue")
 lines(cdf_all_inelastic$x, cdf_all_inelastic$y, lwd=2, lty=2, col="darkblue")
 title(ylab=expression("Proportion "<=" x"), xlab="Gain (in €/year per c.u.)", line=2.3)
 # abline(v=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), lty=3, col="orange")
 # axis(3, at=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), tck=0.0, lwd=0, lwd.ticks = 0, padj=1.5, col.axis="orange", cex.axis=0.9)
-# legend("topleft", col=c("orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjective", "Objective", "Objective inelastic"))
-legend("topleft", col=c("red", "orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjective: Wave 0", "Subjective: Wave 2", "Objective", "Objective inelastic"))
-# legend("topleft", col=c("red", "orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjectif: Vague 0", "Subjectif: Vague 2", "Objectif", "Objectif inélastique"))
-# legend("topleft", col=c("orange", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjectif", "Objectif", "Objectif inélastique"))
-# legend("topleft", col=c("orange", "darkblue"), cex = 0.85, lwd=2, legend = c("Subjective", "Objective"))
+# legend("topleft", col=c("red", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjective", "Objective", "Objective inelastic"))
+# legend("topleft", col=c("orange", "red", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjective: Wave 0", "Subjective: Wave 2", "Objective", "Objective inelastic"))
+legend("topleft", col=c("orange", "red", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjectif: Vague 0", "Subjectif: Vague 2", "Objectif", "Objectif inélastique"))
+# legend("topleft", col=c("red", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,2), lwd=2, legend = c("Subjectif", "Objectif", "Objectif inélastique"))
+# legend("topleft", col=c("red", "darkblue"), cex = 0.85, lwd=2, legend = c("Subjective", "Objective"))
 # restore graphical parameters
 par(mar = mar_old, cex = cex_old)
 
+# gain imputé v2 TODO! 170, add weights (same above)
+par(mar = c(3.4, 3.4, 1.1, 0.1), cex=1.5)
+cdf_gain_e2_without0 <- Ecdf(e2$gain[e2$gain!=0 & e2$dividende==110], weights = e2$weight[e2$gain!=0 & e2$dividende==110])
+gain_impute_110 <- as.numeric(e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110]
+plot(Ecdf(gain_impute_110, weights = e2$weight[e2$dividende==110]), type="s", lwd=2, col="black", xlim=c(-400, 150), main="", ylab="", xlab="") + grid()
+lines(cdf_gain_e2$x, cdf_gain_e2$y, lwd=2, type='s', col="red")
+# lines(cdf_gain_e2_without0$x, cdf_gain_e2_without0$y, lwd=2, type='s', lty=2, col="red")
+# lines(cdf_simule_gain$x, cdf_simule_gain$y, lwd=2, col="darkblue")
+# lines(cdf_all_inelastic$x, cdf_all_inelastic$y, lwd=2, lty=2, col="darkblue")
+title(ylab=expression("Proportion "<=" x"), xlab="Gain (in €/year per c.u.)", line=2.3)
+# abline(v=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), lty=3, col="red")
+# axis(3, at=c(-280, -190, -120, -70, -30, 0, 20, 40, 60, 80), tck=0.0, lwd=0, lwd.ticks = 0, padj=1.5, col.axis="orange", cex.axis=0.9)
+# legend("topleft", col=c("red", "red", "darkblue", "darkblue"), cex = 0.85, lty = c(1,1,1,2), lwd=2, legend = c("Subjective: Wave 0", "Subjective: Wave 2", "Objective", "Objective inelastic"))
+legend("topleft", col=c("black", "red"), cex = 0.85, lty = c(1,1), lwd=2, legend = c("Imputé (dépenses obj., div. subj.)", "Subjectif"))
+# legend("topleft", col=c("black", "red", "red"), cex = 0.85, lty = c(1,1), lwd=2, legend = c("Imputé (dépenses obj., div. subj.)", "Subjectif", "Subjectif, hors Non affecté"))
+par(mar = mar_old, cex = cex_old)
+wtd.mean((e2$simule_gain + e2$dividende_escompte_ajuste - (e2$dividende * pmin(2, e2$nb_adultes)/e2$uc))[e2$dividende==110] < 0, weights = e2$weight[e2$dividende==110])
 
 ##### Champ libre #####
 # 988: "Bonjour !.\nDepuis des lustres je n'ai aucune confiance dans notre système de gouvernance.\nTrop de Députés,\ndes Sénateurs inutiles,\nles Régions sont une entité faisant double emploi avec les Départements,\n
@@ -1611,7 +1628,19 @@ decrit("gain", data=e2)
 decrit("gain", data=e2, which = e2$dividende==0) # -108.90 TODO!: image cdf
 decrit("gain", data=e2, which = e2$dividende==110) # -25.45 en moyenne, 83.45€/110 i.e. 75% (26.55) du dividende pris en compte
 decrit("gain", data=e2, which = e2$dividende==170) # 16.69 en moyenne, 42.14€/60 i.e. 70% (17.86) du dividende additionnel pris en compte (74% du total i.e. 125.59 vs. 44.41)
-
+decrit("gagnant_categorie", data=e1)
+decrit("gagnant_feedback_categorie", data=e1)
+decrit("gagnant_alternative_categorie", data=e2) # 15% plus de gagnants, 15% moins de perdant TODO! exploiter ça 
+summary(lm(gagnant_alternative_categorie=="Perdant" ~ variante_alternative, data=e2, weights = e2$weight)) # pas d'effet
+summary(lm(gagnant_alternative_categorie=="Gagnant" ~ variante_alternative, data=e2, weights = e2$weight)) # pas d'effet
+summary(ivreg(taxe_approbation!="Non" ~ (gagnant_feedback_categorie!="Perdant") + simule_gain | simule_gagnant + simule_gain, data = e1, weights = e1$weight)) # TODO! faire placebo test pour notre 1er papier
+summary(ivreg(taxe_feedback_approbation!="Non" ~ (gagnant_feedback_categorie!="Perdant") + taxe_approbation + Simule_gain + origine_taxe + label_taxe + uc + revenu | 
+  simule_gagnant + taxe_approbation + Simule_gain + origine_taxe + label_taxe + uc + revenu, subset = abs(e1$simule_gain) < 100, data = e1, weights = e1$weight), diagnostics = T) # < 50: pas assez de puissance
+summary(ivreg(taxe_feedback_approbation!="Non" ~ (gagnant_feedback_categorie!="Perdant") + taxe_approbation + simule_gain | 
+                simule_gagnant + taxe_approbation + simule_gain, data = e1, weights = e1$weight))
+# TODO dans papier comment on peut avoir à la fois Simule_gain et hausse_depenses_par_uc ? pk on a un pb en ajoutant Simule_gain2? 
+# TODO IV app ~ confiance_div | origine, label
+summary(ivreg(taxe_approbation!="Non" ~ (confiance_dividende!="Non") | origine_taxe + label_taxe, data=e1, weights = e1$weight), diagnostics = T)
 
 ##### Mécanismes : incertitude #####
 # assez sûrs d'eux, surtout les perdants (v1)
