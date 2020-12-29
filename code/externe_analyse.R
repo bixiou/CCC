@@ -356,7 +356,7 @@ save_plotly(importance_confort_both)
 labels_responsible <- c("Each one of us", "Governments", "Certain foreign countries", "The richest", "Natural causes", "Past generations")
 labels_responsable <- c("Chacun d'entre nous", "Les gouvernements", "Certains pays étrangers", "Les plus riches", "Des causes naturelles", "Les générations passées")
 # barres(file="CC_responsible", data=data1(variables_responsable_CC), miss=F, rev = F, sort=T, showLegend=FALSE, labels=labels_responsable, hover=labels_responsable)
-(responsable_CC_v1 <- barres(vars = variables_responsable_CC, rev = F, miss = F, showLegend=F, labels=labels_responsable, hover=labels_responsable))
+(responsable_CC_v1 <- barres(vars = variables_responsable_CC, error_margin=T, rev = F, miss = F, showLegend=F, labels=labels_responsable, hover=labels_responsable))
 save_plotly(responsable_CC_v1) 
 
 labels_CCC_avis_long <- c()
@@ -1855,3 +1855,7 @@ decrit(e2$gain[e2$dividende==170])
 decrit(e2$origine_taxe)
 
 
+##### Mirjam & Jean-François #####
+decrit("parti", data = e2)
+for (l in levels(as.factor(e2$parti))) print(paste(l, round(wtd.mean(e2$parti==l, weights = e2$weight),3)))
+for (l in levels(as.factor(e2$parti))) print(paste(l, round(wtd.mean(e2$parti[e2$Gauche_droite=="Indeterminate"]==l, weights = e2$weight[e2$Gauche_droite=="Indeterminate"]),3)))

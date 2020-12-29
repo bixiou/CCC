@@ -400,21 +400,24 @@ dataN <- function(var, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALS
   else levels <- labels(v)@.Data
   levels <- levels[!(levels %in% c("NSP", "PNR", "Non concerné·e"))]
   if (rev_legend) levels <- rev(levels) # new (05/20)
+  if (weights) N <- sum(data[['weight']][!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))])
+  else N <- length(which(!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))))
   for (val in levels) { # before: no %in% nowhere below
-    if (weights) mat <- c(mat, sum(data[['weight']][which(v==val)])/sum(data[['weight']][!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))]))
-    else mat <- c(mat, length(which(v==val))/length(which(!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))))) }
+    if (weights) mat <- c(mat, sum(data[['weight']][which(v==val)])/N)
+    else mat <- c(mat, length(which(v==val))/N) }
   if (rev) mat <- rev(mat)
   if (miss) {
     if (is.null(annotation(v))) {
-      if (weights) mat <- c(mat, sum(data[['weight']][which(is.na(v) | v %in% c("NSP", "Non concerné·e"))])/sum(data[['weight']][!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e")))]))
-      else mat <- c(mat, length(which(is.na(v) | v %in% c("NSP", "Non concerné·e")))/length(which(!is.missing(v) & (!(v %in% c("NSP", "Non concerné·e"))))))
+      if (weights) mat <- c(mat, sum(data[['weight']][which(is.na(v) | v %in% c("NSP", "Non concerné·e"))])/N)
+      else mat <- c(mat, length(which(is.na(v) | v %in% c("NSP", "Non concerné·e")))/N)
     } else  {
-      if (weights) mat <- c(mat, sum(data[['weight']][which(is.missing(v) & !is.na(v))])/sum(data[['weight']][!is.missing(v)]))
-      else mat <- c(mat, length(which(is.missing(v) & !is.na(v)))/length(which(!is.missing(v)))) } }
+      if (weights) mat <- c(mat, sum(data[['weight']][which(is.missing(v) & !is.na(v))])/N) # was defined without " & (!(v %in% c("NSP", "Non concerné·e")))" here and line below
+      else mat <- c(mat, length(which(is.missing(v) & !is.na(v)))/N) } } # mais ça semble équivalent pck les NSP sont missing dans ces cas-là
   if (max(nchar(levels))==3 & 'Oui' %in% levels & 'Non' %in% levels) { if (which(levels=='Non') < which(levels=='Oui')) mat[2:1] <- mat[1:2]; levels[c(which(levels=='Oui'),which(levels=='Non'))] <- c('Non', 'Oui') }
   if ((return %in% c("levels", "legend")) & miss & fr) return(c(levels, 'NSP'))
   else if ((return %in% c("levels", "legend")) & miss & (!(fr))) return(c(levels, 'PNR'))
   else if ((return %in% c("levels", "legend")) & (!(miss))) return(levels)
+  else if (return == "N") return(N)
   else return(matrix(mat, ncol=1))
 }
 dataKN <- function(vars, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALSE) {
@@ -511,11 +514,12 @@ order_agree <- function(data, miss, rev = T, n = ncol(data)) {
     else { for (i in 1:n) { agree <- c(agree, data[1, i]) } } }
 return(order(agree, decreasing = rev)) }
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
-                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = F) {
+                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = F, error_margin = F, color_margin = '#00000033', N = NA) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   if (missing(data) & !missing(vars)) {
     data <- dataKN(vars, data=df, miss=miss, weights = weights, return = "", fr=fr, rev=rev)
+    N <- dataN(vars[1], data=df, miss=miss, weights = weights, return = "N")
     if (missing(legend) & missing(hover)) { 
       if (is.logical(df[[vars[1]]])) hover <- legend <- labels # data1(var = vars[1], data=df, weights = weights)
       else hover <- legend <- dataN(var = vars[1], data=df, miss=miss, weights = weights, return = "legend", fr=fr, rev_legend = rev) } }
@@ -551,7 +555,7 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
     value <- c()
     for (i in 1:length(hover)) { 
       hover[i] <- paste(hover[i], "<br>Choisi dans ", round(100*data[1, i]), "% des réponses", sep="")
-      value[i] <- paste(round(100*data[1, i]), '%', sep='') }
+      value[i] <- paste(round(100*data[1, i]), '%', sep='') } # '%  '
     hovers <- matrix(hover, nrow=length(hover))
     values <- matrix(value, nrow=length(hover))
   }
@@ -561,12 +565,12 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
       for (i in 1:(length(hover)-1)) { 
         for (j in 1:length(labels)) {
           hovers <- c(hovers, paste(hover[i], '<br>', round(100*data[i, j]/(1+data[length(hover), j])), '% des réponses<br>', round(100*data[i, j]), '% des réponses exprimées') )
-          values <- c(values, paste(round(100*data[i, j]/(1+data[length(hover), j])), '%', sep=''))
+          values <- c(values, paste(round(100*data[i, j]/(1+data[length(hover), j])), '%', sep='')) # '%  '
         }
       }
       for (j in 1:length(labels)) {
         hovers <- c(hovers, paste(hover[length(hover)], '<br>', round(100*data[length(hover), j]/(1+data[length(hover), j])), '% des réponses<br>') )
-        values <- c(values, paste(round(100*data[length(hover), j]/(1+data[length(hover), j])), '%', sep=''))
+        values <- c(values, paste(round(100*data[length(hover), j]/(1+data[length(hover), j])), '%', sep='')) # '%  '
       }
     }
     else {
@@ -575,7 +579,7 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
       for (i in 1:length(hover)) { 
         for (j in 1:length(labels)) {
           hovers <- c(hovers, paste(hover[i], '<br>', round(100*data[i, j]), '% des réponses exprimées<br>') )
-          values <- c(values, paste(round(100*data[i, j]), '%', sep=''))
+          values <- c(values, paste(round(100*data[i, j]), '%', sep='')) # '%  '
         }
       }  
     }
@@ -584,7 +588,8 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
   }
   if (!(display_values)) values <- replace(values, T, '')
   
-  bars <- plot_ly(x = data[1,], y = labels, type = 'bar', orientation = 'h', text = values[,1], textposition = 'auto', # sort=FALSE, 
+  bars <- plot_ly(x = data[1,], y = labels, type = 'bar', orientation = 'h', text = values[,1], textposition = 'auto', 
+                  error_x = list(visible = error_margin, array=qnorm(1-0.05/2)*sqrt(data[1,]*(1-data[1,])/(N-1)), color = color_margin), # sort=FALSE, 
                   hoverinfo = hovers[,1], name=legend[1], marker = list(color = color[1], line = list(color = 'white'))) %>% # , width = 0
     
     layout(xaxis = list(title = "",
@@ -644,7 +649,8 @@ barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FA
   # print(nrow(hovers))
   # print(ncol(hovers))
   if (nrow(data)>1) { for (i in 2:nrow(data)) { # evaluate=TRUE, 
-    bars <- add_trace(bars, x = data[i,], name=legend[i], text = values[,i], hoverinfo = 'text', hovertext = hovers[,i], marker = list(color = color[i]))
+    bars <- add_trace(bars, x = data[i,], name=legend[i], text = values[,i], hoverinfo = 'text', hovertext = hovers[,i], marker = list(color = color[i]), 
+                      error_x = list(visible = error_margin, array=qnorm(1-0.05/2)*sqrt(data[i,]*(1-data[i,])/(N-1)), color = color_margin)) # width thickness (in px)
   } }
   if (online) { api_create(bars, filename=file, sharing="public") }
   if (!missing(file) & save) save_plotly(bars, filename = file) # new
