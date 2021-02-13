@@ -90,6 +90,22 @@ labels_variables_politiques_2_en <- c("Reinforcement of the bonus/malus", "Train
 (politiques_2_en_v1 <- barres(vars = variables_politiques_2, miss=FALSE, labels=labels_variables_politiques_2_en, legend = c("Completely", "Rather", "Indifferent/NR", "Not really", "Not at all")))
 save_plotly(politiques_2_en_v1)
 
+variables_politiques_both <- c(variables_politiques_1, "pour_vitesse_110", "pour_oblig_renovation")
+labels_variables_politiques_both <- c(labels_variables_politiques_1_v1, "Limitation de la vitesse sur autoroutes à 110 km/h", "Obligation de rénovation thermique des bâtiments")
+c$pour_oblig_renovation <- c$pour_obligation_renovation
+e2$pour_oblig_renovation <- as.numeric(e2$pour_obligation_renovation)
+e2$pour_oblig_renovation[e2$pour_oblig_renovation==-2] <- -3
+e2$pour_oblig_renovation[e2$pour_oblig_renovation==2] <- 3
+e2$pour_oblig_renovation <- as.item(e2$pour_oblig_renovation, labels = structure(c(-3,-1,0,1,3), names = c("Pas du tout","Pas vraiment","NSP","Assez","Très")),
+                                                     missing.values = 0, annotation=Label(e2$pour_obligation_renovation))
+e2$pour_vitesse_110 <- as.numeric(e2$pour_limitation_110)
+e2$pour_vitesse_110[e2$pour_vitesse_110==-2] <- -3
+e2$pour_vitesse_110[e2$pour_vitesse_110==2] <- 3
+e2$pour_vitesse_110 <- as.item(e2$pour_vitesse_110, labels = structure(c(-3,-1,0,1,3), names = c("Pas du tout","Pas vraiment","NSP","Assez","Très")),
+                                    missing.values = 0, annotation=Label(e2$pour_vitesse_110))
+(politiques_both <- barres12(variables_politiques_both, df=list(e2, c), miss= T, labels = labels_variables_politiques_both, comp = "(CCC)", v1 = "(Pop)"))
+save_plotly(politiques_both) 
+
 labels_variables_referendum_long <- c()
 for (v in variables_referendum) labels_variables_referendum_long <- c(labels_variables_referendum_long, sub(' - .*', '', sub('.*: ~ ', '', Label(e1[[v]]))))
 labels_variables_referendum <- c("Obligation de rénovation thermique assortie d'aides de l'État", "Chèque alimentaire aux plus démunis pour AMAP et bio", 
@@ -113,10 +129,11 @@ labels_politiques_c <- c("Abaisser la vitesse limite sur autoroute à 110 km/heu
                          "Taxer les véhicules les plus émetteurs de gaz à effet de serre", "Favoriser l'usage (voies de circulation, place de stationnement réservées)\n des véhicules peu polluants ou partagés (covoiturage)",
                          "Obliger la restauration collective publique à proposer\n une offre de menu végétarien, biologique et/ou de saison", "Réduire le gaspillage alimentaire de moitié")
 (politiques_c2 <- barres(vars = variables_politiques_c, df = c, miss=F, labels=labels_politiques_c))
-save_plotly(politiques_c2_v1) # TODO renommer CCC
+save_plotly(politiques_c2) # TODO renommer CCC
 
 (politiques_c1 <- barres(vars = variables_politiques_1, df = c, miss=F, labels=labels_variables_politiques_1))
 save_plotly(politiques_c1) 
+
 
 labels_variables_politiques_1_en <- c("Reducing food waste", "Obliging canteens to offer green menus", "Encouraging the use of \nlow-polluting or shared vehicles", "Densifying cities", "Developing renewable energies", "Taxing the polluting transport of goods")
 (politiques_c1_en <- barres(vars = variables_politiques_1, df = c, miss=F, labels=labels_variables_politiques_1_en, legend = c("Very", "Rather", "Rather not", "Not at all")))
@@ -693,6 +710,8 @@ save_plotly(politiques_2_v12) # TODO!: politiques all
 
 (politiques_2_en_v12 <- barres12(variables_politiques_2, labels=labels_variables_politiques_2_en, legend = c("Completely", "Rather", "Indifferent/NR", "Not really", "Not at all"), miss=F))
 save_plotly(politiques_2_en_v12) 
+
+decrit(c$pour_vitesse_110)
 
 new_variables_referendum <- c("referendum_environnement_priorite_constit", "referendum_ecocide", "referendum_environnement_constitution") 
 # variables_referendum_v2 <- c(variables_referendum, new_variables_referendum)
