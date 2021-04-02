@@ -534,9 +534,9 @@ convert_e <- function(e, vague) {
   if (vague == 2) {
   temp <- -1*grepl('trop petit', e$avis_estimation) - 0.1*grepl('NSP', e$avis_estimation) + 1*grepl('trop élevé', e$avis_estimation)
   e$avis_estimation <- as.item(temp, labels=structure(c(-1, -0.1, 0, 1), names = c('Trop petite', 'NSP', 'Correcte', 'Trop élevée')), missing.values = -0.1, annotation=Label(e$avis_estimation)) }
-  e$Avis_estimation <- as.factor(as.character(e$avis_estimation))
-  e$Avis_estimation <- relevel(e$Avis_estimation, "Trop petite")
-  label(e$Avis_estimation) <- Label(e$avis_estimation)
+  # e$Avis_estimation <- as.factor(as.character(e$avis_estimation))
+  # e$Avis_estimation <- relevel(e$Avis_estimation, "Trop petite")
+  # label(e$Avis_estimation) <- Label(e$avis_estimation) # TODO: correct bug that forces to comment
   
   temp <- -3*(e$confiance_sortition=='Pas du tout confiance') - (e$confiance_sortition=='Plutôt pas confiance') + (e$confiance_sortition=='Plutôt confiance') + 3*(e$confiance_sortition=='Tout à fait confiance')
   e$confiance_sortition <- as.item(temp, labels=structure(c(-3, -1, 1, 3), names = c('Pas du tout confiance', 'Plutôt pas confiance', 'Plutôt confiance', 'Tout à fait confiance')), annotation=Label(e$confiance_sortition))
@@ -999,8 +999,10 @@ convert_e <- function(e, vague) {
   } # TODO: corrélation bon_français et Connaissance / âge / sexe / CSP, mesures et postérité, Connaissance écolo, etc., distribution du nombre de trucs cochés parmi 150/mesures/sortition
   # Intéressant pour Laslier: 138 "Des citoyens tirés au sort qui ne représentent qu'eux-mêmes alors que nous avons des élu.e.s pour cela...", 285
   # TODO: doublon 400-401? 403-407?
-  variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
-  for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
+  # variables_connaissance_CCC <<- c("bon_francais", "sortition", "mesures", "temporalite", "internet", "150")
+  # for (v in variables_connaissance_CCC) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
+  variables_connaissances_CCC <<- c("mesures", "choix", "sortition", "150", "temporalite", "internet", "opinion", "posterite", "bon_francais")
+  for (v in variables_connaissances_CCC) if (paste("connaissance_CCC", v, sep="_") %in% names(e)) e[[paste("connaissance_CCC", v, sep="_")]] <- e[[paste("connaissance_CCC", v, sep="_")]]!="FALSE"
   temp <- -2*(e$Connaissance_CCC=="hors sujet") -1*(e$Connaissance_CCC=="faux") + 1*(e$Connaissance_CCC=="trop vague") + 2*(e$Connaissance_CCC=="approximatif") + 3*(e$Connaissance_CCC=="bonne")
   temp[e$connaissance_CCC_internet==T] <- 2
   e$Connaissance_CCC <- as.item(temp, labels = structure(c(-2:3), names=c("hors sujet", "faux", "aucune", "trop vague", "approximatif", "bonne")),
@@ -1640,9 +1642,10 @@ prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finishe
 }
 
 # e2_pilote <- prepare_e2(pilote = T)
+e1 <- prepare_e()
 e2 <- prepare_e2()
 # e1 <- e
-e <- e2
+# e <- e2
 
 # e1a <- prepare_e(only_finished = F) # 40 ont abandonné avant la fin
 # e2a <- prepare_e2(only_finished = F) # 49 ont abandonné avant la fin

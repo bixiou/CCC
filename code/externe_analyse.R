@@ -1,4 +1,13 @@
 ##### Socio-démos #####
+# ea2 <- prepare_e2(F, F, F, F, 0)
+# decrit(ea2$fini[is.na(ea2$exclu)]) # attrition: 15% (those who started but didn't complete the survey)
+# ea1 <- prepare_e(F, F, F, F, 0)
+# decrit(ea1$fini[is.na(ea1$exclu)]) # attrition: 18%
+# ea2$vague <- 2
+# ea1$vague <- 1
+# ea <- rbind.fill(ea1, ea2)
+# decrit(ea$fini[is.na(ea$exclu)]) # attrition: 16%
+# decrit(ea$test_qualite[is.na(ea$exclu) & ea$fini=="False"])
 length(intersect(e1$ip, e2$ip)) # seules deux personnes sont les mêmes que dans la vague 1 !
 decrit(e2$diplome4, weight = F)
 decrit(e1$diplome4, weight = F) # similar, though less CAP and more Bac in e2
@@ -660,6 +669,9 @@ save_plotly(CCC_avis_v2)
 (representativite_CCC <- barres(vars="representativite_CCC", df=e2, labels="La CCC est représentative", rev = F, miss = F))
 save_plotly(representativite_CCC) 
 
+(representativite_CCC_en <- barres(vars="representativite_CCC", df=e2[e2$connait_CCC!="Non",], fr = F, labels="The CCC is representative", rev = F, miss = T, legend= c("Yes", "No", "PNR ")))
+save_plotly(representativite_CCC_en) 
+
 (qualite_enfant2_v2 <- barres(vars = variables_qualite_enfant, df=e2, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
 save_plotly(qualite_enfant2_v2) 
 
@@ -708,7 +720,7 @@ save_plotly(politiques_1_en_v12)
 (politiques_2_v12 <- barres12(variables_politiques_2, labels = labels_variables_politiques_2, miss=F))
 save_plotly(politiques_2_v12) # TODO!: politiques all
 
-(politiques_2_en_v12 <- barres12(variables_politiques_2, labels=labels_variables_politiques_2_en, legend = c("Completely", "Rather", "Indifferent/NR", "Not really", "Not at all"), miss=F))
+(politiques_2_en_v12 <- barres12(variables_politiques_2, labels=labels_variables_politiques_2_en, fr = F, legend = c("Completely", "Rather", "Indifferent/NR", "Not really", "Not at all"), miss=F))
 save_plotly(politiques_2_en_v12) 
 
 decrit(c$pour_vitesse_110)
@@ -753,11 +765,26 @@ save_plotly(connait_CCC)
 (connait_CCC_en <- barres12(vars = "connait_CCC", miss = F, fr=F, labels="Have you heard of the \n Citizens'Convention for Climate?", legend=c("Yes, a lot", "Yes, somewhat", "Vaguely", "No")))
 save_plotly(connait_CCC_en)
 
+data_connaissances_CCC <- array(0, dim=c(2, length(variables_connaissances_CCC)))
+for (j in seq_along(variables_connaissances_CCC)) if ((v <- paste("connaissance_CCC", variables_connaissances_CCC[j], sep="_")) %in% names(e1)) data_connaissances_CCC[1,j] <- wtd.mean(e1[[v]]==T, weights = e1$weight)
+for (j in seq_along(variables_connaissances_CCC)) if ((v <- paste("connaissance_CCC", variables_connaissances_CCC[j], sep="_")) %in% names(e2)) data_connaissances_CCC[2,j] <- 2*wtd.mean(e2[[v]]==T, weights = e2$weight)
+# for (v in variables_connaissances_CCC) print(paste(v, round(wtd.mean(e1[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e1$weight), 3)))
+# for (v in variables_connaissances_CCC) print(paste(v, round(2*wtd.mean(e2[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e2$weight), 3)))
+# (connaissances_CCC <- barres12(data = data_connaissances_CCC, miss = F, fr = F, showLegend = F, legend=c("",""), labels=c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")))
+(connaissances_CCC_en <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")), legend = c('Wave 1', "Wave 2")))
+save_plotly(connaissances_CCC_en, width = 360, height = 650)
+
+(connaissances_CCC <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Mesures", "Mesures spécifiques", "Sortition", "150", "Temporalité", "Internet", "Opinion", "Postérité", "Bon français")), legend = c('Vague 1', "Vague 2")))
+save_plotly(connaissances_CCC, width = 360, height = 650) 
+
 (Connaissance_CCC <- barres(vars = "Connaissance_CCC", df=e2, miss = F, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
 save_plotly(Connaissance_CCC) # TODO
 
 (sait_CCC_devoilee <- barres12(vars = "sait_CCC_devoilee", miss = F, labels="Des mesures proposées par la Convention \nCitoyenne pour le Climat ont déjà été dévoilées"))
 save_plotly(sait_CCC_devoilee) # TODO: parmi qui ?
+
+(sait_CCC_devoilee_en <- barres12(vars = "sait_CCC_devoilee", miss = F, fr = F, labels="Measures proposed by the CCC<br>have already been unveiled", legend=c("Yes", "Not sure", "No")))
+save_plotly(sait_CCC_devoilee_en) 
 
 (gilets_jaunes <- barres12(vars = "gilets_jaunes", miss = T, labels="Que pensez-vous des gilets jaunes ?"))
 save_plotly(gilets_jaunes)
@@ -801,6 +828,10 @@ data_taxe_approbation_all_v2 <- cbind(dataN("taxe_alternative_approbation", data
 (taxe_approbation_all_v2 <- barres(data = data_taxe_approbation_all_v2, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une hausse de la taxe carbone...", "... redistribuée en un dividende de 110€/an", "... de 170€/an", 
                                                                                                          expression("... seulement au-delà d'1tCO<sub>2</sub>/an\n redistribuée en un dividende de 60€/an"), "... redistribuée en un dividende différencié allant de\n 88€/an en centre-ville à 133€/an en zone rurale")), legend=c("Oui ", "Non", "NSP"), rev = F))
 save_plotly(taxe_approbation_all_v2)
+
+(tax_acceptance_all_v2 <- barres(data = data_taxe_approbation_all_v2, sort=F, thin=T, miss = T, labels=rev(c("Acceptance of an increase in the carbon tax...", "... rebated in a dividend of 110EUR/year", "... of 170EUR/year", 
+                                                                                                               expression("... only over 1tCO<sub>2</sub>/an\n rebated in dividend of 60EUR/year"), "... rebated in a differentiated dividend from\n 88EUR/year in urban centers to 133EUR/year in rural areas")), legend=c("Yes ", "No", "PNR"), rev = F))
+save_plotly(tax_acceptance_all_v2)
 
 data_taxe_approbation_evol <- cbind(dataN("taxe_approbation", data = e2[which(e2$dividende==110),]), dataN("taxe_approbation", data = e1), dataN("taxe_approbation", data = b))
 (taxe_approbation_evol <- barres(data = data_taxe_approbation_evol, sort=F, thin=T, miss = T, labels=rev(c("Approbation d'une taxe carbone avec dividende\n en 02/19", "... en 04/20", "... en 10/20")), legend=c("Oui ", "Non", "NSP"), rev = F))
@@ -915,12 +946,28 @@ save_plotly(responsable_CC)
 (CCC_avis <- barres(data=rbind(dataKN(variables_CCC_avis, e1, miss=F), dataKN(variables_CCC_avis, e2, miss=F)), labels=labels_CCC_avis_long, legend = c("Vague 1", "Vague 2"), sort = T, grouped=T, rev = F, miss = F))
 save_plotly(CCC_avis) 
 
+labels_CCC_avis_long <- c("Useless as the government will<br>only take back the measures it likes", 
+                          "A promising method to define<br>France's climate policy", 
+                          "A hope for institutional renewal", 
+                          "An experiment doomed to failure", 
+                          "A communication operation<br>of the government", 
+                          "A sincere initiative of the<br>government in favor of democracy", 
+                          "A way for the government to<br>shirk its responsibilities", 
+                          "An opportunity to make the<br>voice of all French people heard", 
+                          "An assembly manipulated or<br>controlled by the government", 
+                          "An assembly representative<br>of the population", "Other")
+(CCC_avis_en <- barres(data=rbind(dataKN(variables_CCC_avis, e1[e1$connait_CCC!='Non',], miss=F), dataKN(variables_CCC_avis, e2[e2$connait_CCC!='Non',], miss=F)), labels=labels_CCC_avis_long, legend = c("Wave 1", "Wave 2"), sort = T, grouped=T, rev = F, miss = F))
+save_plotly(CCC_avis_en, width = 610, height = 650) 
+
 (Connaissance_CCC_v12 <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], miss = F, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
 save_plotly(Connaissance_CCC_v12) # TODO: ajouter barre grise pour les NA
 
 # TODO: appartenance
 (Connaissance_CCC_v12_wo_label <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], miss = F, labels="Synhtèse du champ libre"))
 save_plotly(Connaissance_CCC_v12_wo_label) 
+
+(Connaissance_CCC_v12_wo_label_en <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], fr =F, miss = F, labels="Synhtesis of the open field", legend = c("Good", "Vague", "Too vague", "None", "Wrong", "Irrelevant")))
+save_plotly(Connaissance_CCC_v12_wo_label_en) 
 
 (qualite_enfant2 <- barres(vars = variables_qualite_enfant, df=e2, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
 save_plotly(qualite_enfant2) 
@@ -949,6 +996,9 @@ save_plotly(pour_taxe_carbone_all)
 data_taxe_carbone_b <- cbind(dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = eb[eb$variante_taxe_carbone=='neutre',]))
 (pour_taxe_carbone <- barres(data = data_taxe_carbone_b, rev = F, miss = T, sort = F, labels = c("... sachant qu'une majorité de Français est <i>pour</i>", "... sachant qu'une majorité de Français est <i>contre</i>", "Favorable à une augmentation de la taxe carbone\nVariante... <i>sans information</i>"), legend=c('Oui ', 'Non ', 'NSP')))
 save_plotly(pour_taxe_carbone) 
+
+(pro_carbon_tax <- barres(data = data_taxe_carbone_b, rev = F, miss = T, sort = F, labels = c("... given that a majority of French is <i>in favor</i>", "... given that a majority of French is <i>against</i>", "Favorable to an increase in the carbon tax\nVariant... <i>without information</i>"), legend=c('Yes ', 'No ', 'PNR')))
+save_plotly(pro_carbon_tax) 
 
 (pour_taxe_carbone_neutre <- barres12(vars = "pour_taxe_carbone", df = list(e1[e1$variante_taxe_carbone=='neutre',], e2[e2$variante_taxe_carbone=='neutre',]), legend=c("Oui ", "Non ", "NSP"), rev = F, miss = T, sort = F, labels = c("Favorable à une augmentation de la taxe carbone\nVariante: sans information")))
 save_plotly(pour_taxe_carbone_neutre)
@@ -995,8 +1045,12 @@ e2$CCC_non_representative_autre[e2$CCC_non_representative_autre!="" & !is.na(e2$
 # "Ils se pensent dans un monde de bisounours" "ils sont cons" "Le hasard n est pas scientifique" "ils sont volontaires c'est tout"
 variables_CCC_non_representative <- paste("CCC_non_representative", c("gauche", "droite", "ecolo", "anti_ecolo", "pro_gouv", "anti_gouv", "autre_choix"), sep="_")
 labels_CCC_non_representative <- c("Plus à gauche", "Plus à droite", "Plus écologistes", "Moins écologistes", "Plus pro-gouvernement", "Moins pro-gouvernement", "Autre")
-(CCC_non_representative <- barres(vars = variables_CCC_non_representative, df=e2, showLegend=F, rev=F, miss = F, sort = T, labels = labels_CCC_non_representative))
+(CCC_non_representative <- barres(vars = variables_CCC_non_representative, df=e2[e2$representativite_CCC=='Non',], showLegend=F, rev=F, miss = F, sort = T, labels = labels_CCC_non_representative))
 save_plotly(CCC_non_representative)
+
+labels_CCC_non_representative_en <- c("More left-wing", "More right-wing", "More environmentalist", "Less envionmentalist", "More pro-government", "Less pro-government", "Other")
+(CCC_non_representative_en <- barres(vars = variables_CCC_non_representative, df=e2[e2$representativite_CCC=='Non',], showLegend=F, rev=F, miss = F, sort = T, labels = labels_CCC_non_representative_en))
+save_plotly(CCC_non_representative_en)
 
 # TODO! hausse dépenses v1 (avec comparaison); biais (v1; v0, v2; v0, v1, v2)
 par(mar = c(3.4, 3.4, 1.1, 0.1), cex=1.5)
@@ -1290,6 +1344,7 @@ e$avis_CCC <- (e$CCC_prometteuse_climat + e$CCC_espoir_institutions + e$CCC_init
                - e$CCC_inutile - e$CCC_vouee_echec - e$CCC_operation_comm - e$CCC_pour_se_defausser - e$CCC_controlee_govt)
 e$avis_CCC[e$connait_CCC=='Non'] <- NA # TODO: labels, y.c. dans CCC_inutile etc. pour dire où sont NA
 decrit(e$avis_CCC) # médiane : -1
+wtd.mean(e$avis_CCC < 0, weights = e$weight)
 e$confiance_CCC <- (e$CCC_prometteuse_climat + e$CCC_espoir_institutions + e$CCC_initiative_sincere + e$CCC_entendre_francais + e$CCC_representative) > 0
 e$confiance_CCC[e$connait_CCC=='Non'] <- NA
 e$mefiance_CCC <- (e$CCC_inutile + e$CCC_vouee_echec + e$CCC_operation_comm + e$CCC_pour_se_defausser + e$CCC_controlee_govt) > 0
@@ -1307,6 +1362,9 @@ e$nb_avis_CCC <- (e$CCC_prometteuse_climat + e$CCC_espoir_institutions + e$CCC_i
                + e$CCC_inutile + e$CCC_vouee_echec + e$CCC_operation_comm + e$CCC_pour_se_defausser + e$CCC_controlee_govt + e$CCC_autre_choix)
 e$nb_avis_CCC[e$connait_CCC=='Non'] <- NA 
 decrit(e$nb_avis_CCC) # mean 2.5, median 2
+
+for (v in variables_connaissances_CCC) print(paste(v, round(wtd.mean(e1[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e1$weight), 3)))
+for (v in variables_connaissances_CCC) print(paste(v, round(2*wtd.mean(e2[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e2$weight), 3)))
 # TODO: voir les déterminants
 
 # TODO: clusters mesures incitatif/contraignant, sur quoi ça porte
@@ -1878,3 +1936,25 @@ decrit(e2$origine_taxe)
 decrit("parti", data = e2)
 for (l in levels(as.factor(e2$parti))) print(paste(l, round(wtd.mean(e2$parti==l, weights = e2$weight),3)))
 for (l in levels(as.factor(e2$parti))) print(paste(l, round(wtd.mean(e2$parti[e2$Gauche_droite=="Indeterminate"]==l, weights = e2$weight[e2$Gauche_droite=="Indeterminate"]),3)))
+
+
+##### Évolution préférences #####
+table(ccc$s1_e_q37[data_all$s4_s_q14_clean!="NA"])
+table(ccc$s4_s_q14_clean[data_all$s1_e_q37!="NA"])
+# 110km/h : (1/11/10/1) -> (6/7/6/4) : polarisation
+# Taxe avion : (17/6/4/0) -> (15/8/3/1) : léger affaiblissement
+# Obligation rénovation : (11/10/4/1) -> (13/12/1/0) : renforcement
+# Compteurs intelligents : (9/10/3/0) -> (9/7/6/0) : affaiblissement
+# Augmenter prix produits transports polluants : (12/7/5/0) -> (10/12/1/1) : léger renforcement
+# Augmenter taxe carbone : (1/9/7/3) -> (2/6/4/8) : affaiblissement, peut-être polarisation
+# Développer énergies renouvelables : (12/11/1/1) -> (13/10/2/0) : stable, léger renforcement
+# Densifier villes : (3/4/12/4) -> (5/10/8/2) : renforcement
+# Taxer véhicules émetteurs GES : (11/6/4/2) -> (15/6/1/1) : renforcement
+# Favoriser véhicules propres/partagés : (11/12/2/0) -> (8/14/3/0) : affaiblissement
+# Menu végé : (17/6/1/1) -> (16/8/0/1) : stable
+# Réduire gaspillage alimentaire : (23/2/1/0) -> (21/5/0/0) : stable
+# Sur la confiance inter-personnelle on passe de 21-17 à 20-18 par exemple
+# Prendre aux riches pour donner aux pauvres la moyenne passe de 5.02 à 5.27
+# Si la dernière question commune, où les résultats ont le plus changé, c'est si le CC sera contenu à un niveau acceptable à la fin du siècle (certainement, probablement, probablement pas, certainement pas) :
+# Session 1 : 1/13/26/0
+# Session 7 : 2/20/16/2
