@@ -1051,10 +1051,10 @@ convert_c <- function(c) {
   temp[is.na(c$effets_CC_1e)] <- NA
   c$effets_CC_CCC <- as.item(temp, labels = structure(-1:1, names = c("Effets positifs", "Adaptation sans problème", "Extrêmement pénible")), annotation = Label(c$effets_CC_1e))
 
-  temp <- 1*grepl("uement activité hu", c$cause_CC_1e) - grepl("autant", c$cause_CC_1e) - 2*grepl("incipalement processus na", c$cause_CC_1e) - 3*grepl("iquement à des processus nat", c$cause_CC_1e) - 4*grepl("y a pas", c$cause_CC_1e)
-  temp[is.na(c$cause_CC_1e) | c$cause_CC_1e=='NR'] <- NA
-  c$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1),
-                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(c$cause_CC_1e))
+  temp <- 1*grepl("uement activité hu", c$cause_CC_1e) - grepl("autant", c$cause_CC_1e) - 2*grepl("incipalement processus na", c$cause_CC_1e) - 3*grepl("iquement à des processus nat", c$cause_CC_1e) - 4*grepl("y a pas", c$cause_CC_1e) - 0.1*(c$cause_CC_1e=='NR')
+  temp[is.na(c$cause_CC_1e)] <- NA
+  c$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1, -0.1),
+                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique", "NSP")), missing.values = -0.1, annotation=Label(c$cause_CC_1e))
     
   # c$France_CC <- c$France_CC_1e
   # c$France_CC[c$France_CC_1e=='NR'] <- 'NSP'

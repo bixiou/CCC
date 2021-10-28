@@ -516,10 +516,10 @@ convert_e <- function(e, vague) {
                         missing.values = -1, annotation=Label(e$effets_CC_AT))
   
   # e$cause_CC_CCC <- relabel(e$cause_CC_CCC, "Uniquement à des processus naturels"="Uniquement naturel", "Principalement à des processus naturels"="Principalement naturel", "Autant à des processus naturels qu'à l'activité humaine"="Autant",  "Principalement à l'activité humaine"="Principalement anthropique", "Uniquement à l'activité humaine"="Uniquement anthropique")
-  temp <- 1*grepl("uement à l'activité hu", e$cause_CC_CCC) - grepl("Autant", e$cause_CC_CCC) - 2*grepl("incipalement à des processus na", e$cause_CC_CCC) - 3*grepl("iquement à des processus nat", e$cause_CC_CCC) - 4*grepl("ne pense pas", e$cause_CC_CCC)
+  temp <- 1*grepl("uement à l'activité hu", e$cause_CC_CCC) - grepl("Autant", e$cause_CC_CCC) - 2*grepl("incipalement à des processus na", e$cause_CC_CCC) - 3*grepl("iquement à des processus nat", e$cause_CC_CCC) - 4*grepl("ne pense pas", e$cause_CC_CCC) - 0.1*grepl("ne sais pas", e$cause_CC_CCC)
   temp[is.na(e$cause_CC_CCC)] <- NA
-  e$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1),
-                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique")), annotation=Label(e$cause_CC_CCC))
+  e$cause_CC_CCC <- as.item(temp, labels = structure(c(-4:1, -0.1),
+                      names = c("N'existe pas","Uniquement naturel","Principalement naturel","Autant","Principalement anthropique","Uniquement anthropique", "NSP")), missing.values = -0.1, annotation=Label(e$cause_CC_CCC))
 
   temp <- -1*grepl("positif", e$effets_CC_CCC) + grepl("pénible", e$effets_CC_CCC)
   temp[is.na(e$effets_CC_CCC)] <- NA

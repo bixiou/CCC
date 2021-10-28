@@ -321,7 +321,7 @@ save_plotly(effets_CC_AT_v1)
 (cause_CC_CCC2_v1 <- barres(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
 save_plotly(cause_CC_CCC2_v1)
 
-(cause_CC_CCC_CCC <- barres(vars = "cause_CC_CCC", df = c, miss = F, labels="Cause du changement climatique"))
+(cause_CC_CCC_CCC <- barres(vars = "cause_CC_CCC", df = c, miss = T, labels="Cause du changement climatique"))
 save_plotly(cause_CC_CCC_CCC)
 
 (cause_CC_CCC_both <- barres(data=dataN2("cause_CC_CCC", miss = F, rev = T), miss = F, sort = F, labels = c('CCC', 'Population (PSE)'), legend=rev(dataN2("cause_CC_CCC", miss = F, return = 'legend'))))
@@ -895,7 +895,7 @@ save_plotly(effets_CC_AT)
 (cause_CC_CCC_v12 <- barres12(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
 save_plotly(cause_CC_CCC_v12)
 
-(cause_CC_CCC <- barres(data=dataN3("cause_CC_CCC", miss = F, rev = T), miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=rev(dataN2("cause_CC_CCC", miss = F, return = 'legend'))))
+(cause_CC_CCC <- barres(data=dataN3("cause_CC_CCC", miss = T, rev = T), miss = T, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=dataN("cause_CC_CCC", miss = T, rev_legend = T, return = 'legend')))
 save_plotly(cause_CC_CCC)
 # TODO: add European Social Survey data (see JMF ST prez)
 
