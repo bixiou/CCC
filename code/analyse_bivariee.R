@@ -4,6 +4,34 @@ library(psych)
 #data_all <- read.dta("C:/Users/thoma/Documents/Github/CCC/donnees/1e.dta")
 data_all <- read.dta("C:/Users/thoma/Documents/Github/CCC/donnees/all_benedicte.dta")
 
+
+##### Approval to funding measures #####
+temp <- data_CCC_funding <- matrix(c(59, 36, 0, 2, 8,
+                             41, 32, 7, 16, 9,
+                             54, 26, 9, 8, 8,
+                             49, 24, 6, 13, 13,
+                             62, 28, 4, 7, 4,
+                             55, 27, 10, 7, 6,
+                             62, 34, 2, 4, 3,
+                             55, 38, 4, 5, 3,
+                             54, 35, 6, 4, 6,
+                             67, 25, 1, 3, 9)/105, nrow = 5)
+for (j in 1:ncol(data_CCC_funding)) data_CCC_funding[,ncol(data_CCC_funding)+1-j] <- temp[,j]/sum(temp[1:4,j])
+labels_CCC_funding <- rev(c("Targeting regulated savings<br>to low carbon projects",
+                            "State borrowing",
+                            "Higher income tax above 250k€",
+                            "Wealth tax",
+                            "Higher tax on dividends",
+                            "Stronger bonus/malus on new cars",
+                            "Tax on advertising", 
+                            "Tax on noxious food",
+                            "Carbon-border adjustment",
+                            "Funding global climate policies"))
+(CCC_funding <- barres(data = data_CCC_funding, miss=T, nsp = T, rev_color = F, weights = F, fr = T, sort = F, rev = F, labels=labels_CCC_funding, legend = rev(c("PNR", "Totally disagree", "Somewhat disagree", "Somewhat agree", "Totally agree")))) # c("Tout à fait d'accord", "Plutôt d'accord", "Plutôt en désaccord", "Pas du tout d'accord", "NSP")
+save_plotly_new_filename(CCC_funding, width= 750, height=430)
+
+
+
 ##### Sexe #####
 # Analyse univariée
 prop.table(table(data_all$sexe)) # 53% de femmes
