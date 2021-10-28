@@ -460,7 +460,7 @@ data12 <- function(vars, df = list(e1, e2), miss=T, weights = T, fr=T, rev=FALSE
     }
     return(data)
   } }
-barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "V2", v1 = NULL, miss=T, weights = T, fr=T, rev=T, color=c(), rev_color = FALSE, hover=legend, sort=TRUE, thin=T, return="", showLegend=T) {
+barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "(PSE, V2)", v1 = NULL, miss=T, weights = T, fr=T, rev=T, color=c(), rev_color = FALSE, hover=legend, sort=TRUE, thin=T, return="", showLegend=T) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   data1 <- dataKN(vars, data=df[[1]], miss=miss, weights = weights, return = "", fr=fr, rev=rev)
@@ -479,8 +479,8 @@ barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "V2", v
 
 labels12 <- function(labels, en=F, comp = "V2", v1 = NULL) {
   new_labels <- c()
-  lab2 <- ifelse(comp=="V2", ifelse(en, "Wave 2 (W2)", "Vague 2 (V2)"), comp)
-  lab1 <- ifelse(is.null(v1), ifelse(en, "(W1)", "(V1)"), v1)
+  lab2 <- ifelse(comp=="V2", ifelse(en, "Wave 2 (W2)", "Vague 2 (PSE, V2)"), comp)
+  lab1 <- ifelse(is.null(v1), ifelse(en, "(W1)", "(PSE, V1)"), v1)
   for (l in labels) {
     new_labels <- c(new_labels, lab2, paste(l, lab1))
     lab2 <- paste("", lab2) }

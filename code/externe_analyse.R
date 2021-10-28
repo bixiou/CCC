@@ -506,14 +506,14 @@ data_satisfaction <- cbind(c(sum(dataN("satisfaction_vie_1e", c, miss = F)[1:3])
 save_plotly(satisfaction_both_en) # Cevipof Juin 2019 toplot
 
 data_causes_catastrophe <- cbind(c(0.2, 0.2, 0.58, 0.02), dataN("cause_catastrophes_1e", c, miss = F))
-(causes_catastrophe <- barres(data=data_causes_catastrophe, miss = F, color = c(color(3), "#D3D3D3"), sort = F, rev_color = T, labels = c('CCC', 'Population (ADEME)'), legend=c("Personne n'est sûr", "Ont toujours eu lieu", "Dues au changement climatique", "NR")))
+(causes_catastrophe <- barres(data=data_causes_catastrophe[,2:1], miss = F, color = c(color(3), "#D3D3D3"), sort = F, rev_color = T, labels = rev(c('CCC', 'Population (ADEME)')), legend=c("Personne n'est sûr", "Ont toujours eu lieu", "Dues au changement climatique", "NR")))
 save_plotly(causes_catastrophe) # ADEME octobre 2019 toplot!!
 
 (causes_catastrophe_en <- barres(data=data_causes_catastrophe, miss = F, color = c(color(3), "#D3D3D3"), sort = F, rev_color = T, labels = c('Population (ADEME)', 'CCC'), legend=c("Have always taken place", "No one is sure", "Due to climate change", "NR")))
 save_plotly(causes_catastrophe_en) # ADEME octobre 2019 toplot!!
 
 data_ecole <- cbind(dataN("ecole_2e", c[c$ecole_2e!="",], miss = F), c(0.41, 0.56, 0.03))
-(ecole <- barres(data=data_ecole, miss = F, color = c(color(2), "#D3D3D3"), sort = F, rev_color = T, labels = c('CCC', 'Population (ADEME)'), legend=c("Discipline et effort", "Esprit éveillé et critique", "NR")))
+(ecole <- barres(data=data_ecole[,2:1], miss = F, color = c(color(2), "#D3D3D3"), sort = F, rev_color = T, labels = c('Population (ADEME)', 'CCC'), legend=c("Discipline et effort", "Esprit éveillé et critique", "NR")))
 save_plotly(ecole) # ADEME octobre 2019 toplot!!
 
 (ecole_en <- barres(data=data_ecole[,2:1], miss = F, color = c(color(2), "#D3D3D3"), sort = F, rev_color = T, labels = c('Population (ADEME)', 'CCC'), legend=c("Discipline and effort", "Sharp and critical mind", "NR")))
@@ -670,7 +670,10 @@ save_plotly(responsable_CC_v2)
 (CCC_avis_v2 <- barres(vars = variables_CCC_avis, df=e2, rev = F, miss = F, showLegend=F, labels=labels_CCC_avis_long))
 save_plotly(CCC_avis_v2)
 
-(representativite_CCC <- barres(vars="representativite_CCC", df=e2, labels="La CCC est représentative", rev = F, miss = F))
+(representativite_CCC_titled <- barres(vars="representativite_CCC", df=e2, labels="La CCC est représentative", rev = F, miss = T))
+save_plotly(representativite_CCC_titled) 
+
+(representativite_CCC <- barres(vars="representativite_CCC", df=e2, labels=" ", rev = F, miss = T))
 save_plotly(representativite_CCC) 
 
 (representativite_CCC_en <- barres(vars="representativite_CCC", df=e2[e2$connait_CCC!="Non",], fr = F, labels="The CCC is representative", rev = F, miss = T, legend= c("Yes", "No", "PNR ")))
@@ -706,7 +709,7 @@ save_plotly(nb_politiques_env_v2)
 
 
 ##### Images e1 & e2 #####
-# barres(data=dataN3("confiance_sortition", miss = F, rev = T), sort = F, miss = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=rev(dataN2("confiance_sortition", miss = F, return = 'legend'))))
+# barres(data=dataN3("confiance_sortition", miss = F, rev = T), sort = F, miss = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=rev(dataN2("confiance_sortition", miss = F, return = 'legend'))))
 
 (politiques_1_v1c <- barres12(variables_politiques_1, df=list(e1, c), labels = labels_variables_politiques_1, miss=F, comp = "(CCC)"))
 save_plotly(politiques_1_v1c) 
@@ -731,7 +734,7 @@ decrit(c$pour_vitesse_110)
 
 new_variables_referendum <- c("referendum_environnement_priorite_constit", "referendum_ecocide", "referendum_environnement_constitution") 
 # variables_referendum_v2 <- c(variables_referendum, new_variables_referendum)
-new_labels_variables_referendum <- c("L'inscription dans la Constitution que la \n préservation de l'environnement passe avant tout (V2)", "La reconnaissance du crime d'«écocide» (V2)", "L'inscription dans la Constitution de la préservation de la biodiversité,\n de l'environnement et de la lutte contre le dérèglement climatique (V2)")
+new_labels_variables_referendum <- c("L'inscription dans la Constitution que la \n préservation de l'environnement passe avant tout (PSE, V2)", "La reconnaissance du crime d'«écocide» (PSE, V2)", "L'inscription dans la Constitution de la préservation de la biodiversité,\n de l'environnement et de la lutte contre le dérèglement climatique (PSE, V2)")
 # labels_variables_referendum_v2 <- c(labels_variables_referendum, new_labels_variables_referendum)
 (referendum_v12 <- barres(data = cbind(dataKN(vars = new_variables_referendum, data=e2, rev = T), barres12(variables_referendum, return="data")), sort=F, miss=T, labels=c(new_labels_variables_referendum, barres12(variables_referendum, labels=labels_variables_referendum, return="labels")), legend=barres12(variables_referendum, return="legend")))
 save_plotly(referendum_v12) 
@@ -746,24 +749,30 @@ save_plotly(referendum_en_v12)
 variables_devoile_v2 <- c(variables_devoile, "CCC_devoile_28_heures")
 variables_devoile_v2 <- c(labels_variables_devoile, "La réduction du temps de travail légal \n à 28 heures par semaine (F)")
 variables_devoile_v2[2] <- "Limitation de la vitesse sur autoroutes à 110 km/h (V)"
-labels_devoile_v12 <- c("La réduction du temps de travail légal \n à 28 heures par semaine (F) (V2)", barres12(variables_devoile, labels=labels_variables_devoile, return="labels"))
-labels_devoile_v12[4] <- "(V: a été dévoilé entre temps) (V2)"
+labels_devoile_v12 <- c("La réduction du temps de travail légal \n à 28 heures par semaine (F) (PSE, V2)", barres12(variables_devoile, labels=labels_variables_devoile, return="labels"))
+labels_devoile_v12[4] <- "(V: a été dévoilé entre temps) (PSE, V2)"
 (devoile_v12 <- barres(data = cbind(dataN(var = "CCC_devoile_28_heures", data=e2, rev = T, miss=F), barres12(variables_devoile, return="data", miss=F)), sort=F, miss=F, labels=labels_devoile_v12, legend=barres12(variables_devoile, return="legend")))
 save_plotly(devoile_v12) # TODO: parmi qui ?
 
-(confiance_sortition <- barres(data=dataN3("confiance_sortition", miss = F, rev = T), sort = F, miss = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=rev(dataN2("confiance_sortition", miss = F, return = 'legend'))))
+(confiance_sortition <- barres(data=dataN3("confiance_sortition", miss = F, rev = T), sort = F, miss = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=rev(dataN2("confiance_sortition", miss = F, return = 'legend'))))
 save_plotly(confiance_sortition)
 
 (confiance_sortition_en <- barres(data=dataN3("confiance_sortition", miss = F, rev = T), sort = F, miss = F, labels = c('Population (PSE, W2)', 'Population (PSE, W1)', 'CCC'), legend=rev(c("Not at all confident", "Rather not confident", "Rather confident", "Completely confident"))))
 save_plotly(confiance_sortition_en)
 
-(pour_sortition <- barres12("pour_sortition", rev = F, legend = c("Oui ", "Non ", "NSP"), labels = "Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement", miss=T))
+(pour_sortition_title <- barres12("pour_sortition", rev = F, legend = c("Oui ", "Non ", "NSP"), labels = "Pour une assemblée constituée de 150 citoyens tirés au sort, \ndotée d'un droit de veto sur les textes votés au Parlement", miss=T))
+save_plotly(pour_sortition_title) # Oui Non
+
+(pour_sortition <- barres12("pour_sortition", rev = F, legend = c("Oui ", "Non ", "NSP"), labels = "Population", miss=T))
 save_plotly(pour_sortition) # Oui Non
 
 (pour_sortition_en <- barres12("pour_sortition", rev = F, fr=F, legend = c("Yes ", "No ", "PNR"), comp = "(PSE, W2)", v1 = "(PSE, W1)", labels = "For an assembly made up of 150 citizens drawn by lot,\n with a right of veto on the texts voted in the Parliament", miss=T))
 save_plotly(pour_sortition_en) # Oui Non
 
-(connait_CCC <- barres12(vars = "connait_CCC", miss = F, labels="Avez-vous entendu parler de \nla Convention Citoyenne pour le Climat ?"))
+(connait_CCC_title <- barres12(vars = "connait_CCC", miss = F, labels="Avez-vous entendu parler de \nla Convention Citoyenne pour le Climat ?"))
+save_plotly(connait_CCC_title)
+
+(connait_CCC <- barres12(vars = "connait_CCC", miss = F, labels=" "))
 save_plotly(connait_CCC)
 
 (connait_CCC_en <- barres12(vars = "connait_CCC", miss = F, fr=F, comp = "(PSE, W2)", v1 = "(PSE, W1)", labels="Have you heard of the \n Citizens'Convention for Climate?", legend=c("Yes, a lot", "Yes, somewhat", "Vaguely", "No")))
@@ -778,14 +787,17 @@ for (j in seq_along(variables_connaissances_CCC)) if ((v <- paste("connaissance_
 (connaissances_CCC_en <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")), legend = c('Wave 1', "Wave 2")))
 save_plotly(connaissances_CCC_en, width = 360, height = 650) # TODO: opinion, legacy for e1
 
-(connaissances_CCC <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Mesures", "Mesures spécifiques", "Sortition", "150", "Temporalité", "Internet", "Opinion", "Postérité", "Bon français")), legend = c('Vague 1', "Vague 2")))
+(connaissances_CCC <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Mesures", "Mesures spécifiques", "Tirage au sort", "150", "Déroulement", "Internet", "Opinion", "Postérité", "Bon français")), legend = c('Vague 1', "Vague 2")))
 save_plotly(connaissances_CCC, width = 360, height = 650) 
 
 (Connaissance_CCC <- barres(vars = "Connaissance_CCC", df=e2, miss = F, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
 save_plotly(Connaissance_CCC) # TODO
 
-(sait_CCC_devoilee <- barres12(vars = "sait_CCC_devoilee", miss = F, labels="Des mesures proposées par la Convention \nCitoyenne pour le Climat ont déjà été dévoilées"))
+(sait_CCC_devoilee <- barres12(vars = "sait_CCC_devoilee", miss = F, labels="Population"))
 save_plotly(sait_CCC_devoilee) # TODO: parmi qui ?
+
+(sait_CCC_devoilee_title <- barres12(vars = "sait_CCC_devoilee", miss = F, labels="Des mesures proposées par la Convention \nCitoyenne pour le Climat ont déjà été dévoilées"))
+save_plotly(sait_CCC_devoilee_title) 
 
 (sait_CCC_devoilee_en <- barres12(vars = "sait_CCC_devoilee", miss = F, fr = F, comp = "(PSE, W2)", v1 = "(PSE, W1)", labels="Measures proposed by the CCC<br>have already been unveiled", legend=c("Yes", "Not sure", "No")))
 save_plotly(sait_CCC_devoilee_en) 
@@ -847,7 +859,7 @@ save_plotly(trop_impots)
 (problemes_invisibilises_v12 <- barres12(vars = "problemes_invisibilises", miss = F, rev=F, labels="Se sent confronté à des difficultés ignorées\n des pouvoirs publics et des médias"))
 save_plotly(problemes_invisibilises_v12) 
 
-(problemes_invisibilises <- barres(data=dataN3("problemes_invisibilises", miss = F), miss = F, sort = F, rev_color = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=dataN2("problemes_invisibilises", miss = F, return = 'legend')))
+(problemes_invisibilises <- barres(data=dataN3("problemes_invisibilises", miss = F), miss = F, sort = F, rev_color = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=dataN2("problemes_invisibilises", miss = F, return = 'legend')))
 save_plotly(problemes_invisibilises) # « Condi^ons de vie et aspira^ons », CREDOC, janvier 2019: donne 58% d'invisibilisés (contre 61% ici)
 
 (problemes_invisibilises_en <- barres(data=dataN3("problemes_invisibilises", miss = F), miss = F, sort = F, rev_color = F, labels = c('Population (PSE, W2)', 'Population (PSE, W1)', 'CCC'), legend=c("Never", "Not often", "Quite often", "Very often")))
@@ -856,13 +868,13 @@ save_plotly(problemes_invisibilises_en) # « Condi^ons de vie et aspira^ons », 
 (confiance_gens2_v12 <- barres12(vars = "confiance_gens", miss = F, labels="Confiance dans les autres"))
 save_plotly(confiance_gens2_v12) 
 
-(confiance_gens3 <- barres(data=dataN3("confiance_gens", miss = F, rev = T), miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=rev(dataN3("confiance_gens", miss = F, return = 'legend'))))
+(confiance_gens3 <- barres(data=dataN3("confiance_gens", miss = F, rev = T), miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=rev(dataN3("confiance_gens", miss = F, return = 'legend'))))
 save_plotly(confiance_gens3)
 
 (confiance_gens3_en <- barres(data=dataN3("confiance_gens", miss = F, rev = T), fr = F, miss = F, sort = F, labels = c('Population (W2)', 'Population (W1)','CCC'), legend=c("Trust", "Mistrust")))
 save_plotly(confiance_gens3_en)
 
-(confiance_gens <- barres(data=cbind(c(0.35, 0.65), dataN3("confiance_gens", miss = F, rev=T)), miss = F, sort = F, labels = c('Population (Cevipof 04/2020)', 'Population (V2)', 'Population (V1)', 'CCC'), legend=c("Confiance", "Méfiance")))
+(confiance_gens <- barres(data=cbind(c(0.35, 0.65), dataN3("confiance_gens", miss = F, rev=T)), miss = F, sort = F, labels = c('Population (Cevipof 04/2020)', 'Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=c("Confiance", "Méfiance")))
 save_plotly(confiance_gens) # toplot!
 
 (confiance_gens_en <- barres(data=cbind(c(0.35, 0.65), dataN3("confiance_gens", miss = F, rev=T)), miss = F, sort = F, labels = c('Population (Cevipof 04/2020)', 'Population (W2)', 'Population (W1)', 'CCC'), legend=c("Trust", "Mistrust"), fr = F))
@@ -877,7 +889,7 @@ save_plotly(parle_CC)
 (issue_CC_v12 <- barres12(vars = "issue_CC", miss = F, labels="Le changement climatique sera limité \nà un niveau acceptable d'ici la fin du siècle"))
 save_plotly(issue_CC_v12) 
 
-(issue_CC <- barres(data=cbind(rev(c(13, 50, 31, 5))/99, dataN3("issue_CC", miss = F, rev = T)), miss = F, sort = F, labels = c('Population (ADEME)', 'Population (V2)', 'Population (V1)','CCC'), legend=rev(dataN2("issue_CC", miss = F, return = 'legend'))))
+(issue_CC <- barres(data=cbind(rev(c(13, 50, 31, 5))/99, dataN3("issue_CC", miss = F, rev = T)), miss = F, sort = F, labels = c('Population (ADEME)', 'Population (PSE, V2)', 'Population (PSE, V1)','CCC'), legend=rev(dataN2("issue_CC", miss = F, return = 'legend'))))
 save_plotly(issue_CC) # ADEME octobre 2019 toplot!
 
 (issue_CC_en <- barres(data=cbind(rev(c(13, 50, 31, 5))/99, dataN3("issue_CC", miss = F, rev = T)), miss = F, sort = F, labels = c('Population (ADEME)', 'Population (PSE, W2)', 'Population (PSE, W1)', 'CCC'), legend=rev(c("No, certainly not", "No, probably not", "Yes, probably", "Yes, certainly"))))
@@ -886,7 +898,7 @@ save_plotly(issue_CC_en) # ADEME octobre 2019 toplot!
 (effets_CC_CCC_v12 <- barres12(vars = "effets_CC_CCC", miss = F, rev = F, labels="Quelles seront les conséquences en France d'ici 50 ans ?"))
 save_plotly(effets_CC_CCC_v12) 
 
-(effets_CC_CCC <- barres(data=cbind(c(0.02, 0.32, 0.65)/0.99, dataN3("effets_CC_CCC", miss = F)), miss = F, sort = F, labels = c('Population (ADEME)', 'Population (V2)', 'Population (V1)', 'CCC'), legend=dataN2("effets_CC_CCC", miss = F, return = 'legend')))
+(effets_CC_CCC <- barres(data=cbind(c(0.02, 0.32, 0.65)/0.99, dataN3("effets_CC_CCC", miss = F)), miss = F, sort = F, labels = c('Population (ADEME)', 'Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend = c("Effets positifs", "Adaptation sans trop de problème", "Extrêmement pénible")))
 save_plotly(effets_CC_CCC) # ADEME 2019 toplot!
 
 (effets_CC_AT <- barres12(vars = "effets_CC_AT", rev = F, miss = T, labels="Effets du changement climatique, \nsi rien n'est fait pour le limiter ?"))
@@ -895,7 +907,7 @@ save_plotly(effets_CC_AT)
 (cause_CC_CCC_v12 <- barres12(vars = "cause_CC_CCC", miss = F, labels="Cause du changement climatique"))
 save_plotly(cause_CC_CCC_v12)
 
-(cause_CC_CCC <- barres(data=dataN3("cause_CC_CCC", miss = T, rev = T), miss = T, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=dataN("cause_CC_CCC", miss = T, rev_legend = T, return = 'legend')))
+(cause_CC_CCC <- barres(data=dataN3("cause_CC_CCC", miss = T, rev = T), miss = T, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=dataN("cause_CC_CCC", miss = T, rev_legend = T, return = 'legend')))
 save_plotly(cause_CC_CCC)
 # TODO: add European Social Survey data (see JMF ST prez)
 
@@ -905,7 +917,7 @@ save_plotly(cause_CC_CCC_en)
 (France_CC_v12 <- barres12(vars = "France_CC", thin = T, miss = F, labels="La France doit prendre de l'avance \nsur d'autres pays dans la lutte contre le changement climatique"))
 save_plotly(France_CC_v12) 
 
-(France_CC <- barres(data=dataN3("France_CC", miss=F, rev = T), miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=rev(dataN2("France_CC", return = 'legend', miss=F))))
+(France_CC <- barres(data=dataN3("France_CC", miss=F, rev = T), miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=rev(dataN2("France_CC", return = 'legend', miss=F))))
 save_plotly(France_CC)
 
 (France_CC_en <- barres(data=dataN3("France_CC", miss=F, rev = T), miss = F, sort = F, labels = c('Population (PSE, W2)', 'Population (PSE, W1)', 'CCC'), legend=c("Yes", "NR", "No")))
@@ -914,7 +926,7 @@ save_plotly(France_CC_en)
 (echelle_politique_CC_v12 <- barres12(vars = "echelle_politique_CC", thin = T, rev = F, miss = F, labels="Le changement climatique exige\n d'être pris en charge par des politiques ..."))
 save_plotly(echelle_politique_CC_v12) 
 
-(echelle_politique_CC <- barres(data=dataN3("echelle_politique_CC", miss = F), miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=dataN2("echelle_politique_CC", miss = F, return = 'legend')))
+(echelle_politique_CC <- barres(data=dataN3("echelle_politique_CC", miss = F), miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=str_to_sentence(dataN2("echelle_politique_CC", miss = F, return = 'legend'))))
 save_plotly(echelle_politique_CC) 
 
 (echelle_politique_CC_en <- barres(data=dataN3("echelle_politique_CC", miss = F), miss = F, sort = F, labels = c('Population (PSE, W2)', 'Population (PSE, W1)', 'CCC'), legend=c("At all scales", "Global", "European", "National", "Local")))
@@ -926,19 +938,19 @@ save_plotly(patrimoine_v12)
 (redistribution_v12 <- barres12(vars = "redistribution", rev = F, miss = F, labels="Il faudrait prendre aux riches pour donner aux pauvres"))
 save_plotly(redistribution_v12) 
 
-(redistribution <- barres(data=dataN3("redistribution", miss = F), rev = F,  miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=dataN2("redistribution", miss = F, return = 'legend')))
+(redistribution <- barres(data=dataN3("redistribution", miss = F), rev = F,  miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=dataN2("redistribution", miss = F, return = 'legend')))
 save_plotly(redistribution)
 
 # (importance_v12 <- barres(data=cbind(dataN3("redistribution", miss = F), dataN3("redistribution", miss = F), dataN3("redistribution", miss = F)), rev = F, rev_color = T, miss = F, labels=c("L'action sociale et associative", "La protection de l'environnement", "L'amélioration de mon niveau de vie et de confort")))
 # save_plotly(importance_v12) # TODO
 
-(importance_associatif <- barres(data=cbind(dataN("importance_associatif", data = e2, miss = F), dataN("importance_associatif", data = e1, miss = F), data_importance_CCC[,1]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=0:10))
+(importance_associatif <- barres(data=cbind(dataN("importance_associatif", data = e2, miss = F), dataN("importance_associatif", data = e1, miss = F), data_importance_CCC[,1]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=0:10))
 save_plotly(importance_associatif)
 
-(importance_environnement <- barres(data=cbind(dataN("importance_environnement", data = e2, miss = F), dataN("importance_environnement", data = e1, miss = F), data_importance_CCC[,2]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=0:10))
+(importance_environnement <- barres(data=cbind(dataN("importance_environnement", data = e2, miss = F), dataN("importance_environnement", data = e1, miss = F), data_importance_CCC[,2]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=0:10))
 save_plotly(importance_environnement)
 
-(importance_confort <- barres(data=cbind(dataN("importance_confort", data = e2, miss = F), dataN("importance_confort", data = e1, miss = F), data_importance_CCC[,3]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (V2)', 'Population (V1)', 'CCC'), legend=0:10))
+(importance_confort <- barres(data=cbind(dataN("importance_confort", data = e2, miss = F), dataN("importance_confort", data = e1, miss = F), data_importance_CCC[,3]), rev = F, rev_color = T,  miss = F, sort = F, labels = c('Population (PSE, V2)', 'Population (PSE, V1)', 'CCC'), legend=0:10))
 save_plotly(importance_confort)
 
 (responsable_CC_v12 <- barres12(vars = variables_responsable_CC, miss = F, showLegend=F, labels=labels_responsable))
@@ -967,19 +979,22 @@ save_plotly(CCC_avis_en, width = 610, height = 650)
 save_plotly(Connaissance_CCC_v12) # TODO: ajouter barre grise pour les NA
 
 # TODO: appartenance
-(Connaissance_CCC_v12_wo_label <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], miss = F, labels="Synhtèse du champ libre"))
+(Connaissance_CCC_v12_wo_label_title <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], miss = F, labels="Synhtèse du champ libre"))
+save_plotly(Connaissance_CCC_v12_wo_label_title) 
+
+(Connaissance_CCC_v12_wo_label <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], miss = F, labels="Population", legend = c("Bonne", "Approximatif", "Trop vague", "Aucune", "Faux", "Hors sujet")))
 save_plotly(Connaissance_CCC_v12_wo_label) 
 
 (Connaissance_CCC_v12_wo_label_en <- barres12(vars = "Connaissance_CCC", color = color(7)[c(1,2,4:7)], fr =F, miss = F, comp = "(PSE, W2)", v1 = "(PSE, W1)", labels="Synthesis of the open field", legend = c("Good", "Vague", "Too vague", "None", "Wrong", "Irrelevant")))
 save_plotly(Connaissance_CCC_v12_wo_label_en) 
 
-(qualite_enfant2 <- barres(vars = variables_qualite_enfant, df=e2, rev = F, miss = F, showLegend=F, labels=labels_qualite_enfant))
+(qualite_enfant2 <- barres(vars = variables_qualite_enfant, df=e2, rev = F, miss = F, showLegend=F, labels=str_to_sentence(labels_qualite_enfant)))
 save_plotly(qualite_enfant2) 
 
 data_qualite_enfant_all <- matrix(NA, ncol = length(variables_qualite_enfant), nrow = 3)
 data_qualite_enfant_all[1:2,] <- data_qualite_enfant
 for (j in 1:length(variables_qualite_enfant)) data_qualite_enfant_all[3,j] <- sum(e$weight[e2[[variables_qualite_enfant[j]]]==T])/sum(e2$weight)
-(qualite_enfant <- barres(data = data_qualite_enfant_all, color = color(4)[c(1,3,4)], grouped = T, rev = F, miss=F, labels=labels_qualite_enfant, legend = c('CCC', 'Population (V1)', "Population (V2)")))
+(qualite_enfant <- barres(data = data_qualite_enfant_all, color = color(4)[c(1,3,4)], grouped = T, rev = F, miss=F, labels=labels_qualite_enfant, legend = c('CCC', 'Population (PSE, V1)', "Population (PSE, V2)")))
 save_plotly(qualite_enfant)
 
 (qualite_enfant_en <- barres(data = data_qualite_enfant_all[3:1,], color = rev(color(4)[c(1,3,4)]), grouped = T, rev = F, miss=F, labels=labels_qualite_enfant_en, legend = rev(c('CCC', 'Population (PSE, W1)', "Population (PSE, W2)"))))
@@ -988,7 +1003,7 @@ save_plotly(qualite_enfant_en)
 data_anthropique_v1 <- (rbind(length(which(e1$part_anthropique <= 45)), length(which(e1$part_anthropique %between% c(46, 55))), length(which(e1$part_anthropique %between% c(56, 65))), length(which(e1$part_anthropique %between% c(66, 75))), length(which(e1$part_anthropique >75)))/nrow(e1))
 data_anthropique_v2 <- (rbind(length(which(e2$part_anthropique <= 45)), length(which(e2$part_anthropique %between% c(46, 55))), length(which(e2$part_anthropique %between% c(56, 65))), length(which(e2$part_anthropique %between% c(66, 75))), length(which(e2$part_anthropique >75)))/nrow(e2))
 data_anthropique <- cbind(data_anthropique_v2, data_anthropique_v1)
-(part_anthropique <- barres(data = data_anthropique, rev = F, rev_color = T,  miss = F, sort = F, labels = c("Vague 2 (V2)", "Part des Français considérant que \nle changement climatique est anthropique ? (V1)"), legend=c("Moins de 45%", "De 46 à 55%", "De 56 à 65%", "De 66 à 75%", "Plus de 75%")))
+(part_anthropique <- barres(data = data_anthropique, rev = F, rev_color = T,  miss = F, sort = F, labels = c("Vague 2 (PSE, V2)", "Part des Français considérant que \nle changement climatique est anthropique ? (PSE, V1)"), legend=c("Moins de 45%", "De 46 à 55%", "De 56 à 65%", "De 66 à 75%", "Plus de 75%")))
 save_plotly(part_anthropique)
 
 data_taxe_carbone_v1 <- cbind(dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='pour',]), dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='contre',]), dataN("pour_taxe_carbone", data = e1[e1$variante_taxe_carbone=='neutre',]))
@@ -1016,7 +1031,7 @@ save_plotly(solution_CC_v12)
 data_solution_all <- matrix(NA, ncol = length(variables_solution), nrow = 4)
 data_solution_all[c(1:2,4),] <- rbind(data_solution_good, c(11, 52, 19, 17)/99)
 for (j in 1:length(variables_solution)) data_solution_all[3,j] <- sum(e2$weight[e2[[variables_solution[j]]]==T])/sum(e2$weight)
-(solution_CC <- barres(data = data_solution_all, color = color(7)[c(1,5:7)], grouped = T, rev = F, miss=F, labels=labels_solution, legend = c('CCC', 'Population (V1)', 'Population (V2)', 'Population (ADEME)')))
+(solution_CC <- barres(data = data_solution_all[4:1,], color = rev(color(7)[c(1,5:7)]), grouped = T, rev = F, miss=F, labels=labels_solution, legend = rev(c('CCC', 'Population (PSE, V1)', 'Population (PSE, V2)', 'Population (ADEME)'))))
 save_plotly(solution_CC) # TODO!: use color(7)[c(5:6)] for all V1, V2
 
 (solution_CC_en <- barres(data = data_solution_all[4:1,], color = rev(color(7)[c(1,5:7)]), grouped = T, rev = F, miss=F, labels=labels_solution_en, legend = rev(c('CCC', 'Population (PSE, W1)', 'Population (PSE, W2)', 'Population (ADEME)'))))
@@ -1030,7 +1045,7 @@ save_plotly(obstacles_v2)
 data_obstacles <- matrix(NA, ncol = length(variables_obstacles), nrow = 3)
 data_obstacles[1:2,] <- data_obstacles_both
 for (j in 1:length(variables_obstacles)) data_obstacles[3,j] <- sum(e2$weight[e2[[variables_obstacles[j]]]<=2],na.rm=T)/sum(e2$weight)
-(obstacles_all <- barres(data = data_obstacles, color = color(4)[c(1,3,4)], grouped = T, rev = F, miss=F, labels=labels_obstacles[1:7], legend = c('CCC', 'Population (V1)', 'Population (V2)')))
+(obstacles_all <- barres(data = data_obstacles[3:1,], color = color(4)[c(4,3,1)], grouped = T, rev = F, miss=F, labels=labels_obstacles[1:7], legend = rev(c('CCC', 'Population (PSE, V1)', 'Population (PSE, V2)'))))
 save_plotly(obstacles)
 
 (obstacles_en <- barres(data = data_obstacles[3:1,], color = rev(color(4)[c(1,3,4)]), grouped = T, rev = F, miss=F, labels=c("Lobbies", "Lack of political will", "Lack of cooperation between countries", "Inequalities", "Uncertainties of scientific community", "Demography", "Lack of alternative technologies"), legend = rev(c('CCC', 'Population (PSE, W1)', 'Population (PSE, W2)'))))
@@ -1583,7 +1598,7 @@ summary(lm(taxe_approbation!='Non' ~ label_taxe * origine_taxe * question_confia
 summary(lm(taxe_approbation!='Non' ~ origine_taxe * as.factor(dividende), data=e2, weights = e2$weight)) # l'effet du gouv/EELV ne passe que pour dividende=0, donc pas lié à confiance_dividende
 summary(lm(confiance_dividende!='Non' ~ label_taxe * origine_taxe, data=e1, weights = e1$weight)) # no effect
 # 3.d Effet de confiance_gouvernement
-#     méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (v1) mais pas corrélé avec gagnant_categorie (v2)
+#     méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (PSE, V1) mais pas corrélé avec gagnant_categorie (PSE, V2)
 decrit("confiance_gouvernement", data=e1, miss=T) # 26/38/18/14 jamais/parfois/moitié/plupart temps
 summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0), data = e1, weights = e1$weight)) # gouv: 0.16**
 # summary(lm(gagnant_categorie=='Perdant' ~ (confiance_gouvernement < 0), data = e2, weights = e2$weight)) # gouv: 0.03 Pas corrélé suggère encore une fois que ceux qui doutent du gouv/dividende répondent NSP
@@ -1634,7 +1649,7 @@ CrossTable(e1$gagnant_categorie[e1$simule_gagnant==0 & e1$bug_touche==F], e1$gag
 ##### Expliquer que 60% se pensent perdants au lieu de 27% #####
 # gain fiscal (N) gains_losses_data.py; pas croire au dividende (N); élasticité nulle (B): à eux seuls, expliquent beaucoup (si ce n'est tout)
 # pourquoi pas de biais dans v2? pck ceux qui ne sont pas sûrs cochent NSP plutôt que Perdant + effet de cadrage (pour expliquer évolution Gagnants).  
-   # Pb: non confirmé par certitude_gagnant: Perdant sont aussi + sûrs qu'autres dans v1 que dans v2 (on devrait plus + sûr dans v2 pour confirmer). Cela dit questions pas comparable pck l'une porte sur gagnant_categorie (v1) et l'autre sur gain (v2)
+   # Pb: non confirmé par certitude_gagnant: Perdant sont aussi + sûrs qu'autres dans v1 que dans v2 (on devrait plus + sûr dans v2 pour confirmer). Cela dit questions pas comparable pck l'une porte sur gagnant_categorie (PSE, V1) et l'autre sur gain (PSE, V2)
 # effets de cadrage (B). Gens pensent perdre et ne croit pas au dividende pck on leur suggère, ds v2 c'est plutôt qu'ils pensent notre estimation surestimée mais intègrent dividende. 
 #   pb de cette explication: pas d'effet sur approbation
 # potentiellement dû à MR: pensent perdre plus que les autres (B) perte_relative; pensent que tout le monde perd tout en croyant au dividende (B). Il aurait fallu avoir question dividende + perdants/gagnants dans le même sondage pour savoir
@@ -1744,7 +1759,7 @@ summary(ivreg(taxe_feedback_approbation!="Non" ~ (gagnant_feedback_categorie!="P
 summary(ivreg(taxe_approbation!="Non" ~ (confiance_dividende!="Non") | origine_taxe + label_taxe, data=e1, weights = e1$weight), diagnostics = T)
 
 ##### Mécanismes : incertitude #####
-# assez sûrs d'eux, surtout les perdants (v1)
+# assez sûrs d'eux, surtout les perdants (PSE, V1)
 # v1: 18/40/42 pas/moyennement/sûr par rapport à gagnant_categorie, v2: 30/42/29 par rapport à gain (hors NSP)
 decrit("certitude_gagnant", data=e1)  
 decrit("certitude_gagnant", data=e2, which = e2$gagnant_categorie!="NSP") # moins sûrs vague == 2 car il s'agit de gain subjectif, pas gagnant_categorie
@@ -1766,7 +1781,7 @@ CrossTable(e2$gagnant_categorie[e2$dividende==170], e2$certitude_gagnant[e2$divi
 
 
 ##### Mécanismes : confiance #####
-# méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (v1) mais pas corrélé avec gagnant_categorie (v2)
+# méfiance gouv est capturée par méfiance dividende pour expliquer Perdant. confiance_gouv augmente proba NA (PSE, V1) mais pas corrélé avec gagnant_categorie (PSE, V2)
 # Parmi le peu qui croient recevoir le dividende, gagnant_categorie est bien plus alignée avec la réponse objective: +32***p.p.
 decrit(e1$confiance_gouvernement, miss=T) # 26/38/18/14 jamais/parfois/moitié/plupart temps
 decrit(e2$confiance_gouvernement, miss=T) # pareil
