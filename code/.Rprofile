@@ -470,7 +470,7 @@ barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "V2", v
   agree <- order_agree(data = data1, miss = miss)
   if (is.logical(df[[1]][[vars[1]]])) agree <- rev(agree)
   if (return=="data") return(data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""))
-  else if (return=="labels") return(labels12(labels[agree], en = !fr, v1=v1))
+  else if (return=="labels") return(labels12(labels[agree], en = !fr, comp = comp, v1=v1))
   else if (return=="legend") return(legend)
   else return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
                 labels=labels12(labels[agree], en = !fr, comp = comp, v1=v1), legend=legend, 
