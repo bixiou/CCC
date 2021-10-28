@@ -1,14 +1,26 @@
 library(utils)
 
 # options(download.file.method = "wget"); # For Ubuntu 14.04
-package <- function(p) { 
+package <- function(p, version = NULL) { 
   if (!is.element(p, installed.packages()[,1])) {
-    install.packages(p); 
+    if (missing(version)) install.packages(p)
+    else {
+      package("remotes")
+      install_version(p, version = version, repos = "http://cran.us.r-project.org", upgrade = "never", dependencies = TRUE)
+    }
   }
+  else { if(!missing(version)) warning(paste("'", p, "' is already installed with a (potentially) newer version. You may want to install the required version (", version, ") to avoid bugs.", sep=""))}
   library(p, character.only = TRUE)
 } # loads packages with automatical install if needed
 
-package("memisc")
+
+if (file.exists("C:/Users/afabre")) .libPaths(c("C:/Users/afabre/R-4.1.1/library", "C:/Users/afabre/R-4.0.3/library", "\\\\nash/mtec-home/afabre/My Documents/R/win-library/4.0")) 
+
+chooseCRANmirror(ind = 1)
+package("plyr")
+package("tm")
+package("memisc") 
+# package("memisc", version = "0.99.22") 
 package('tidyverse')
 package("xtable")
 package("rms")
@@ -22,6 +34,7 @@ package("stringr")
 package("survey")
 Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "/home/adrien/anaconda3/bin", sep = .Platform$path.sep))
 Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "C:/Users/afabre/Anaconda3/pkgs/plotly-orca-1.3.1-1/orca_app", sep = .Platform$path.sep)) # to correct bug orca, add folder of orca.exe
+Sys.setenv("PATH" = paste(Sys.getenv("PATH"), "C:/ProgramData/Anaconda3/pkgs/plotly-orca-1.3.1-1/orca_app", sep = .Platform$path.sep))
 package("plotly")
 package('gdata')
 package("Hmisc")

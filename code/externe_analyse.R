@@ -770,7 +770,7 @@ for (j in seq_along(variables_connaissances_CCC)) if ((v <- paste("connaissance_
 for (j in seq_along(variables_connaissances_CCC)) if ((v <- paste("connaissance_CCC", variables_connaissances_CCC[j], sep="_")) %in% names(e2)) data_connaissances_CCC[2,j] <- 2*wtd.mean(e2[[v]]==T, weights = e2$weight)
 # for (v in variables_connaissances_CCC) print(paste(v, round(wtd.mean(e1[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e1$weight), 3)))
 # for (v in variables_connaissances_CCC) print(paste(v, round(2*wtd.mean(e2[[paste("connaissance_CCC", v, sep="_")]]==T, weights = e2$weight), 3)))
-# (connaissances_CCC <- barres12(data = data_connaissances_CCC, miss = F, fr = F, showLegend = F, legend=c("",""), labels=c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")))
+(connaissances_CCC <- barres12(data = data_connaissances_CCC, miss = F, fr = F, showLegend = F, legend=c("",""), labels=c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")))
 (connaissances_CCC_en <- barres(data = data_connaissances_CCC[,9:1], grouped = T, rev = F, sort = F, miss=F, labels=rev(c("Measures", "Specific measures", "Sortition", "150", "Temporality", "Internet", "Opinion", "Legacy", "Good french")), legend = c('Wave 1', "Wave 2")))
 save_plotly(connaissances_CCC_en, width = 360, height = 650)
 
