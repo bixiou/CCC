@@ -907,7 +907,7 @@ convert_e <- function(e, vague) {
   e$correct_soutenu_bonus_malus <- e$soutenu_bonus_malus==T # ~65% pour
   e$correct_soutenu_normes_isolation <- e$soutenu_normes_isolation==T # AT: 72% pour
   e$correct_soutenu_obligation_renovation <- e$soutenu_obligation_renovation==T # referendum_obligation_renovation: ~75% Oui / pour_obligation_renovation: ~83% pour
-  e$correct_soutenu_limitation_110 <- e$soutenu_limitation_110==F # pour_limitation_110: ~53% contre
+  e$correct_soutenu_limitation_110 <- e$soutenu_limitation_110==FALSE # pour_limitation_110: ~53% contre
   e$nb_correct_soutenu <- e$correct_soutenu_bonus_malus + e$correct_soutenu_normes_isolation + e$correct_soutenu_obligation_renovation + e$correct_soutenu_limitation_110
   label(e$correct_soutenu_bonus_malus) <- "correct_soutenu_bonus_malus: soutenu_bonus_malus==T - Un renforcement du bonus/malus écologique pour l’achat d’un véhicule - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
   label(e$correct_soutenu_obligation_renovation) <- "correct_soutenu_obligation_renovation: soutenu_obligation_renovation==T - L'obligation de rénovation thermique des logements les moins bien isolés assortie d'aides de l'État - Réponse correcte à si cette politique est soutenue par une majorité de Français (obligation_renovation/normes_isolation/bonus_malus/limitation_110)"
@@ -1618,7 +1618,7 @@ relabel_and_rename2_pilote <- function(e) {
   for (i in 1:length(e)) names(e)[i] <- sub(':.*', '', label(e[[i]]))
   return(e)
 }
-prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished=TRUE, only_known_agglo=T, duree_max=390, pilote = F) { # , exclude_quotas_full=TRUE
+prepare_e2 <- function(exclude_speeder=TRUE, exclude_screened=TRUE, only_finished=TRUE, only_known_agglo=T, duree_max=390, pilote = FALSE) { # , exclude_quotas_full=TRUE
   
   if (pilote) {
     e <- read_csv("../donnees/externe2_pilote.csv")[,c(1:126,136:139,141:164,168:171,173:193,140,194:198,213:233,127:135,165:167,172,199:212)] #[-c(1:2),]
@@ -1670,7 +1670,7 @@ e2 <- prepare_e2()
 
 e2$vague <- 2
 e1$vague <- 1
-eb <- rbind.fill(e1, e2)
+e <- eb <- rbind.fill(e1, e2)
 for (i in names(eb)) { 
   if (i %in% names(e1)) label(eb[[i]]) <- label(e1[[i]])
   if (i %in% names(e2)) label(eb[[i]]) <- label(e2[[i]]) }

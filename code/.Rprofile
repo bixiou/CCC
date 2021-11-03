@@ -44,7 +44,6 @@ package("DescTools")
 package("VCA")
 package("glmnet")
 # package("installr") # not for linux
-package("plotly")
 package("processx")
 package("readstata13")
 package("permute")
@@ -404,11 +403,11 @@ data1 <- function(vars, data=e1, weights=T) {
   return( matrix(res, ncol=length(vars)) )
 }
 dataN <- function(var, data=e1, miss=T, weights = T, return = "", fr=T, rev=FALSE, rev_legend = FALSE) {
-  if (is.null(data[['weight']])) weights <- F # TODO? warning
+  if (is.null(data[['weight']])) weights <- FALSE # TODO? warning
   mat <- c()
   if (is.character(data[[var]]) | (is.numeric(data[[var]]) & !grepl("item", class(data[[var]]))) | is.logical(data[[var]])) v <- as.factor(data[[var]]) # before: no is.logical
   else v <- data[[var]]
-  if (setequal(levels(v), c(T, F))) levels <- c(T) # before: not this line
+  if (setequal(levels(v), c(T, FALSE))) levels <- c(T) # before: not this line
   else if (is.null(annotation(v))) levels <- levels(v)
   else levels <- labels(v)@.Data
   levels <- levels[!(levels %in% c("NSP", "PNR", "Non concerné·e"))]
@@ -453,7 +452,7 @@ data12 <- function(vars, df = list(e1, e2), miss=T, weights = T, fr=T, rev=FALSE
     for (var in vars) {
       if (init) {
         data <- dataN2(var=var, df=list(df[[2]], df[[1]]), miss=miss, weights=weights, fr=fr, rev=rev, return=return)
-        init <- F
+        init <- FALSE
       } else {
         data <- cbind(data, dataN2(var=var, df=list(df[[2]], df[[1]]), miss=miss, weights=weights, fr=fr, rev=rev, return=return))
       }
@@ -474,10 +473,10 @@ barres12 <- function(vars, df=list(e1, e2), labels, legend=hover, comp = "(PSE, 
   else if (return=="legend") return(legend)
   else return(barres(data = data12(vars[agree], df = df, miss=miss, weights = weights, fr=fr, rev=rev, return = ""), 
                 labels=labels12(labels[agree], en = !fr, comp = comp, v1=v1), legend=legend, 
-                miss=miss, weights = weights, fr=fr, rev=rev, color=color, rev_color = rev_color, hover=hover, sort=F, thin=thin, showLegend=showLegend))
+                miss=miss, weights = weights, fr=fr, rev=rev, color=color, rev_color = rev_color, hover=hover, sort=FALSE, thin=thin, showLegend=showLegend))
 }
 
-labels12 <- function(labels, en=F, comp = "V2", v1 = NULL) {
+labels12 <- function(labels, en=FALSE, comp = "V2", v1 = NULL) {
   new_labels <- c()
   lab2 <- ifelse(comp=="V2", ifelse(en, "Wave 2 (W2)", "Vague 2 (PSE, V2)"), comp)
   lab1 <- ifelse(is.null(v1), ifelse(en, "(W1)", "(PSE, V1)"), v1)
@@ -527,7 +526,7 @@ order_agree <- function(data, miss, rev = T, n = ncol(data)) {
     else { for (i in 1:n) { agree <- c(agree, data[1, i]) } } }
 return(order(agree, decreasing = rev)) }
 barres <- function(data, vars, file, title="", labels, color=c(), rev_color = FALSE, hover=legend, nsp=TRUE, sort=TRUE, legend=hover, showLegend=T, margin_r=0, margin_l=NA, online=FALSE, 
-                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = F, error_margin = F, color_margin = '#00000033', N = NA) {
+                   display_values=T, thin=T, legend_x=NA, show_ticks=T, xrange=NA, save = FALSE, df=e1, miss=T, weights = T, fr=T, rev=T, grouped = FALSE, error_margin = FALSE, color_margin = '#00000033', N = NA) {
   if (missing(vars) & missing(legend) & missing(hover)) warning('hover or legend must be given')
   if (!missing(miss)) nsp <- miss
   if (missing(data) & !missing(vars)) {
