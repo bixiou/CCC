@@ -505,8 +505,8 @@ data_satisfaction <- cbind(c(sum(dataN("satisfaction_vie_1e", c, miss = FALSE)[1
 (satisfaction_both_en <- barres(data=data_satisfaction[,2:1], miss = FALSE, sort = FALSE, rev_color = T, labels = c('Population (Cevipof 06/2019)', 'CCC'), legend=c('1 to 3', '4 to 6', '7 to 10')))
 save_plotly(satisfaction_both_en) # Cevipof Juin 2019 toplot
 
-data_causes_catastrophe <- cbind(c(0.2, 0.2, 0.58, 0.02), dataN("cause_catastrophes_1e", c, miss = FALSE))
-(causes_catastrophe <- barres(data=data_causes_catastrophe[,2:1], miss = FALSE, color = c(color(3), "#D3D3D3"), sort = FALSE, rev_color = T, labels = rev(c('CCC', 'Population (ADEME)')), legend=c("Personne n'est sûr", "Ont toujours eu lieu", "Dues au changement climatique", "NR")))
+data_causes_catastrophe <- cbind(c(0.2, 0.2, 0.58, 0.02), dataN("cause_catastrophes_1e", c, miss = F))
+(causes_catastrophe <- barres(data=data_causes_catastrophe, miss = F, color = c(color(3), "#D3D3D3"), sort = F, rev_color = T, labels = rev(c('CCC', 'Population (ADEME)')), legend=c("Personne n'est sûr", "Ont toujours eu lieu", "Dues au changement climatique", "NR")))
 save_plotly(causes_catastrophe) # ADEME octobre 2019 toplot!!
 
 (causes_catastrophe_en <- barres(data=data_causes_catastrophe, miss = FALSE, color = c(color(3), "#D3D3D3"), sort = FALSE, rev_color = T, labels = c('Population (ADEME)', 'CCC'), legend=c("Have always taken place", "No one is sure", "Due to climate change", "NR")))
