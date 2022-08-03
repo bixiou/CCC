@@ -791,6 +791,9 @@ save_plotly(connaissances_CCC_en, width = 360, height = 650) # TODO: opinion, le
 (connaissances_CCC <- barres(data = data_connaissances_CCC[,9:1], color = color(7)[c(5:6)], grouped = T, rev = FALSE, sort = FALSE, miss=FALSE, labels=rev(c("Mesures", "Mesures spécifiques", "Tirage au sort", "150", "Déroulement", "Internet", "Opinion", "Postérité", "Bon français")), legend = c('Vague 1 (PSE)', "Vague 2 (PSE)")))
 save_plotly(connaissances_CCC, width = 360, height = 650) 
 
+(connaissances2_CCC <- barres(data = data_connaissances_CCC[,8:1], color = color(7)[c(5:6)], grouped = T, rev = FALSE, sort = FALSE, miss=FALSE, labels=rev(c("Mesures", "Mesures spécifiques", "Tirage au sort", "'150'", "Déroulement", "Internet", "Opinion", "Postérité")), legend = c('Vague 1 (PSE)', "Vague 2 (PSE)")))
+save_plotly(connaissances2_CCC, width = 400, height = 500) 
+
 (Connaissance_CCC <- barres(vars = "Connaissance_CCC", df=e2, miss = FALSE, labels="Connaissance de la Convention Citoyenne pour le Climat\n (évaluation du champ libre demandant de la décrire)"))
 save_plotly(Connaissance_CCC) # TODO
 
